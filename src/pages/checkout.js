@@ -79,7 +79,7 @@ export default function Checkout() {
       
       <main className={styles.checkoutPage}>
         <div className="container">
-          <div className={styles.pageHeader}>
+          <div className={styles.pageHeaderTitle}>
             <h1>Checkout</h1>
             <p>Complete your purchase</p>
           </div>
@@ -91,34 +91,34 @@ export default function Checkout() {
                 
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label htmlFor="firstName">First Name *</label>
+                    <label className={styles.formLabel} htmlFor="firstName">First Name *</label>
                     <input
                       type="text"
                       id="firstName"
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className={errors.firstName ? styles.error : ''}
+                      className={`${styles.formInput} ${errors.firstName ? styles.inputError : ''}`}
                     />
                     {errors.firstName && <span className={styles.errorMessage}>{errors.firstName}</span>}
                   </div>
                   
                   <div className={styles.formGroup}>
-                    <label htmlFor="lastName">Last Name *</label>
+                    <label className={styles.formLabel} htmlFor="lastName">Last Name *</label>
                     <input
                       type="text"
                       id="lastName"
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className={errors.lastName ? styles.error : ''}
+                      className={`${styles.formInput} ${errors.lastName ? styles.inputError : ''}`}
                     />
                     {errors.lastName && <span className={styles.errorMessage}>{errors.lastName}</span>}
                   </div>
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label htmlFor="email">Email Address *</label>
+                  <label className={styles.formLabel} htmlFor="email">Email Address *</label>
                   <input
                     type="email"
                     id="email"
@@ -131,7 +131,7 @@ export default function Checkout() {
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label htmlFor="phone">Phone Number</label>
+                  <label className={styles.formLabel} htmlFor="phone">Phone Number</label>
                   <input
                     type="tel"
                     id="phone"
@@ -142,34 +142,35 @@ export default function Checkout() {
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label htmlFor="address">Street Address *</label>
+                  <label  className={styles.formLabel} htmlFor="address">Street Address *</label>
                   <input
                     type="text"
                     id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className={errors.address ? styles.error : ''}
+                    className={`${styles.formInput} ${errors.address ? styles.inputError : ''}`}
+
                   />
                   {errors.address && <span className={styles.errorMessage}>{errors.address}</span>}
                 </div>
                 
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label htmlFor="city">Town / City *</label>
+                    <label className={styles.formLabel} htmlFor="city">Town / City *</label>
                     <input
                       type="text"
                       id="city"
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className={errors.city ? styles.error : ''}
+                      className={`${styles.formInput} ${errors.city ? styles.inputError : ''}`}
                     />
                     {errors.city && <span className={styles.errorMessage}>{errors.city}</span>}
                   </div>
                   
                   <div className={styles.formGroup}>
-                    <label htmlFor="country">Country *</label>
+                    <label className={styles.formLabel} htmlFor="country">Country *</label>
                     <select
                       id="country"
                       name="country"
@@ -188,14 +189,14 @@ export default function Checkout() {
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label htmlFor="zipCode">ZIP / Postal Code *</label>
+                  <label className={styles.formLabel} htmlFor="zipCode">ZIP / Postal Code *</label>
                   <input
                     type="text"
                     id="zipCode"
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleChange}
-                    className={errors.zipCode ? styles.error : ''}
+                    className={`${styles.formInput} ${errors.zipCode ? styles.inputError : ''}`}
                   />
                   {errors.zipCode && <span className={styles.errorMessage}>{errors.zipCode}</span>}
                 </div>
@@ -290,7 +291,7 @@ export default function Checkout() {
                           placeholder="1234 5678 9012 3456"
                           value={formData.cardNumber}
                           onChange={handleChange}
-                          className={errors.cardNumber ? styles.error : ''}
+                          className={`${styles.formInput} ${errors.cardNumber ? styles.inputError : ''}`}
                         />
                         {errors.cardNumber && <span className={styles.errorMessage}>{errors.cardNumber}</span>}
                       </div>
@@ -304,7 +305,7 @@ export default function Checkout() {
                           placeholder="John Doe"
                           value={formData.cardName}
                           onChange={handleChange}
-                          className={errors.cardName ? styles.error : ''}
+                          className={`${styles.formInput} ${errors.cardName ? styles.inputError : ''}`}
                         />
                         {errors.cardName && <span className={styles.errorMessage}>{errors.cardName}</span>}
                       </div>
@@ -319,7 +320,7 @@ export default function Checkout() {
                             placeholder="MM/YY"
                             value={formData.cardExpiry}
                             onChange={handleChange}
-                            className={errors.cardExpiry ? styles.error : ''}
+                            className={`${styles.formInput} ${errors.cardExpiry ? styles.inputError : ''}`}
                           />
                           {errors.cardExpiry && <span className={styles.errorMessage}>{errors.cardExpiry}</span>}
                         </div>
@@ -333,7 +334,7 @@ export default function Checkout() {
                             placeholder="123"
                             value={formData.cardCvv}
                             onChange={handleChange}
-                            className={errors.cardCvv ? styles.error : ''}
+                            className={`${styles.formInput} ${errors.cardCvv ? styles.inputError : ''}`}
                           />
                           {errors.cardCvv && <span className={styles.errorMessage}>{errors.cardCvv}</span>}
                         </div>
