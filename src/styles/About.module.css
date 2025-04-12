@@ -1,0 +1,195 @@
+.aboutPage {
+    padding: 2rem 0 4rem;
+  }
+  
+  .pageHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .pageHeader h1 {
+    font-size: 2.5rem;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .pageHeader p {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+  }
+  
+  .aboutSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    margin-bottom: 4rem;
+  }
+  
+  .reverse {
+    direction: rtl;
+  }
+  
+  .reverse > * {
+    direction: ltr;
+  }
+  
+  .aboutContent {
+    padding: 1rem;
+  }
+  
+  .aboutContent h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+  }
+  
+  .aboutContent p {
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+    line-height: 1.7;
+  }
+  
+  .aboutContent ul {
+    margin: 1.5rem 0;
+    padding-left: 1.5rem;
+    color: var(--secondary-color);
+  }
+  
+  .aboutContent li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .aboutImage {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+  }
+  
+  .aboutImage img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .valuesSection {
+    text-align: center;
+    margin: 5rem 0;
+  }
+  
+  .valuesSection h2 {
+    font-size: 1.75rem;
+    margin-bottom: 3rem;
+    color: var(--dark-color);
+  }
+  
+  .valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+  
+  .valueCard {
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    background-color: white;
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease;
+  }
+  
+  .valueCard:hover {
+    transform: translateY(-5px);
+  }
+  
+  .valueIcon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+  }
+  
+  .valueCard h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+  }
+  
+  .valueCard p {
+    color: var(--secondary-color);
+    line-height: 1.6;
+  }
+  
+  .teamSection {
+    margin-top: 5rem;
+  }
+  
+  .teamSection h2 {
+    text-align: center;
+    font-size: 1.75rem;
+    margin-bottom: 3rem;
+    color: var(--dark-color);
+  }
+  
+  .teamGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+  
+  .teamMember {
+    text-align: center;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .teamMember:hover {
+    transform: translateY(-5px);
+  }
+  
+  .memberImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 1.5rem;
+    border: 3px solid var(--primary-color);
+  }
+  
+  .memberImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .teamMember h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+  }
+  
+  .memberRole {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .memberBio {
+    color: var(--secondary-color);
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 992px) {
+    .aboutSection {
+      grid-template-columns: 1fr;
+    }
+    
+    .reverse {
+      direction: ltr;
+    }
+    
+    .aboutImage {
+      order: -1;
+    }
+  }

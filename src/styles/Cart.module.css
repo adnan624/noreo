@@ -1,0 +1,115 @@
+.cartPage {
+    padding: 2rem 0 4rem;
+  }
+  
+  .pageHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .pageHeader h1 {
+    font-size: 2.5rem;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .pageHeader p {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+  }
+  
+  .cartLayout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+  
+  .cartItems {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .cartSummary {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+  }
+  
+  .cartSummary h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .summaryRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+  }
+  
+  .totalRow {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--dark-color);
+    margin: 1.5rem 0;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+  }
+  
+  .cartSummary button {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  
+  .paymentMethods {
+    text-align: center;
+  }
+  
+  .paymentMethods p {
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+  }
+  
+  .paymentIcons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 1.5rem;
+    color: #6b7280;
+  }
+  
+  .emptyCart {
+    text-align: center;
+    padding: 4rem 0;
+  }
+  
+  .emptyCart h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+  }
+  
+  .emptyCart p {
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 992px) {
+    .cartLayout {
+      grid-template-columns: 1fr;
+    }
+    
+    .cartSummary {
+      position: static;
+    }
+  }

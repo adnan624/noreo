@@ -1,0 +1,102 @@
+.productCard {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .productCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .productImageContainer {
+    position: relative;
+    padding-top: 75%; /* 4:3 aspect ratio */
+    overflow: hidden;
+  }
+  
+  .productImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .productCard:hover .productImage {
+    transform: scale(1.05);
+  }
+  
+  .outOfStock {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--danger-color);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .productInfo {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .productName {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+  }
+  
+  .productRating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .reviewCount {
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+  }
+  
+  .productDescription {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+  
+  .productFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .productPrice {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+  
+  .addToCartBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .addToCartBtn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    transform: none !important;
+  }

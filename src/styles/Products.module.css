@@ -1,0 +1,128 @@
+.productsPage {
+    padding: 2rem 0 4rem;
+  }
+  
+  .pageHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .pageHeader h1 {
+    font-size: 2.5rem;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .pageHeader p {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+  }
+  
+  .productsLayout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+  }
+  
+  .sidebar {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+  }
+  
+  .filterSection {
+    margin-bottom: 2rem;
+  }
+  
+  .filterSection h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .filterList {
+    list-style: none;
+  }
+  
+  .filterButton {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+    background: none;
+    border: none;
+    text-align: left;
+    color: var(--secondary-color);
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .filterButton:hover {
+    color: var(--primary-color);
+  }
+  
+  .filterButton.active {
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+  
+  .productsContent {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .productsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .sortOptions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .sortSelect {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    background-color: white;
+  }
+  
+  .productsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .noResults {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 0;
+  }
+  
+  .noResults p {
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+  }
+  
+  @media (max-width: 992px) {
+    .productsLayout {
+      grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+      position: static;
+    }
+  }

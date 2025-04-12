@@ -1,0 +1,28 @@
+.rating {
+    display: flex;
+    align-items: center;
+  }
+  
+  .star {
+    color: var(--warning-color);
+    font-size: 1rem;
+    position: relative;
+  }
+  
+  .star.empty {
+    color: #d1d5db;
+  }
+  
+  /* For half star */
+  .star:nth-last-child(2) {
+    position: relative;
+  }
+  
+  .star:nth-last-child(2)::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+    color: var(--warning-color);
+  }

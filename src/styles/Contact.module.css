@@ -1,0 +1,178 @@
+.contactPage {
+  padding: 2rem 0 4rem;
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.pageHeaderTitle {
+  font-size: 2.5rem;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+}
+
+.pageHeaderDescription {
+  color: var(--secondary-color);
+  font-size: 1.1rem;
+}
+
+.contactLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+.contactInfo {
+  padding: 2rem;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.contactInfoHeading {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--dark-color);
+}
+
+.contactInfoDescription {
+  color: var(--secondary-color);
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+.infoItem {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.infoIcon {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(37, 99, 235, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.infoItemHeading {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  color: var(--dark-color);
+}
+
+.infoItemText {
+  margin: 0;
+  color: var(--secondary-color);
+  line-height: 1.6;
+}
+
+.contactForm {
+  padding: 2rem;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.contactFormHeading {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--dark-color);
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--dark-color);
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.inputError {
+  border-color: var(--danger-color);
+}
+
+.errorMessage {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--danger-color);
+  font-size: 0.875rem;
+}
+
+.submitButton {
+  width: 100%;
+}
+
+.successMessage {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.successIcon {
+  font-size: 3rem;
+  color: var(--success-color);
+  margin-bottom: 1.5rem;
+}
+
+.successHeading {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--dark-color);
+}
+
+.successText {
+  color: var(--secondary-color);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.mapContainer {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.mapContainer iframe {
+  width: 100%;
+  height: 450px;
+  border: 0;
+}
+
+@media (max-width: 992px) {
+  .contactLayout {
+    grid-template-columns: 1fr;
+  }
+}
