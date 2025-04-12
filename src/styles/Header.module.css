@@ -12,32 +12,46 @@
   .header.scrolled {
     background: linear-gradient(135deg, #0f0f1a 0%, #10182b 100%);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    padding: 0.5rem 0;
+    padding: 0.3rem 0;
   }
   
   .headerContent {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem 2rem;
+    padding: 1rem 1.5rem;
     max-width: 1400px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .logo a {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 4vw, 2rem); /* Responsive font size */
     font-weight: 700;
     color: #fff;
     text-decoration: none;
     position: relative;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logo-main {
+    font-size: inherit;
+  }
+  
+  .logo-sub {
+    font-size: 0.5em;
+    font-weight: 300;
+    opacity: 0.8;
   }
   
   .logo a::after {
     content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -0.3em;
     left: 0;
     width: 100%;
     height: 2px;
@@ -55,8 +69,10 @@
   .navList {
     display: flex;
     list-style: none;
-    gap: 2.5rem;
+    gap: clamp(1rem, 3vw, 2.5rem);
     align-items: center;
+    margin: 0;
+    padding: 0;
   }
   
   .navList a {
@@ -64,9 +80,9 @@
     color: rgba(255, 255, 255, 0.9);
     transition: all 0.3s ease;
     position: relative;
-    font-size: 1.05rem;
-    padding: 0.5rem 0;
-    letter-spacing: 0.5px;
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+    padding: 0.3rem 0;
+    letter-spacing: 0.3px;
   }
   
   .navList a:hover {
@@ -94,6 +110,7 @@
     gap: 0.5rem;
     position: relative;
     transition: all 0.3s ease;
+    text-decoration: none;
   }
   
   .cartLink:hover {
@@ -104,14 +121,14 @@
     background: linear-gradient(135deg, #F3E0B0 0%, #D9B968 100%);
     color: #0f0f1a;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    width: clamp(20px, 5vw, 24px);
+    height: clamp(20px, 5vw, 24px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: clamp(0.6rem, 2vw, 0.75rem);
     font-weight: 700;
-    box-shadow: 0 2px 15px rgba(0, 219, 222, 0.4);
+    box-shadow: 0 2px 10px rgba(243, 224, 176, 0.4);
   }
   
   .mobileMenuButton {
@@ -119,38 +136,43 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.75rem;
+    padding: 0.5rem;
     z-index: 101;
     transition: all 0.3s ease;
   }
   
   .mobileMenuButton span {
     display: block;
-    width: 28px;
+    width: clamp(24px, 6vw, 28px);
     height: 2px;
     background: linear-gradient(90deg, #F3E0B0 0%, #D9B968 100%);
-    margin: 6px 0;
+    margin: 5px 0;
     transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
   }
   
   .mobileMenuButton.open span:nth-child(1) {
-    transform: rotate(45deg) translate(6px, 6px);
+    transform: rotate(45deg) translate(5px, 5px);
     background: #F3E0B0;
   }
   
   .mobileMenuButton.open span:nth-child(2) {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-15px);
   }
   
   .mobileMenuButton.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
+    transform: rotate(-45deg) translate(5px, -5px);
     background: #D9B968;
   }
   
-  @media (max-width: 992px) {
+  /* Enhanced Mobile Responsiveness */
+  @media (max-width: 1024px) {
+    .headerContent {
+      padding: 0.8rem 1.2rem;
+    }
+    
     .navList {
-      gap: 1.8rem;
+      gap: clamp(0.8rem, 2vw, 1.5rem);
     }
   }
   
@@ -163,13 +185,13 @@
       position: fixed;
       top: 0;
       right: -100%;
-      width: 80%;
+      width: 85%;
       height: 100vh;
       background: linear-gradient(135deg, #0f0f1a 0%, #10182b 100%);
       backdrop-filter: blur(20px);
-      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
-      transition: right 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
-      padding-top: 6rem;
+      box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+      transition: right 0.4s cubic-bezier(0.77, 0.2, 0.05, 1);
+      padding-top: 5rem;
       border-left: 1px solid rgba(255, 255, 255, 0.1);
     }
   
@@ -179,21 +201,57 @@
   
     .navList {
       flex-direction: column;
-      gap: 2.5rem;
-      padding: 2rem;
+      gap: 2rem;
+      padding: 1.5rem;
       align-items: flex-start;
     }
   
     .navList a {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       padding: 0.5rem 1rem;
     }
   
     .navList a::after {
-      height: 3px;
+      height: 2px;
     }
+  }
   
+  @media (max-width: 480px) {
+    .headerContent {
+      padding: 0.6rem 1rem;
+    }
+    
     .logo a {
-      font-size: 1.6rem;
+      font-size: clamp(1.2rem, 5vw, 1.5rem);
+    }
+    
+    .cartCount {
+      width: 18px;
+      height: 18px;
+      font-size: 0.6rem;
+    }
+    
+    .mobileMenuButton {
+      padding: 0.4rem;
+    }
+    
+    .mobileMenuButton span {
+      width: 22px;
+      height: 1.5px;
+      margin: 4px 0;
+    }
+    
+    .nav {
+      width: 90%;
+      padding-top: 4.5rem;
+    }
+    
+    .navList {
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+    
+    .navList a {
+      font-size: 1rem;
     }
   }
