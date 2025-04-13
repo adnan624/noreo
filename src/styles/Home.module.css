@@ -11,6 +11,23 @@
   overflow: hidden;
 }
 
+.circuitBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(135deg, var(--light-color) 25%, transparent 25%) -50px 0,
+    linear-gradient(225deg, var(--light-color) 25%, transparent 25%) -50px 0,
+    linear-gradient(315deg, var(--light-color) 25%, transparent 25%),
+    linear-gradient(45deg, var(--light-color) 25%, transparent 25%);
+  background-size: 100px 100px;
+  background-color: #f0f1f6;
+  z-index: -1;
+  opacity: 0.7;
+}
+
 .heroContent {
   max-width: 800px;
   margin: 0 auto;
@@ -136,14 +153,14 @@
 }
 
 .btnOutline {
-  background: transparent;
+  background-color: rgba(85, 97, 187, 0.8);
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(5px);
 }
 
 .btnOutline:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #D9B968;
   border-color: rgba(255, 255, 255, 0.5);
 }
 

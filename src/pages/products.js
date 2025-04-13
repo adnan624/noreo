@@ -41,18 +41,16 @@ export default function Products() {
   });
 
   return (
-    <div className={styles.electroTheme}>
-      <Head>
-        <title>Products | ElectroShop</title>
-        <meta name="description" content="Browse our wide selection of electrical appliances" />
-      </Head>
-      
-      <Header />
-      
-      <main className={styles.productsPage}>
+    
+      <><Head>
+      <title>Products | ElectroShop</title>
+      <meta name="description" content="Browse our wide selection of electrical appliances" />
+    </Head>
+    <Header />
+    <main className={styles.productsPage}>
         {/* Animated Circuit Background */}
         <div className={styles.circuitBackground}></div>
-        
+
         <div className="container">
           <div className={styles.pageHeader}>
             <h1>
@@ -61,7 +59,7 @@ export default function Products() {
             </h1>
             <p className={styles.subtitle}>Power your home with cutting-edge technology</p>
           </div>
-          
+
           <div className={styles.productsLayout}>
             <aside className={styles.sidebar}>
               <div className={styles.filterSection}>
@@ -71,7 +69,7 @@ export default function Products() {
                 <ul className={styles.filterList}>
                   {categories.map(category => (
                     <li key={category}>
-                      <button 
+                      <button
                         className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
                         onClick={() => setCategoryFilter(category)}
                       >
@@ -85,7 +83,7 @@ export default function Products() {
                   ))}
                 </ul>
               </div>
-              
+
               <div className={styles.filterSection}>
                 <h3>
                   <i className={`${styles.icon} fas fa-dollar-sign`}></i> Price Range
@@ -93,7 +91,7 @@ export default function Products() {
                 <ul className={styles.filterList}>
                   {['All', 'Under $100', '$100 - $500', 'Over $500'].map(price => (
                     <li key={price}>
-                      <button 
+                      <button
                         className={`${styles.filterButton} ${priceFilter === price ? styles.active : ''}`}
                         onClick={() => setPriceFilter(price)}
                       >
@@ -107,19 +105,19 @@ export default function Products() {
                   ))}
                 </ul>
               </div>
-              
-              <button 
+
+              <button
                 className={styles.resetButton}
                 onClick={() => {
                   setCategoryFilter('All');
                   setPriceFilter('All');
                   setSortOption('featured');
-                }}
+                } }
               >
-  <FaSync className={styles.buttonIcon} /> Reset Filters
+                <FaSync className={styles.buttonIcon} /> Reset Filters
               </button>
             </aside>
-            
+
             <div className={styles.productsContent}>
               <div className={styles.productsHeader}>
                 <p className={styles.productCount}>
@@ -129,8 +127,8 @@ export default function Products() {
                   <label htmlFor="sort">
                     <i className={`${styles.icon} fas fa-sort-amount-down`}></i> Sort by:
                   </label>
-                  <select 
-                    id="sort" 
+                  <select
+                    id="sort"
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
                     className={styles.sortSelect}
@@ -142,7 +140,7 @@ export default function Products() {
                   </select>
                 </div>
               </div>
-              
+
               {sortedProducts.length > 0 ? (
                 <div className={styles.productsGrid}>
                   {sortedProducts.map(product => (
@@ -156,14 +154,14 @@ export default function Products() {
                   </div>
                   <h3>No products found</h3>
                   <p>Try adjusting your filters to find what you're looking for</p>
-                  <button 
+                  <button
                     className={styles.clearFiltersButton}
                     onClick={() => {
                       setCategoryFilter('All');
                       setPriceFilter('All');
-                    }}
+                    } }
                   >
-                   <FaBroom className={styles.buttonIcon} /> Clear All Filters
+                    <FaBroom className={styles.buttonIcon} /> Clear All Filters
 
                   </button>
                 </div>
@@ -172,9 +170,9 @@ export default function Products() {
           </div>
         </div>
       </main>
-      
       <Footer />
-    </div>
+      </>
+   
   );
 }
 

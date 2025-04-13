@@ -21,6 +21,8 @@ export default function Home() {
       <Header />
       
       <main>
+          <div className={styles.circuitBackground}></div>
+        
         {/* Hero Section with Particles */}
         <section className={styles.hero}>
           <div className={styles.particles}>
@@ -48,7 +50,7 @@ export default function Home() {
         </section>
         
         {/* Featured Products */}
-        <section className={`${styles.section} ${styles.featuredSection}`}>
+        <section className={`${styles.section}`}>
           <div className="container">
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Featured Products</h2>
@@ -140,7 +142,7 @@ export default function Home() {
         </section>
         
         {/* Newsletter */}
-        <section className={`${styles.section} ${styles.newsletterSection}`}>
+        <section className={`${styles.section}`}>
           <div className="container">
             <div className={styles.newsletterContainer}>
               <h2>Stay Updated</h2>
