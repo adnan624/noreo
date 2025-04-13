@@ -3,9 +3,10 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-
 import styles from '../styles/Products.module.css';
 import products from '@/data/products';
+import { FaSync, FaBroom } from 'react-icons/fa';
+
 
 export default function Products() {
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -15,7 +16,7 @@ export default function Products() {
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
 
-  // Filter products based on selected filters
+  // Filter products
   const filteredProducts = products.filter(product => {
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
     
@@ -31,22 +32,16 @@ export default function Products() {
     return matchesCategory && matchesPrice;
   });
 
-  // Sort products based on selected option
+  // Sort products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOption === 'price-low') {
-      return a.price - b.price;
-    } else if (sortOption === 'price-high') {
-      return b.price - a.price;
-    } else if (sortOption === 'rating') {
-      return b.rating - a.rating;
-    } else {
-      // Featured (default) - could implement your own logic here
-      return a.id - b.id;
-    }
+    if (sortOption === 'price-low') return a.price - b.price;
+    if (sortOption === 'price-high') return b.price - a.price;
+    if (sortOption === 'rating') return b.rating - a.rating;
+    return a.id - b.id; // Featured
   });
 
   return (
-    <>
+    <div className={styles.electroTheme}>
       <Head>
         <title>Products | ElectroShop</title>
         <meta name="description" content="Browse our wide selection of electrical appliances" />
@@ -55,16 +50,24 @@ export default function Products() {
       <Header />
       
       <main className={styles.productsPage}>
+        {/* Animated Circuit Background */}
+        <div className={styles.circuitBackground}></div>
+        
         <div className="container">
           <div className={styles.pageHeader}>
-            <h1>Our Products</h1>
-            <p>Find the perfect appliance for your home</p>
+            <h1>
+              <span className={styles.spark}>⚡</span> Our Products
+              <span className={styles.spark}>⚡</span>
+            </h1>
+            <p className={styles.subtitle}>Power your home with cutting-edge technology</p>
           </div>
           
           <div className={styles.productsLayout}>
             <aside className={styles.sidebar}>
               <div className={styles.filterSection}>
-                <h3>Categories</h3>
+                <h3>
+                  <i className={`${styles.icon} fas fa-bolt`}></i> Categories
+                </h3>
                 <ul className={styles.filterList}>
                   {categories.map(category => (
                     <li key={category}>
@@ -72,7 +75,11 @@ export default function Products() {
                         className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
                         onClick={() => setCategoryFilter(category)}
                       >
-                        {category}
+                        {category === 'All' ? (
+                          <><i className={`${styles.icon} fas fa-plug`}></i> All Categories</>
+                        ) : (
+                          <><i className={`${styles.icon} ${getCategoryIcon(category)}`}></i> {category}</>
+                        )}
                       </button>
                     </li>
                   ))}
@@ -80,7 +87,9 @@ export default function Products() {
               </div>
               
               <div className={styles.filterSection}>
-                <h3>Price Range</h3>
+                <h3>
+                  <i className={`${styles.icon} fas fa-dollar-sign`}></i> Price Range
+                </h3>
                 <ul className={styles.filterList}>
                   {['All', 'Under $100', '$100 - $500', 'Over $500'].map(price => (
                     <li key={price}>
@@ -88,19 +97,38 @@ export default function Products() {
                         className={`${styles.filterButton} ${priceFilter === price ? styles.active : ''}`}
                         onClick={() => setPriceFilter(price)}
                       >
-                        {price}
+                        {price === 'All' ? (
+                          <><i className={`${styles.icon} fas fa-coins`}></i> All Prices</>
+                        ) : (
+                          <><i className={`${styles.icon} fas fa-tag`}></i> {price}</>
+                        )}
                       </button>
                     </li>
                   ))}
                 </ul>
               </div>
+              
+              <button 
+                className={styles.resetButton}
+                onClick={() => {
+                  setCategoryFilter('All');
+                  setPriceFilter('All');
+                  setSortOption('featured');
+                }}
+              >
+  <FaSync className={styles.buttonIcon} /> Reset Filters
+              </button>
             </aside>
             
             <div className={styles.productsContent}>
               <div className={styles.productsHeader}>
-                <p>{sortedProducts.length} products found</p>
+                <p className={styles.productCount}>
+                  <i className={`${styles.icon} fas fa-microchip`}></i> {sortedProducts.length} products found
+                </p>
                 <div className={styles.sortOptions}>
-                  <label htmlFor="sort">Sort by:</label>
+                  <label htmlFor="sort">
+                    <i className={`${styles.icon} fas fa-sort-amount-down`}></i> Sort by:
+                  </label>
                   <select 
                     id="sort" 
                     value={sortOption}
@@ -115,32 +143,50 @@ export default function Products() {
                 </div>
               </div>
               
-              <div className={styles.productsGrid}>
-                {sortedProducts.length > 0 ? (
-                  sortedProducts.map(product => (
+              {sortedProducts.length > 0 ? (
+                <div className={styles.productsGrid}>
+                  {sortedProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
-                  ))
-                ) : (
-                  <div className={styles.noResults}>
-                    <p>No products match your selected filters.</p>
-                    <button 
-                      className="btn btn-outline"
-                      onClick={() => {
-                        setCategoryFilter('All');
-                        setPriceFilter('All');
-                      }}
-                    >
-                      Clear Filters
-                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noResults}>
+                  <div className={styles.noResultsIcon}>
+                    <i className="fas fa-unlink"></i>
                   </div>
-                )}
-              </div>
+                  <h3>No products found</h3>
+                  <p>Try adjusting your filters to find what you're looking for</p>
+                  <button 
+                    className={styles.clearFiltersButton}
+                    onClick={() => {
+                      setCategoryFilter('All');
+                      setPriceFilter('All');
+                    }}
+                  >
+                   <FaBroom className={styles.buttonIcon} /> Clear All Filters
+
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </main>
       
       <Footer />
-    </>
+    </div>
   );
+}
+
+// Helper function to get icons for categories
+function getCategoryIcon(category) {
+  switch(category) {
+    case 'Televisions': return 'fas fa-tv';
+    case 'Computers': return 'fas fa-laptop';
+    case 'Phones': return 'fas fa-mobile-alt';
+    case 'Audio': return 'fas fa-headphones';
+    case 'Gaming': return 'fas fa-gamepad';
+    case 'Home Appliances': return 'fas fa-blender';
+    default: return 'fas fa-plug';
+  }
 }

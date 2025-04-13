@@ -1,28 +1,32 @@
 .rating {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    gap: 2px;
   }
   
   .star {
+    font-size: 1.2rem;
+    position: relative;
+    color: #d1d5db; /* Default empty star color */
+  }
+  
+  .star.full {
     color: var(--warning-color);
-    font-size: 1rem;
-    position: relative;
   }
   
-  .star.empty {
-    color: #d1d5db;
+  .star.half {
+    color: #d1d5db; /* Base empty star */
   }
   
-  /* For half star */
-  .star:nth-last-child(2) {
-    position: relative;
-  }
-  
-  .star:nth-last-child(2)::before {
+  .star.half::before {
     content: '★';
     position: absolute;
     left: 0;
     width: 50%;
     overflow: hidden;
     color: var(--warning-color);
+  }
+  
+  .star.empty {
+    color: #d1d5db;
   }
