@@ -142,20 +142,7 @@ export default function Home() {
         </section>
         
         {/* Newsletter */}
-        <section className={`${styles.section}`}>
-          <div className="container">
-            <div className={styles.newsletterContainer}>
-              <h2>Stay Updated</h2>
-              <p>Subscribe to our newsletter for the latest products and exclusive offers</p>
-              <form className={styles.newsletterForm}>
-                <input type="email" placeholder="Your email address" required />
-                <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
-                  Subscribe <i className="fas fa-paper-plane"></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        </section>
+    
       </main>
       
       <Footer />
