@@ -22,7 +22,7 @@ export default function Home() {
       
       <main>
           <div className={styles.circuitBackground}></div>
-        
+        {/* // */}
         {/* Hero Section with Particles */}
         <section className={styles.hero}>
           <div className={styles.particles}>
