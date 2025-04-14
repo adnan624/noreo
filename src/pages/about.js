@@ -45,11 +45,11 @@ export default function About() {
       icon: "shield-alt",
       description: "Building long-term relationships based on honesty and transparency."
     },
-    { 
-      title: "Innovation", 
-      icon: "lightbulb",
-      description: "Bringing you the latest in smart home technology and energy efficiency."
-    },
+    // { 
+    //   title: "Innovation", 
+    //   icon: "lightbulb",
+    //   description: "Bringing you the latest in smart home technology and energy efficiency."
+    // },
     { 
       title: "Customer Care", 
       icon: "heart",
@@ -85,6 +85,7 @@ export default function About() {
       <Header />
       
       <main className={styles.aboutPage}>
+      <div className={styles.circuitBackground}></div>
         {/* Hero Section */}
         {/* <section className={`${styles.pageHeader} observe-section`} id="header">
           <motion.div
@@ -163,20 +164,21 @@ export default function About() {
               <h2>Our Values</h2>
               <div className={styles.valuesGrid}>
                 {values.map((value, index) => (
-                  <motion.div
-                    key={value.title}
-                    className={styles.valueCard}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={isVisible['values'] ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    whileHover={{ y: -10 }}
-                  >
-                    <div className={styles.valueIcon}>
-                      <i className={`fas fa-${value.icon}`}></i>
-                    </div>
-                    <h3>{value.title}</h3>
-                    <p>{value.description}</p>
-                  </motion.div>
+                 <motion.div
+                 key={value.title}
+                 className={styles.feature}
+                 initial={{ opacity: 0, y: 30 }}
+                 animate={isVisible['values'] ? { opacity: 1, y: 0 } : {}}
+                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                 whileHover={{ y: -10 }}
+               >
+                 <div className={styles.featureIcon}>
+                   <i className={`fas fa-${value.icon}`}></i>
+                 </div>
+                 <h3 className={styles.featureTitle}>{value.title}</h3>
+  <p className={styles.featureDescription}>{value.description}</p>
+                 <div className={styles.featureHoverEffect}></div>
+               </motion.div>
                 ))}
               </div>
             </motion.div>

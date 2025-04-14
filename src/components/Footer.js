@@ -10,7 +10,7 @@ const Footer = () => {
             <h3 className={styles.footerTitle}>ElectroShop</h3>
             <p>Your one-stop shop for all electrical appliances at competitive prices.</p>
           </div>
-          
+          {/* // */}
           <div className={styles.footerSection}>
             <h3 className={styles.footerTitle}>Quick Links</h3>
             <ul className={styles.footerLinks}>

@@ -29,7 +29,7 @@
   .logo a {
     font-size: clamp(1.5rem, 4vw, 2rem); /* Responsive font size */
     font-weight: 700;
-    color: #fff;
+    color:  #D9B968;
     text-decoration: none;
     position: relative;
     letter-spacing: 0.5px;
