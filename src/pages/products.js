@@ -5,13 +5,13 @@ import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
 import products from '@/data/products';
-import { FaSync, FaBroom } from 'react-icons/fa';
-
+import { FaSync, FaBroom, FaSearch } from 'react-icons/fa';
 
 export default function Products() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
@@ -29,7 +29,12 @@ export default function Products() {
       matchesPrice = product.price > 500;
     }
     
-    return matchesCategory && matchesPrice;
+    const matchesSearch = searchQuery === '' || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesPrice && matchesSearch;
   });
 
   // Sort products
@@ -40,14 +45,22 @@ export default function Products() {
     return a.id - b.id; // Featured
   });
 
+  // Handle search reset
+  const handleResetAll = () => {
+    setCategoryFilter('All');
+    setPriceFilter('All');
+    setSortOption('featured');
+    setSearchQuery('');
+  };
+
   return (
-    
-      <><Head>
-      <title>Products | ElectroShop</title>
-      <meta name="description" content="Browse our wide selection of electrical appliances" />
-    </Head>
-    <Header />
-    <main className={styles.productsPage}>
+    <>
+      <Head>
+        <title>Products | ElectroShop</title>
+        <meta name="description" content="Browse our wide selection of electrical appliances" />
+      </Head>
+      <Header />
+      <main className={styles.productsPage}>
         {/* Animated Circuit Background */}
         <div className={styles.circuitBackground}></div>
 
@@ -108,21 +121,37 @@ export default function Products() {
 
               <button
                 className={styles.resetButton}
-                onClick={() => {
-                  setCategoryFilter('All');
-                  setPriceFilter('All');
-                  setSortOption('featured');
-                } }
+                onClick={handleResetAll}
               >
                 <FaSync className={styles.buttonIcon} /> Reset Filters
               </button>
             </aside>
 
-            <div className={styles.productsContent}>
-              <div className={styles.productsHeader}>
-                <p className={styles.productCount}>
-                  <i className={`${styles.icon} fas fa-microchip`}></i> {sortedProducts.length} products found
-                </p>
+            <div className={styles.productsContentWrapper}>
+              {/* Sticky Search/Sort Bar - Now outside productsContent */}
+              <div className={styles.stickySearchBar}>
+                <div className={styles.searchContainer}>
+                  <div className={styles.searchInputWrapper}>
+                    <FaSearch className={styles.searchIcon} />
+                    <input
+                      type="text"
+                      placeholder="Search products, categories, or features..."
+                      className={styles.searchInput}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    {/* // */}
+                    {searchQuery && (
+                      <button
+                        className={styles.searchClearButton}
+                        onClick={() => setSearchQuery('')}
+                        aria-label="Clear search"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                </div>
                 <div className={styles.sortOptions}>
                   <label htmlFor="sort">
                     <i className={`${styles.icon} fas fa-sort-amount-down`}></i> Sort by:
@@ -141,38 +170,39 @@ export default function Products() {
                 </div>
               </div>
 
-              {sortedProducts.length > 0 ? (
-                <div className={styles.productsGrid}>
-                  {sortedProducts.map(product => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              ) : (
-                <div className={styles.noResults}>
-                  <div className={styles.noResultsIcon}>
-                    <i className="fas fa-unlink"></i>
+              <div className={styles.productsContent}>
+                {sortedProducts.length > 0 ? (
+                  <div className={styles.productsGrid}>
+                    {sortedProducts.map(product => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
                   </div>
-                  <h3>No products found</h3>
-                  <p>Try adjusting your filters to find what you're looking for</p>
-                  <button
-                    className={styles.clearFiltersButton}
-                    onClick={() => {
-                      setCategoryFilter('All');
-                      setPriceFilter('All');
-                    } }
-                  >
-                    <FaBroom className={styles.buttonIcon} /> Clear All Filters
-
-                  </button>
-                </div>
-              )}
+                ) : (
+                  <div className={styles.noResults}>
+                    <div className={styles.noResultsIcon}>
+                      <i className="fas fa-unlink"></i>
+                    </div>
+                    <h3>No products found</h3>
+                    {searchQuery ? (
+                      <p>No products match your search term "{searchQuery}". Try a different keyword or adjust your filters.</p>
+                    ) : (
+                      <p>Try adjusting your filters to find what you're looking for</p>
+                    )}
+                    <button
+                      className={styles.clearFiltersButton}
+                      onClick={handleResetAll}
+                    >
+                      <FaBroom className={styles.buttonIcon} /> Clear All Filters
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </main>
       <Footer />
-      </>
-   
+    </>
   );
 }
 
