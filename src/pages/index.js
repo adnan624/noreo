@@ -7,7 +7,7 @@ import styles from '../styles/Home.module.css';
 import Footer from '@/components/Footer';
 
 export default function Home() {
-  const featuredProducts = products.slice(0, 4);
+  const featuredProducts = products.slice(0, 10);
   const onSaleProducts = products.slice(2, 6);
 
   return (
@@ -140,9 +140,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
-        {/* Newsletter */}
-    
       </main>
       
       <Footer />
