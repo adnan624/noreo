@@ -75,6 +75,7 @@
   gap: 1.5rem;
   margin-bottom: 3rem;
   margin-top: 1rem;
+  position: relative;
 }
 
 /* Filter Panel */
@@ -184,6 +185,54 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  z-index: 10;
+}
+
+/* Sticky bar styles */
+.stickySearchBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #F0EEE6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-top: 95px;
+  max-width: 1280px; /* Maintain original width for web view */
+  left: 50%; /* Center the search bar */
+  transform: translateX(-50%);
+}
+
+@media (max-width: 768px) {
+  .stickySearchBar {
+    margin-top: 0;
+    padding: 0.5rem 1rem 0.75rem;
+    margin-top: 0;
+    padding: 0.5rem 1rem 0.75rem;
+    max-width: 100%;
+    left: 0;
+    transform: none;
+  }
+}
+
+/* Container for the search bar */
+.searchBarContainer {
+  position: relative;
+  width: 100%;
+}
+
+/* Add padding when search bar is sticky */
+.stickyPadding {
+  height: 0;
+  width: 100%;
+  transition: height 0.2s ease;
+}
+
+.stickyPadding.active {
+  height: 76px; /* Adjust to match your search bar height */
 }
 
 .searchContainer {
@@ -274,14 +323,6 @@
 }
 
 /* Products Content */
-/* .productsContent {
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
-} */
-
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -366,6 +407,16 @@
   .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1rem;
+  }
+  
+  /* Mobile sticky search bar styles */
+  .stickySearchBar {
+    padding: 0.5rem 1rem 0.75rem;
+  }
+  
+  /* Adjust padding height for mobile */
+  .stickyPadding.active {
+    height: 110px;
   }
 }
 

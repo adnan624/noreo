@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -12,9 +12,51 @@ export default function Products() {
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSticky, setIsSticky] = useState(false);
+  
+  // Refs for sticky behavior
+  const searchBarRef = useRef(null);
+  const filterPanelRef = useRef(null);
+  const searchBarContainerRef = useRef(null);
   
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
+
+  // Handle scroll event to make search bar sticky
+  useEffect(() => {
+    const handleScroll = () => {
+      if (filterPanelRef.current && searchBarRef.current) {
+        // Get the position of the filter panel bottom relative to viewport
+        const filterPanelRect = filterPanelRef.current.getBoundingClientRect();
+        
+        // If we've scrolled past the filter panel, make the search bar sticky
+        if (filterPanelRect.bottom <= 0) {
+          if (!isSticky) {
+            setIsSticky(true);
+          }
+        } else {
+          if (isSticky) {
+            setIsSticky(false);
+          }
+        }
+      }
+    };
+    
+    // Add event listener with passive option for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial check
+    handleScroll();
+    
+    // Add resize listener to handle orientation changes
+    window.addEventListener('resize', handleScroll, { passive: true });
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isSticky]);
 
   // Filter products
   const filteredProducts = products.filter(product => {
@@ -25,8 +67,12 @@ export default function Products() {
       matchesPrice = product.price < 100;
     } else if (priceFilter === '$100 - $500') {
       matchesPrice = product.price >= 100 && product.price <= 500;
-    } else if (priceFilter === 'Over $500') {
-      matchesPrice = product.price > 500;
+    } else if (priceFilter === '$500 - $1000') {
+      matchesPrice = product.price > 500 && product.price <= 1000;
+    } else if (priceFilter === 'Over $1000') {
+      matchesPrice = product.price > 1000;
+    } else if (priceFilter === 'Premium') {
+      matchesPrice = product.price > 2000;
     }
     
     const matchesSearch = searchQuery === '' || 
@@ -65,17 +111,9 @@ export default function Products() {
         <div className={styles.circuitBackground}></div>
 
         <div className={styles.container}>
-          {/* <div className={styles.pageHeader}>
-            <h1>
-              <span className={styles.spark}>⚡</span> Our Products
-              <span className={styles.spark}>⚡</span>
-            </h1>
-            <p className={styles.subtitle}>Power your home with cutting-edge technology</p>
-          </div> */}
-
           <div className={styles.filterContainer}>
             {/* Filter Panel */}
-            <div className={styles.filterPanel}>
+            <div className={styles.filterPanel} ref={filterPanelRef}>
               <div className={styles.filterSection}>
                 <div className={styles.filterHeader}>
                   <FaTh className={styles.filterIcon} />
@@ -120,42 +158,51 @@ export default function Products() {
               </button>
             </div>
 
-            {/* Search/Sort Bar */}
-            <div className={styles.searchSortBar}>
-              <div className={styles.searchContainer}>
-                <div className={styles.searchInputWrapper}>
-                  <FaSearch className={styles.searchIcon} />
-                  <input
-                    type="text"
-                    placeholder="Search products, categories, or features..."
-                    className={styles.searchInput}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  {searchQuery && (
-                    <button
-                      className={styles.searchClearButton}
-                      onClick={() => setSearchQuery('')}
-                      aria-label="Clear search"
-                    >
-                      ×
-                    </button>
-                  )}
+            {/* Search Bar Container with padding placeholder */}
+            <div className={styles.searchBarContainer} ref={searchBarContainerRef}>
+              {/* Padding placeholder that activates when search bar is sticky */}
+              <div className={`${styles.stickyPadding} ${isSticky ? styles.active : ''}`}></div>
+              
+              {/* Search/Sort Bar */}
+              <div
+                ref={searchBarRef}
+                className={`${styles.searchSortBar} ${isSticky ? styles.stickySearchBar : ''}`}
+              >
+                <div className={styles.searchContainer}>
+                  <div className={styles.searchInputWrapper}>
+                    <FaSearch className={styles.searchIcon} />
+                    <input
+                      type="text"
+                      placeholder="Search products, categories, or features..."
+                      className={styles.searchInput}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    {searchQuery && (
+                      <button
+                        className={styles.searchClearButton}
+                        onClick={() => setSearchQuery('')}
+                        aria-label="Clear search"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className={styles.sortOptions}>
-                <label htmlFor="sort">Sort by:</label>
-                <select
-                  id="sort"
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  className={styles.sortSelect}
-                >
-                  <option value="featured">Featured</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Customer Rating</option>
-                </select>
+                <div className={styles.sortOptions}>
+                  <label htmlFor="sort">Sort by:</label>
+                  <select
+                    id="sort"
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className={styles.sortSelect}
+                  >
+                    <option value="featured">Featured</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Customer Rating</option>
+                  </select>
+                </div>
               </div>
             </div>
 
