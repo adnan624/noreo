@@ -5,14 +5,14 @@ import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
 import products from '@/data/products';
-import { FaSync, FaBroom, FaSearch } from 'react-icons/fa';
+import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
 
 export default function Products() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
-
+  
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
 
@@ -64,138 +64,128 @@ export default function Products() {
         {/* Animated Circuit Background */}
         <div className={styles.circuitBackground}></div>
 
-        <div className="container">
-          <div className={styles.pageHeader}>
+        <div className={styles.container}>
+          {/* <div className={styles.pageHeader}>
             <h1>
               <span className={styles.spark}>⚡</span> Our Products
               <span className={styles.spark}>⚡</span>
             </h1>
             <p className={styles.subtitle}>Power your home with cutting-edge technology</p>
-          </div>
+          </div> */}
 
-          <div className={styles.productsLayout}>
-            <aside className={styles.sidebar}>
+          <div className={styles.filterContainer}>
+            {/* Filter Panel */}
+            <div className={styles.filterPanel}>
               <div className={styles.filterSection}>
-                <h3>
-                  <i className={`${styles.icon} fas fa-bolt`}></i> Categories
-                </h3>
-                <ul className={styles.filterList}>
+                <div className={styles.filterHeader}>
+                  <FaTh className={styles.filterIcon} />
+                  <h3>Categories</h3>
+                </div>
+                <div className={styles.filterButtons}>
                   {categories.map(category => (
-                    <li key={category}>
-                      <button
-                        className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
-                        onClick={() => setCategoryFilter(category)}
-                      >
-                        {category === 'All' ? (
-                          <><i className={`${styles.icon} fas fa-plug`}></i> All Categories</>
-                        ) : (
-                          <><i className={`${styles.icon} ${getCategoryIcon(category)}`}></i> {category}</>
-                        )}
-                      </button>
-                    </li>
+                    <button
+                      key={category}
+                      className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
+                      onClick={() => setCategoryFilter(category)}
+                    >
+                      {category}
+                    </button>
                   ))}
-                </ul>
+                </div>
               </div>
 
               <div className={styles.filterSection}>
-                <h3>
-                  <i className={`${styles.icon} fas fa-dollar-sign`}></i> Price Range
-                </h3>
-                <ul className={styles.filterList}>
-                  {['All', 'Under $100', '$100 - $500', 'Over $500'].map(price => (
-                    <li key={price}>
-                      <button
-                        className={`${styles.filterButton} ${priceFilter === price ? styles.active : ''}`}
-                        onClick={() => setPriceFilter(price)}
-                      >
-                        {price === 'All' ? (
-                          <><i className={`${styles.icon} fas fa-coins`}></i> All Prices</>
-                        ) : (
-                          <><i className={`${styles.icon} fas fa-tag`}></i> {price}</>
-                        )}
-                      </button>
-                    </li>
+                <div className={styles.filterHeader}>
+                  <FaTag className={styles.filterIcon} />
+                  <h3>Price Range</h3>
+                </div>
+                <div className={styles.filterButtons}>
+                  {['All', 'Under $100', '$100 - $500', '$500 - $1000', 'Over $1000', 'Premium'].map(price => (
+                    <button
+                      key={price}
+                      className={`${styles.filterButton} ${priceFilter === price ? styles.active : ''}`}
+                      onClick={() => setPriceFilter(price)}
+                    >
+                      {price === 'All' ? 'All Prices' : price}
+                    </button>
                   ))}
-                </ul>
+                </div>
               </div>
 
               <button
                 className={styles.resetButton}
                 onClick={handleResetAll}
               >
-                <FaSync className={styles.buttonIcon} /> Reset Filters
+                <FaSync className={styles.buttonIcon} /> Reset All
               </button>
-            </aside>
+            </div>
 
-            <div className={styles.productsContentWrapper}>
-              {/* Sticky Search/Sort Bar - Now outside productsContent */}
-              <div className={styles.stickySearchBar}>
-                <div className={styles.searchContainer}>
-                  <div className={styles.searchInputWrapper}>
-                    <FaSearch className={styles.searchIcon} />
-                    <input
-                      type="text"
-                      placeholder="Search products, categories, or features..."
-                      className={styles.searchInput}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    {searchQuery && (
-                      <button
-                        className={styles.searchClearButton}
-                        onClick={() => setSearchQuery('')}
-                        aria-label="Clear search"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.sortOptions}>
-                  <label htmlFor="sort">
-                    <i className={`${styles.icon} fas fa-sort-amount-down`}></i> Sort by:
-                  </label>
-                  <select
-                    id="sort"
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
-                    className={styles.sortSelect}
-                  >
-                    <option value="featured">Featured</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="rating">Customer Rating</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className={styles.productsContent}>
-                {sortedProducts.length > 0 ? (
-                  <div className={styles.productsGrid}>
-                    {sortedProducts.map(product => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.noResults}>
-                    <div className={styles.noResultsIcon}>
-                      <i className="fas fa-unlink"></i>
-                    </div>
-                    <h3>No products found</h3>
-                    {searchQuery ? (
-                      <p>No products match your search term "{searchQuery}". Try a different keyword or adjust your filters.</p>
-                    ) : (
-                      <p>Try adjusting your filters to find what you're looking for</p>
-                    )}
+            {/* Search/Sort Bar */}
+            <div className={styles.searchSortBar}>
+              <div className={styles.searchContainer}>
+                <div className={styles.searchInputWrapper}>
+                  <FaSearch className={styles.searchIcon} />
+                  <input
+                    type="text"
+                    placeholder="Search products, categories, or features..."
+                    className={styles.searchInput}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  {searchQuery && (
                     <button
-                      className={styles.clearFiltersButton}
-                      onClick={handleResetAll}
+                      className={styles.searchClearButton}
+                      onClick={() => setSearchQuery('')}
+                      aria-label="Clear search"
                     >
-                      <FaBroom className={styles.buttonIcon} /> Clear All Filters
+                      ×
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
+              <div className={styles.sortOptions}>
+                <label htmlFor="sort">Sort by:</label>
+                <select
+                  id="sort"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className={styles.sortSelect}
+                >
+                  <option value="featured">Featured</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Customer Rating</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Products Content */}
+            <div className={styles.productsContent}>
+              {sortedProducts.length > 0 ? (
+                <div className={styles.productsGrid}>
+                  {sortedProducts.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noResults}>
+                  <div className={styles.noResultsIcon}>
+                    <i className="fas fa-unlink"></i>
+                  </div>
+                  <h3>No products found</h3>
+                  {searchQuery ? (
+                    <p>No products match your search term "{searchQuery}". Try a different keyword or adjust your filters.</p>
+                  ) : (
+                    <p>Try adjusting your filters to find what you're looking for</p>
+                  )}
+                  <button
+                    className={styles.clearFiltersButton}
+                    onClick={handleResetAll}
+                  >
+                    <FaBroom className={styles.buttonIcon} /> Clear All Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

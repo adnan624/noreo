@@ -1,8 +1,29 @@
+import { useState } from 'react';
 import Link from 'next/link';
-import Rating from './Rating';
 import styles from '../styles/ProductCard.module.css';
 
-const ProductCard = ({ product, isOnSale = false }) => {
+const ProductCard = ({ product }) => {
+  const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
+
+  const incrementQuantity = () => {
+    setQuantity(prev => prev + 1);
+  };
+
+  const decrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
+    } else {
+      // When quantity is 1 and user presses minus, remove from cart
+      setIsAdded(false);
+      setQuantity(1); // Reset quantity to 1 for next time
+    }
+  };
+
+  const handleAddToCart = () => {
+    setIsAdded(true);
+  };
+
   return (
     <div className={styles.productCard}>
       <div className={styles.productImageContainer}>
@@ -14,7 +35,7 @@ const ProductCard = ({ product, isOnSale = false }) => {
         {!product.inStock && (
           <div className={styles.outOfStock}>Out of Stock</div>
         )}
-        {isOnSale && product.inStock && (
+        {product.onSale && product.inStock && (
           <div className={styles.saleBadge}>Sale</div>
         )}
       </div>
@@ -22,31 +43,30 @@ const ProductCard = ({ product, isOnSale = false }) => {
         <h3 className={styles.productName}>
           <Link href={`/products/${product.id}`}>{product.name}</Link>
         </h3>
-        <p className={styles.productDescription}>
-          {product.description.length > 70 
-            ? `${product.description.substring(0, 70)}...` 
-            : product.description}
-        </p>
-        {product.rating && (
-          <div className={styles.ratingWrapper}>
-            <Rating value={product.rating} />
-            <span className={styles.ratingText}>{product.rating.toFixed(1)}</span>
-          </div>
-        )}
+        <p className={styles.quantityText}>{product.weight || '450 g'}</p>
         <div className={styles.productFooter}>
           <div className={styles.priceContainer}>
-            {isOnSale && (
-              <span className={styles.originalPrice}>${(product.price * 1.2).toFixed(2)}</span>
+            {product.originalPrice && (
+              <span className={styles.originalPrice}>₹{product.originalPrice}</span>
             )}
-            <span className={styles.productPrice}>${product.price.toFixed(2)}</span>
+            <span className={styles.productPrice}>₹{product.price}</span>
           </div>
-          <button 
-            className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
-            disabled={!product.inStock}
-            aria-label={!product.inStock ? 'Out of stock' : 'Add to cart'}
-          >
-            {!product.inStock ? 'Out' : 'Add'}
-          </button>
+          
+          {!isAdded ? (
+            <button 
+              className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
+              disabled={!product.inStock}
+              onClick={handleAddToCart}
+            >
+              ADD
+            </button>
+          ) : (
+            <div className={styles.quantityControl}>
+              <button className={styles.quantityButton} onClick={decrementQuantity}>−</button>
+              <span className={styles.quantityValue}>{quantity}</span>
+              <button className={styles.quantityButton} onClick={incrementQuantity}>+</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
