@@ -14,31 +14,25 @@ const ProductCard = ({ product, isOnSale = false }) => {
         {!product.inStock && (
           <div className={styles.outOfStock}>Out of Stock</div>
         )}
-        {isOnSale && (
+        {isOnSale && product.inStock && (
           <div className={styles.saleBadge}>Sale</div>
         )}
-        <div className={styles.productActions}>
-          <button className={styles.actionBtn}>
-            <i className="fas fa-heart"></i>
-          </button>
-          <button className={styles.actionBtn}>
-            <i className="fas fa-eye"></i>
-          </button>
-          <button className={styles.actionBtn}>
-            <i className="fas fa-share-alt"></i>
-          </button>
-        </div>
       </div>
       <div className={styles.productInfo}>
-        <div className={styles.productCategory}>{product.category}</div>
         <h3 className={styles.productName}>
           <Link href={`/products/${product.id}`}>{product.name}</Link>
         </h3>
-        <div className={styles.productRating}>
-          <Rating value={product.rating} />
-          <span className={styles.reviewCount}>({product.reviews})</span>
-        </div>
-        <p className={styles.productDescription}>{product.description}</p>
+        <p className={styles.productDescription}>
+          {product.description.length > 70 
+            ? `${product.description.substring(0, 70)}...` 
+            : product.description}
+        </p>
+        {product.rating && (
+          <div className={styles.ratingWrapper}>
+            <Rating value={product.rating} />
+            <span className={styles.ratingText}>{product.rating.toFixed(1)}</span>
+          </div>
+        )}
         <div className={styles.productFooter}>
           <div className={styles.priceContainer}>
             {isOnSale && (
@@ -49,12 +43,9 @@ const ProductCard = ({ product, isOnSale = false }) => {
           <button 
             className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
             disabled={!product.inStock}
+            aria-label={!product.inStock ? 'Out of stock' : 'Add to cart'}
           >
-            {!product.inStock ? 'Out of Stock' : (
-              <>
-                <i className="fas fa-shopping-cart"></i> Add to Cart
-              </>
-            )}
+            {!product.inStock ? 'Out' : 'Add'}
           </button>
         </div>
       </div>
