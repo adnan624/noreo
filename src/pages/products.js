@@ -1,20 +1,62 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
 import products from '@/data/products';
-import { FaSync, FaBroom, FaSearch } from 'react-icons/fa';
+import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
 
 export default function Products() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [isSticky, setIsSticky] = useState(false);
+  
+  // Refs for sticky behavior
+  const searchBarRef = useRef(null);
+  const filterPanelRef = useRef(null);
+  const searchBarContainerRef = useRef(null);
+  
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
+
+  // Handle scroll event to make search bar sticky
+  useEffect(() => {
+    const handleScroll = () => {
+      if (filterPanelRef.current && searchBarRef.current) {
+        // Get the position of the filter panel bottom relative to viewport
+        const filterPanelRect = filterPanelRef.current.getBoundingClientRect();
+        
+        // If we've scrolled past the filter panel, make the search bar sticky
+        if (filterPanelRect.bottom <= 0) {
+          if (!isSticky) {
+            setIsSticky(true);
+          }
+        } else {
+          if (isSticky) {
+            setIsSticky(false);
+          }
+        }
+      }
+    };
+    
+    // Add event listener with passive option for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial check
+    handleScroll();
+    
+    // Add resize listener to handle orientation changes
+    window.addEventListener('resize', handleScroll, { passive: true });
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isSticky]);
 
   // Filter products
   const filteredProducts = products.filter(product => {
@@ -25,8 +67,12 @@ export default function Products() {
       matchesPrice = product.price < 100;
     } else if (priceFilter === '$100 - $500') {
       matchesPrice = product.price >= 100 && product.price <= 500;
-    } else if (priceFilter === 'Over $500') {
-      matchesPrice = product.price > 500;
+    } else if (priceFilter === '$500 - $1000') {
+      matchesPrice = product.price > 500 && product.price <= 1000;
+    } else if (priceFilter === 'Over $1000') {
+      matchesPrice = product.price > 1000;
+    } else if (priceFilter === 'Premium') {
+      matchesPrice = product.price > 2000;
     }
     
     const matchesSearch = searchQuery === '' || 
@@ -64,72 +110,64 @@ export default function Products() {
         {/* Animated Circuit Background */}
         <div className={styles.circuitBackground}></div>
 
-        <div className="container">
-          <div className={styles.pageHeader}>
-            <h1>
-              <span className={styles.spark}>⚡</span> Our Products
-              <span className={styles.spark}>⚡</span>
-            </h1>
-            <p className={styles.subtitle}>Power your home with cutting-edge technology</p>
-          </div>
-
-          <div className={styles.productsLayout}>
-            <aside className={styles.sidebar}>
+        <div className={styles.container}>
+          <div className={styles.filterContainer}>
+            {/* Filter Panel */}
+            <div className={styles.filterPanel} ref={filterPanelRef}>
               <div className={styles.filterSection}>
-                <h3>
-                  <i className={`${styles.icon} fas fa-bolt`}></i> Categories
-                </h3>
-                <ul className={styles.filterList}>
+                <div className={styles.filterHeader}>
+                  <FaTh className={styles.filterIcon} />
+                  <h3>Categories</h3>
+                </div>
+                <div className={styles.filterButtons}>
                   {categories.map(category => (
-                    <li key={category}>
-                      <button
-                        className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
-                        onClick={() => setCategoryFilter(category)}
-                      >
-                        {category === 'All' ? (
-                          <><i className={`${styles.icon} fas fa-plug`}></i> All Categories</>
-                        ) : (
-                          <><i className={`${styles.icon} ${getCategoryIcon(category)}`}></i> {category}</>
-                        )}
-                      </button>
-                    </li>
+                    <button
+                      key={category}
+                      className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
+                      onClick={() => setCategoryFilter(category)}
+                    >
+                      {category}
+                    </button>
                   ))}
-                </ul>
+                </div>
               </div>
 
               <div className={styles.filterSection}>
-                <h3>
-                  <i className={`${styles.icon} fas fa-dollar-sign`}></i> Price Range
-                </h3>
-                <ul className={styles.filterList}>
-                  {['All', 'Under $100', '$100 - $500', 'Over $500'].map(price => (
-                    <li key={price}>
-                      <button
-                        className={`${styles.filterButton} ${priceFilter === price ? styles.active : ''}`}
-                        onClick={() => setPriceFilter(price)}
-                      >
-                        {price === 'All' ? (
-                          <><i className={`${styles.icon} fas fa-coins`}></i> All Prices</>
-                        ) : (
-                          <><i className={`${styles.icon} fas fa-tag`}></i> {price}</>
-                        )}
-                      </button>
-                    </li>
+                <div className={styles.filterHeader}>
+                  <FaTag className={styles.filterIcon} />
+                  <h3>Price Range</h3>
+                </div>
+                <div className={styles.filterButtons}>
+                  {['All', 'Under $100', '$100 - $500', '$500 - $1000', 'Over $1000', 'Premium'].map(price => (
+                    <button
+                      key={price}
+                      className={`${styles.filterButton} ${priceFilter === price ? styles.active : ''}`}
+                      onClick={() => setPriceFilter(price)}
+                    >
+                      {price === 'All' ? 'All Prices' : price}
+                    </button>
                   ))}
-                </ul>
+                </div>
               </div>
 
               <button
                 className={styles.resetButton}
                 onClick={handleResetAll}
               >
-                <FaSync className={styles.buttonIcon} /> Reset Filters
+                <FaSync className={styles.buttonIcon} /> Reset All
               </button>
-            </aside>
+            </div>
 
-            <div className={styles.productsContentWrapper}>
-              {/* Sticky Search/Sort Bar - Now outside productsContent */}
-              <div className={styles.stickySearchBar}>
+            {/* Search Bar Container with padding placeholder */}
+            <div className={styles.searchBarContainer} ref={searchBarContainerRef}>
+              {/* Padding placeholder that activates when search bar is sticky */}
+              <div className={`${styles.stickyPadding} ${isSticky ? styles.active : ''}`}></div>
+              
+              {/* Search/Sort Bar */}
+              <div
+                ref={searchBarRef}
+                className={`${styles.searchSortBar} ${isSticky ? styles.stickySearchBar : ''}`}
+              >
                 <div className={styles.searchContainer}>
                   <div className={styles.searchInputWrapper}>
                     <FaSearch className={styles.searchIcon} />
@@ -153,9 +191,7 @@ export default function Products() {
                   </div>
                 </div>
                 <div className={styles.sortOptions}>
-                  <label htmlFor="sort">
-                    <i className={`${styles.icon} fas fa-sort-amount-down`}></i> Sort by:
-                  </label>
+                  <label htmlFor="sort">Sort by:</label>
                   <select
                     id="sort"
                     value={sortOption}
@@ -169,34 +205,35 @@ export default function Products() {
                   </select>
                 </div>
               </div>
+            </div>
 
-              <div className={styles.productsContent}>
-                {sortedProducts.length > 0 ? (
-                  <div className={styles.productsGrid}>
-                    {sortedProducts.map(product => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
+            {/* Products Content */}
+            <div className={styles.productsContent}>
+              {sortedProducts.length > 0 ? (
+                <div className={styles.productsGrid}>
+                  {sortedProducts.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noResults}>
+                  <div className={styles.noResultsIcon}>
+                    <i className="fas fa-unlink"></i>
                   </div>
-                ) : (
-                  <div className={styles.noResults}>
-                    <div className={styles.noResultsIcon}>
-                      <i className="fas fa-unlink"></i>
-                    </div>
-                    <h3>No products found</h3>
-                    {searchQuery ? (
-                      <p>No products match your search term "{searchQuery}". Try a different keyword or adjust your filters.</p>
-                    ) : (
-                      <p>Try adjusting your filters to find what you're looking for</p>
-                    )}
-                    <button
-                      className={styles.clearFiltersButton}
-                      onClick={handleResetAll}
-                    >
-                      <FaBroom className={styles.buttonIcon} /> Clear All Filters
-                    </button>
-                  </div>
-                )}
-              </div>
+                  <h3>No products found</h3>
+                  {searchQuery ? (
+                    <p>No products match your search term "{searchQuery}". Try a different keyword or adjust your filters.</p>
+                  ) : (
+                    <p>Try adjusting your filters to find what you're looking for</p>
+                  )}
+                  <button
+                    className={styles.clearFiltersButton}
+                    onClick={handleResetAll}
+                  >
+                    <FaBroom className={styles.buttonIcon} /> Clear All Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
