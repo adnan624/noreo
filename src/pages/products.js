@@ -333,7 +333,7 @@ export default function Products() {
     </>
   );
 }
-
+//
 // Helper function to get icons for categories
 function getCategoryIcon(category) {
   switch(category) {
