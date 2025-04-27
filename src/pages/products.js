@@ -20,6 +20,7 @@ export default function Products() {
   const searchBarRef = useRef(null);
   const filterPanelRef = useRef(null);
   const searchBarContainerRef = useRef(null);
+  const mainRef = useRef(null);
   
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
@@ -43,23 +44,42 @@ export default function Products() {
   useEffect(() => {
     if (!isMobile) return;
     
+    const initialWindowHeight = window.innerHeight;
+    
     // Function to detect keyboard
     const detectKeyboard = () => {
       // On most mobile devices, when keyboard opens, the window height becomes smaller
-      const isKeyboardLikelyOpen = window.innerHeight < window.outerHeight * 0.75;
-      setKeyboardOpen(isKeyboardLikelyOpen);
+      const heightDifference = initialWindowHeight - window.innerHeight;
+      const isKeyboardLikelyOpen = heightDifference > 200; // Threshold of 200px for keyboard
       
-      // When keyboard opens, we force sticky mode
-      if (isKeyboardLikelyOpen && !isSticky) {
-        setIsSticky(true);
+      if (isKeyboardLikelyOpen !== keyboardOpen) {
+        setKeyboardOpen(isKeyboardLikelyOpen);
+        
+        // When keyboard opens, adjust scroll if needed
+        if (isKeyboardLikelyOpen && searchBarRef.current) {
+          // Disable sticky to prevent jumping
+          setIsSticky(false);
+          
+          // Ensure search bar is in view when keyboard opens
+          const rect = searchBarRef.current.getBoundingClientRect();
+          if (rect.top < 0 || rect.bottom > window.innerHeight) {
+            window.scrollTo({ 
+              top: window.scrollY + rect.top - 10, // Position just below the top
+              behavior: 'smooth' 
+            });
+          }
+        }
       }
     };
     
     // Listen for resize events that might indicate keyboard appearance
     window.addEventListener('resize', detectKeyboard);
     
+    // Initialize window height reference
+    detectKeyboard();
+    
     return () => window.removeEventListener('resize', detectKeyboard);
-  }, [isMobile, isSticky]);
+  }, [isMobile, keyboardOpen]);
 
   // Create memoized scroll handler to prevent recreating on each render
   const handleScroll = useCallback(() => {
@@ -70,7 +90,6 @@ export default function Products() {
       // Get the position of the filter panel bottom relative to viewport
       const filterPanelRect = filterPanelRef.current.getBoundingClientRect();
       
-      // For both mobile and desktop, use the same logic
       // If we've scrolled past the filter panel, make the search bar sticky
       if (filterPanelRect.bottom <= 0) {
         if (!isSticky) {
@@ -108,18 +127,26 @@ export default function Products() {
     
     if (searchInput) {
       const handleFocus = () => {
-        // Force sticky on focus (when keyboard appears)
-        setIsSticky(true);
-        
-        // On mobile, set keyboard open state
         if (isMobile) {
+          // When focusing on mobile, disable sticky temporarily
+          setIsSticky(false);
+          
+          // Mark keyboard as open - this may happen before resize event
           setKeyboardOpen(true);
+          
+          // Ensure the input is visible - scroll to it if needed
+          const rect = searchInput.getBoundingClientRect();
+          if (rect.top < 0 || rect.bottom > window.innerHeight) {
+            window.scrollTo({ 
+              top: window.scrollY + rect.top - 60, // Position with some space above
+              behavior: 'smooth'
+            });
+          }
         }
       };
       
       const handleBlur = () => {
-        // On mobile, reset keyboard open state after a short delay
-        // to allow scroll position to adjust
+        // Reset keyboard state on blur after a delay
         if (isMobile) {
           setTimeout(() => {
             setKeyboardOpen(false);
@@ -129,22 +156,12 @@ export default function Products() {
         }
       };
       
-      // Touch events to better handle mobile interactions
-      const handleTouchStart = () => {
-        // On mobile, force sticky behavior when interacting with search
-        if (isMobile) {
-          setIsSticky(true);
-        }
-      };
-      
       searchInput.addEventListener('focus', handleFocus);
       searchInput.addEventListener('blur', handleBlur);
-      searchInput.addEventListener('touchstart', handleTouchStart);
       
       return () => {
         searchInput.removeEventListener('focus', handleFocus);
         searchInput.removeEventListener('blur', handleBlur);
-        searchInput.removeEventListener('touchstart', handleTouchStart);
       };
     }
   }, [isMobile, handleScroll]);
@@ -198,7 +215,7 @@ export default function Products() {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <Header />
-      <main className={styles.productsPage}>
+      <main className={styles.productsPage} ref={mainRef}>
         {/* Animated Circuit Background */}
         <div className={styles.circuitBackground}></div>
 
@@ -251,14 +268,21 @@ export default function Products() {
             </div>
 
             {/* Search Bar Container with padding placeholder */}
-            <div className={styles.searchBarContainer} ref={searchBarContainerRef}>
+            <div 
+              className={`${styles.searchBarContainer} ${keyboardOpen ? styles.keyboardOpenContainer : ''}`} 
+              ref={searchBarContainerRef}
+            >
               {/* Padding placeholder that activates when search bar is sticky */}
-              <div className={`${styles.stickyPadding} ${isSticky ? styles.active : ''}`}></div>
+              <div className={`${styles.stickyPadding} ${isSticky && !keyboardOpen ? styles.active : ''}`}></div>
               
               {/* Search/Sort Bar */}
               <div
                 ref={searchBarRef}
-                className={`${styles.searchSortBar} ${isSticky ? styles.stickySearchBar : ''} ${keyboardOpen ? styles.keyboardOpenSearchBar : ''}`}
+                className={`
+                  ${styles.searchSortBar} 
+                  ${isSticky && !keyboardOpen ? styles.stickySearchBar : ''} 
+                  ${keyboardOpen ? styles.keyboardOpenSearchBar : ''}
+                `}
               >
                 <div className={styles.searchContainer}>
                   <div className={styles.searchInputWrapper}>
@@ -281,7 +305,7 @@ export default function Products() {
                     )}
                   </div>
                 </div>
-                <div className={styles.sortOptions}>
+                <div className={`${styles.sortOptions} ${keyboardOpen ? styles.keyboardOpenSortOptions : ''}`}>
                   <label htmlFor="sort">Sort by:</label>
                   <select
                     id="sort"
@@ -299,7 +323,7 @@ export default function Products() {
             </div>
 
             {/* Products Content */}
-            <div className={styles.productsContent}>
+            <div className={`${styles.productsContent} ${keyboardOpen ? styles.keyboardOpenContent : ''}`}>
               {sortedProducts.length > 0 ? (
                 <div className={styles.productsGrid}>
                   {sortedProducts.map(product => (
@@ -333,7 +357,7 @@ export default function Products() {
     </>
   );
 }
-//
+
 // Helper function to get icons for categories
 function getCategoryIcon(category) {
   switch(category) {
