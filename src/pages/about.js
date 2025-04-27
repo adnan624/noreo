@@ -153,7 +153,7 @@ export default function About() {
               <img src="/images/about-mission.jpg" alt="Our team" />
             </motion.div>
           </section>
-
+{/* .. */}
           {/* Values Section */}
           <section className={`${styles.valuesSection} observe-section`} id="values">
             <motion.div
