@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -13,6 +13,7 @@ export default function Products() {
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSticky, setIsSticky] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
   // Refs for sticky behavior
   const searchBarRef = useRef(null);
@@ -22,26 +23,43 @@ export default function Products() {
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
 
-  // Handle scroll event to make search bar sticky
+  // Check if we're on mobile
   useEffect(() => {
-    const handleScroll = () => {
-      if (filterPanelRef.current && searchBarRef.current) {
-        // Get the position of the filter panel bottom relative to viewport
-        const filterPanelRect = filterPanelRef.current.getBoundingClientRect();
-        
-        // If we've scrolled past the filter panel, make the search bar sticky
-        if (filterPanelRect.bottom <= 0) {
-          if (!isSticky) {
-            setIsSticky(true);
-          }
-        } else {
-          if (isSticky) {
-            setIsSticky(false);
-          }
-        }
-      }
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
     };
     
+    // Check on initial load
+    checkIfMobile();
+    
+    // Listen for resize events
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  // Create memoized scroll handler to prevent recreating on each render
+  const handleScroll = useCallback(() => {
+    if (filterPanelRef.current && searchBarRef.current) {
+      // Get the position of the filter panel bottom relative to viewport
+      const filterPanelRect = filterPanelRef.current.getBoundingClientRect();
+      
+      // For both mobile and desktop, use the same logic
+      // If we've scrolled past the filter panel, make the search bar sticky
+      if (filterPanelRect.bottom <= 0) {
+        if (!isSticky) {
+          setIsSticky(true);
+        }
+      } else {
+        if (isSticky) {
+          setIsSticky(false);
+        }
+      }
+    }
+  }, [isSticky]);
+  
+  // Handle scroll event to make search bar sticky
+  useEffect(() => {
     // Add event listener with passive option for better performance
     window.addEventListener('scroll', handleScroll, { passive: true });
     
@@ -56,7 +74,35 @@ export default function Products() {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
-  }, [isSticky]);
+  }, [handleScroll]);
+
+  // Add focus/blur event listeners to handle keyboard appearance on mobile
+  useEffect(() => {
+    const searchInput = document.querySelector(`.${styles.searchInput}`);
+    
+    if (searchInput) {
+      const handleFocus = () => {
+        // Force sticky on focus (when keyboard appears)
+        setIsSticky(true);
+      };
+      
+      // Touch events to better handle mobile interactions
+      const handleTouchStart = () => {
+        // On mobile, force sticky behavior when interacting with search
+        if (isMobile) {
+          setIsSticky(true);
+        }
+      };
+      
+      searchInput.addEventListener('focus', handleFocus);
+      searchInput.addEventListener('touchstart', handleTouchStart);
+      
+      return () => {
+        searchInput.removeEventListener('focus', handleFocus);
+        searchInput.removeEventListener('touchstart', handleTouchStart);
+      };
+    }
+  }, [isMobile]);
 
   // Filter products
   const filteredProducts = products.filter(product => {
@@ -104,6 +150,7 @@ export default function Products() {
       <Head>
         <title>Products | ElectroShop</title>
         <meta name="description" content="Browse our wide selection of electrical appliances" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <Header />
       <main className={styles.productsPage}>
@@ -178,7 +225,6 @@ export default function Products() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    {/* // */}
                     {searchQuery && (
                       <button
                         className={styles.searchClearButton}
