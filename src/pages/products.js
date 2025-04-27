@@ -14,6 +14,7 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSticky, setIsSticky] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
   
   // Refs for sticky behavior
   const searchBarRef = useRef(null);
@@ -38,8 +39,33 @@ export default function Products() {
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
 
+  // Detect keyboard open state on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    // Function to detect keyboard
+    const detectKeyboard = () => {
+      // On most mobile devices, when keyboard opens, the window height becomes smaller
+      const isKeyboardLikelyOpen = window.innerHeight < window.outerHeight * 0.75;
+      setKeyboardOpen(isKeyboardLikelyOpen);
+      
+      // When keyboard opens, we force sticky mode
+      if (isKeyboardLikelyOpen && !isSticky) {
+        setIsSticky(true);
+      }
+    };
+    
+    // Listen for resize events that might indicate keyboard appearance
+    window.addEventListener('resize', detectKeyboard);
+    
+    return () => window.removeEventListener('resize', detectKeyboard);
+  }, [isMobile, isSticky]);
+
   // Create memoized scroll handler to prevent recreating on each render
   const handleScroll = useCallback(() => {
+    // Skip scroll handling if keyboard is open on mobile
+    if (isMobile && keyboardOpen) return;
+    
     if (filterPanelRef.current && searchBarRef.current) {
       // Get the position of the filter panel bottom relative to viewport
       const filterPanelRect = filterPanelRef.current.getBoundingClientRect();
@@ -56,7 +82,7 @@ export default function Products() {
         }
       }
     }
-  }, [isSticky]);
+  }, [isSticky, isMobile, keyboardOpen]);
   
   // Handle scroll event to make search bar sticky
   useEffect(() => {
@@ -84,6 +110,23 @@ export default function Products() {
       const handleFocus = () => {
         // Force sticky on focus (when keyboard appears)
         setIsSticky(true);
+        
+        // On mobile, set keyboard open state
+        if (isMobile) {
+          setKeyboardOpen(true);
+        }
+      };
+      
+      const handleBlur = () => {
+        // On mobile, reset keyboard open state after a short delay
+        // to allow scroll position to adjust
+        if (isMobile) {
+          setTimeout(() => {
+            setKeyboardOpen(false);
+            // Recalculate sticky state based on scroll position
+            handleScroll();
+          }, 300);
+        }
       };
       
       // Touch events to better handle mobile interactions
@@ -95,14 +138,16 @@ export default function Products() {
       };
       
       searchInput.addEventListener('focus', handleFocus);
+      searchInput.addEventListener('blur', handleBlur);
       searchInput.addEventListener('touchstart', handleTouchStart);
       
       return () => {
         searchInput.removeEventListener('focus', handleFocus);
+        searchInput.removeEventListener('blur', handleBlur);
         searchInput.removeEventListener('touchstart', handleTouchStart);
       };
     }
-  }, [isMobile]);
+  }, [isMobile, handleScroll]);
 
   // Filter products
   const filteredProducts = products.filter(product => {
@@ -213,7 +258,7 @@ export default function Products() {
               {/* Search/Sort Bar */}
               <div
                 ref={searchBarRef}
-                className={`${styles.searchSortBar} ${isSticky ? styles.stickySearchBar : ''}`}
+                className={`${styles.searchSortBar} ${isSticky ? styles.stickySearchBar : ''} ${keyboardOpen ? styles.keyboardOpenSearchBar : ''}`}
               >
                 <div className={styles.searchContainer}>
                   <div className={styles.searchInputWrapper}>
