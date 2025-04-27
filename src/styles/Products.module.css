@@ -175,7 +175,7 @@
 
 /* Search Sort Bar */
 .searchSortBar {
-  background-color: white;
+  background-color: #B9B4A9;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 1rem 1.5rem;
@@ -280,6 +280,7 @@
 .searchBarContainer {
   position: relative;
   width: 100%;
+
 }
 
 /* Add padding when search bar is sticky */
@@ -287,6 +288,7 @@
   height: 0;
   width: 100%;
   transition: height 0.2s ease;
+  
 }
 
 .stickyPadding.active {
