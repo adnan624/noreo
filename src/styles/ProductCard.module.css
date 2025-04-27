@@ -1,7 +1,7 @@
 /* Blinkit-style ProductCard */
 .productCard {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   transition: all 0.2s ease;
   height: 100%;
@@ -80,7 +80,7 @@
 }
 
 .productName {
-  font-size: 0.85rem;
+  font-size: 1rem;
   margin: 0;
   color: #1f2937;
   font-weight: 500;
@@ -199,7 +199,7 @@
   }
   
   .productName {
-    font-size: 0.8rem;
+    font-size: 1rem;
   }
 }
 
@@ -209,7 +209,7 @@
   }
   
   .productName {
-    font-size: 0.75rem;
+    font-size: 1.1rem;
     height: 2.8em;
   }
   
@@ -244,6 +244,6 @@
   }
   
   .productName {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
   }
 }

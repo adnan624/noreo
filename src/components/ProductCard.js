@@ -44,7 +44,7 @@ const ProductCard = ({ product }) => {
         <h3 className={styles.productName}>
           <Link href={`/products/${product.id}`}>{product.name}</Link>
         </h3>
-        <p className={styles.quantityText}>{product.weight || '450 g'}</p>
+        <p className={styles.quantityText}>{product.weight || '20W'}</p>
         <div className={styles.productFooter}>
         <div className={styles.priceContainer}>
   {product.originalPrice && (
