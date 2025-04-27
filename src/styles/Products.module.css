@@ -207,6 +207,25 @@
   transform: translateX(-50%);
 }
 
+@media (min-width: 768px) and (max-width: 1024px) {
+  .stickySearchBar {
+    margin-top: 0px; /* Reduced margin for tablets/iPads */
+  }
+}
+
+@media (max-width: 768px) {
+  .stickySearchBar {
+    margin-top: 0;
+    padding: 0.5rem 1rem 0.75rem;
+    max-width: 100%;
+    left: 0;
+    transform: none;
+    position: fixed; /* Keep using fixed position for better mobile support */
+    top: 0;
+    border-radius: 0; /* Remove border radius on mobile */
+  }
+}
+
 /* Keyboard open styles - different approach for mobile */
 .keyboardOpenContainer {
   position: relative;
