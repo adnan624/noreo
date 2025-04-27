@@ -1,27 +1,11 @@
-import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Cart.module.css';
+import { addToCart, removeFromCart } from '../store/slices/cartSlice';
 
-// Mock cart data
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Smart Refrigerator",
-    price: 1299.99,
-    image: "/images/fridge.jpg",
-    quantity: 1
-  },
-  {
-    id: 2,
-    name: "Air Fryer Pro",
-    price: 89.99,
-    image: "/images/airfryer.jpg",
-    quantity: 2
-  }
-];
 
 // CartItem component with quantity controls similar to ProductCard
 const CartItem = ({ item, onRemove, onQuantityChange }) => {
@@ -40,7 +24,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
         <div className={styles.quantityControl}>
           <button 
             className={styles.quantityButton} 
-            onClick={() => onQuantityChange(item.id, item.quantity - 1)}
+            onClick={() => onQuantityChange(item.id, false)}
             disabled={item.quantity <= 1}
             aria-label="Decrease quantity"
           >
@@ -49,7 +33,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
           <span className={styles.quantityValue}>{item.quantity}</span>
           <button 
             className={styles.quantityButton} 
-            onClick={() => onQuantityChange(item.id, item.quantity + 1)}
+            onClick={() => onQuantityChange(item.id, true)}
             aria-label="Increase quantity"
           >
             +
@@ -57,7 +41,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
         </div>
         
         <div className={styles.itemTotal}>
-          ${(item.price * item.quantity).toFixed(2)}
+          ${item.totalPrice ? item.totalPrice.toFixed(2) : (item.price * item.quantity).toFixed(2)}
         </div>
         
         <button 
@@ -73,21 +57,32 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
 };
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  // Replace useState with useSelector and useDispatch
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.items);
+  const totalAmount = useSelector(state => state.cart.totalAmount);
   
+  // Function to handle complete removal (regardless of quantity)
   const handleRemoveItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+    const item = cartItems.find(item => item.id === id);
+    for (let i = 0; i < item.quantity; i++) {
+      dispatch(removeFromCart(id));
+    }
   };
   
-  const handleQuantityChange = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
+  // Function to handle quantity changes
+  const handleQuantityChange = (id, isIncrease) => {
+    if (isIncrease) {
+      // Find the item in cartItems to pass to addToCart
+      const item = cartItems.find(item => item.id === id);
+      dispatch(addToCart(item));
+    } else {
+      dispatch(removeFromCart(id));
+    }
   };
   
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  // Calculate tax and shipping based on totalAmount
+  const subtotal = totalAmount;
   const tax = subtotal * 0.1; // 10% tax
   const shipping = subtotal > 500 ? 0 : 49.99;
   const total = subtotal + tax + shipping;
