@@ -1,27 +1,28 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import styles from '../styles/ProductCard.module.css';
+import { addToCart, removeFromCart } from '../store/slices/cartSlice';
 
 const ProductCard = ({ product }) => {
-  const [quantity, setQuantity] = useState(1);
-  const [isAdded, setIsAdded] = useState(false);
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.items);
+  
+  // Find this product in cart (if it exists)
+  const cartItem = cartItems.find(item => item.id === product.id);
+  const quantityInCart = cartItem ? cartItem.quantity : 0;
+  const isInCart = quantityInCart > 0;
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+  };
 
   const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
+    dispatch(addToCart(product));
   };
 
   const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(prev => prev - 1);
-    } else {
-      // When quantity is 1 and user presses minus, remove from cart
-      setIsAdded(false);
-      setQuantity(1); // Reset quantity to 1 for next time
-    }
-  };
-
-  const handleAddToCart = () => {
-    setIsAdded(true);
+    dispatch(removeFromCart(product.id));
   };
 
   return (
@@ -45,14 +46,14 @@ const ProductCard = ({ product }) => {
         </h3>
         <p className={styles.quantityText}>{product.weight || '450 g'}</p>
         <div className={styles.productFooter}>
-          <div className={styles.priceContainer}>
-            {product.originalPrice && (
-              <span className={styles.originalPrice}>₹{product.originalPrice}</span>
-            )}
-            <span className={styles.productPrice}>₹{product.price}</span>
-          </div>
+        <div className={styles.priceContainer}>
+  {product.originalPrice && (
+    <span className={styles.originalPrice}>₹{Math.round(product.originalPrice)}</span>
+  )}
+  <span className={styles.productPrice}>₹{Math.round(product.price)}</span>
+</div>
           
-          {!isAdded ? (
+          {!isInCart ? (
             <button 
               className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
               disabled={!product.inStock}
@@ -63,7 +64,7 @@ const ProductCard = ({ product }) => {
           ) : (
             <div className={styles.quantityControl}>
               <button className={styles.quantityButton} onClick={decrementQuantity}>−</button>
-              <span className={styles.quantityValue}>{quantity}</span>
+              <span className={styles.quantityValue}>{quantityInCart}</span>
               <button className={styles.quantityButton} onClick={incrementQuantity}>+</button>
             </div>
           )}

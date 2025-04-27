@@ -1,10 +1,14 @@
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import styles from '../styles/Header.module.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Get cart count from Redux store
+  const totalQuantity = useSelector(state => state.cart.totalQuantity);
 
   useEffect(() => {
     const header = document.querySelector(`.${styles.header}`);
@@ -66,7 +70,7 @@ const Header = () => {
             <li><Link href="/contact" onClick={closeMenu}>Contact</Link></li>
             <li>
               <Link href="/cart" className={styles.cartLink} onClick={closeMenu}>
-                Cart <span className={styles.cartCount}>0</span>
+                Cart <span className={styles.cartCount}>{totalQuantity}</span>
               </Link>
             </li>
           </ul>
@@ -74,7 +78,7 @@ const Header = () => {
         
         {isMenuOpen && (
           <div 
-            className={styles.menuOverlay} 
+            className={styles.menuOverlay}
             onClick={closeMenu}
             aria-hidden="true"
           />

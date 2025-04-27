@@ -95,7 +95,7 @@ export default function Cart() {
       </Head>
       
       <Header />
-      
+      <div className={styles.circuitBackground}></div>
       <main className={styles.cartPage}>
         <div className="container">
           <div className={styles.pageHeader}>
