@@ -186,7 +186,7 @@
   flex-wrap: wrap;
   gap: 1rem;
   z-index: 10;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
 }
 
 /* Sticky bar styles */

@@ -25,52 +25,83 @@ const ProductCard = ({ product }) => {
     dispatch(removeFromCart(product.id));
   };
 
+  const handleCardClick = () => {
+    console.log(`Product clicked - ID: ${product.id}`);
+  };
+
   return (
-    <div className={styles.productCard}>
-      <div className={styles.productImageContainer}>
-        <img 
-          src={product.image} 
-          alt={product.name} 
-          className={styles.productImage}
-        />
-        {!product.inStock && (
-          <div className={styles.outOfStock}>Out of Stock</div>
-        )}
-        {product.onSale && product.inStock && (
-          <div className={styles.saleBadge}>Sale</div>
-        )}
-      </div>
-      <div className={styles.productInfo}>
-        <h3 className={styles.productName}>
-          <Link href={`/products/${product.id}`}>{product.name}</Link>
-        </h3>
-        <p className={styles.quantityText}>{product.weight || '20W'}</p>
-        <div className={styles.productFooter}>
-        <div className={styles.priceContainer}>
-  {product.originalPrice && (
-    <span className={styles.originalPrice}>₹{Math.round(product.originalPrice)}</span>
-  )}
-  <span className={styles.productPrice}>₹{Math.round(product.price)}</span>
-</div>
-          
-          {!isInCart ? (
-            <button 
-              className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
-              disabled={!product.inStock}
-              onClick={handleAddToCart}
-            >
-              ADD
-            </button>
-          ) : (
-            <div className={styles.quantityControl}>
-              <button className={styles.quantityButton} onClick={decrementQuantity}>−</button>
-              <span className={styles.quantityValue}>{quantityInCart}</span>
-              <button className={styles.quantityButton} onClick={incrementQuantity}>+</button>
-            </div>
+    <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div 
+        className={styles.productCard}
+        style={{ cursor: 'pointer' }} 
+       
+      >
+        <div className={styles.productImageContainer}>
+          <img 
+            src={product.image} 
+            alt={product.name} 
+            className={styles.productImage}
+          />
+          {!product.inStock && (
+            <div className={styles.outOfStock}>Out of Stock</div>
+          )}
+          {product.onSale && product.inStock && (
+            <div className={styles.saleBadge}>Sale</div>
           )}
         </div>
+        <div className={styles.productInfo}>
+          <h3 className={styles.productName}>
+            {product.name}
+          </h3>
+          <p className={styles.quantityText}>{product.weight || '20W'}</p>
+          <div className={styles.productFooter}>
+          <div className={styles.priceContainer}>
+            {product.originalPrice && (
+              <span className={styles.originalPrice}>₹{Math.round(product.originalPrice)}</span>
+            )}
+            <span className={styles.productPrice}>₹{Math.round(product.price)}</span>
+          </div>
+            
+            {!isInCart ? (
+              <button 
+                className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
+                disabled={!product.inStock}
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent navigation
+                  e.stopPropagation(); // Prevent card click event
+                  handleAddToCart();
+                }}
+              >
+                ADD
+              </button>
+            ) : (
+              <div 
+                className={styles.quantityControl}
+                onClick={(e) => e.preventDefault()} // Prevent navigation
+              >
+                <button 
+                  className={styles.quantityButton} 
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent navigation
+                    e.stopPropagation(); // Prevent card click event
+                    decrementQuantity();
+                  }}
+                >−</button>
+                <span className={styles.quantityValue}>{quantityInCart}</span>
+                <button 
+                  className={styles.quantityButton} 
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent navigation
+                    e.stopPropagation(); // Prevent card click event
+                    incrementQuantity();
+                  }}
+                >+</button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

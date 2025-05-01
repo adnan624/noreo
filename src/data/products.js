@@ -19,7 +19,7 @@ const products = [
     category: "Kitchen",
     rating: 4.2,
     reviews: 256,
-    image: "https://pngimg.com/d/air_fryer_PNG35.png", // ✅ Verified working
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnzFQn86uKSNOI1YGJmOhKZL1RPz4MmVTMSg&s", // ✅ Verified working
     inStock: true,
     features: ["8 presets", "Digital display", "Non-stick basket", "60-min timer"]
   },
@@ -31,7 +31,7 @@ const products = [
     category: "Cleaning",
     rating: 4.7,
     reviews: 312,
-    image: "https://pngimg.com/d/vacuum_cleaner_PNG44.png", // ✅ Verified working
+    image: "https://www.guardian.in/cdn/shop/files/Artboard_1_d81f677e-a64c-48f2-98be-04f5e0f1ee19.png?v=1739966971&width=1200", // ✅ Verified working
     inStock: true,
     features: ["Laser mapping", "Auto-recharge", "Voice control", "Multi-surface cleaning"]
   },
@@ -43,7 +43,7 @@ const products = [
     category: "Kitchen",
     rating: 4.3,
     reviews: 187,
-    image: "https://pngimg.com/d/blender_PNG9.png", // ✅ Verified working
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHA8OiBfO3Qq-PNR1psnlvbman-Bt3hbXZHw&s", // ✅ Verified working
     inStock: true,
     features: ["1000W motor", "Stainless steel blades", "8 speeds", "BPA-free jug"]
   },
@@ -55,7 +55,7 @@ const products = [
     category: "Laundry",
     rating: 4.6,
     reviews: 210,
-    image: "https://pngimg.com/d/washing_machine_PNG53.png", // ✅ Verified working
+    image: "https://png.pngtree.com/png-vector/20240521/ourmid/pngtree-high-efficiency-washing-machines-for-modern-homes-png-image_12504770.png", // ✅ Verified working
     inStock: false,
     features: ["10kg capacity", "AI stain removal", "Energy efficient", "Quiet operation"]
   },

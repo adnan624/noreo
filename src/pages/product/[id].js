@@ -5,6 +5,7 @@ import Footer from '../../components/Footer';
 import Rating from '../../components/Rating';
 import products from '../../data/products';
 import styles from '../../styles/Product.module.css';
+import ProductCard from '@/components/ProductCard';                                 
 
 export default function ProductDetail() {
   const router = useRouter();
