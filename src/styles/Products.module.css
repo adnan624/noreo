@@ -73,9 +73,29 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-bottom: 3rem;
-  margin-top: 1rem;
+  /* margin-bottom: 1rem; */
+  margin-top: 6rem;
   position: relative;
+}
+
+@media (max-width: 768px) {
+  /* Target the exact class from the dev tools */
+  .Products-module__6JFhN6__filterContainer {
+    gap: 0.5rem !important; /* Reduce from 1.5rem to 0.5rem */
+  }
+  
+  /* If the class name changes due to CSS modules, also target the generic class */
+  .filterContainer {
+    gap: 0.5rem !important; /* Same reduction */
+  }
+}
+
+/* Even smaller gap for very small screens */
+@media (max-width: 480px) {
+  .Products-module__6JFhN6__filterContainer,
+  .filterContainer {
+    gap: 0.25rem !important; /* Further reduce for smallest screens */
+  }
 }
 
 /* Filter Panel */
@@ -189,10 +209,10 @@
   /* transition: all 0.3s ease; */
 }
 
-/* Sticky bar styles */
-.stickySearchBar {
+/* Fixed search bar styles (replacing sticky) */
+.fixedSearchBar {
   position: fixed;
-  top: 0;
+  top: 95px; /* Keep it below the header */
   left: 0;
   right: 0;
   width: 100%;
@@ -201,28 +221,37 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  margin-top: 95px;
+  margin-top: 0;
   max-width: 1280px; /* Maintain original width for web view */
   left: 50%; /* Center the search bar */
   transform: translateX(-50%);
 }
 
+/* Fixed padding to match the height of the search bar */
+.fixedPadding {
+  height: 76px; /* Match height of search bar */
+  width: 100%;
+}
+
 @media (min-width: 768px) and (max-width: 1024px) {
-  .stickySearchBar {
-    margin-top: 0px; /* Reduced margin for tablets/iPads */
+  .fixedSearchBar {
+    top: 60px; /* Adjusted for tablets/iPads */
   }
 }
 
 @media (max-width: 768px) {
-  .stickySearchBar {
-    margin-top: 0;
+  .fixedSearchBar {
+    top: 0;
     padding: 0.5rem 1rem 0.75rem;
     max-width: 100%;
     left: 0;
     transform: none;
-    position: fixed; /* Keep using fixed position for better mobile support */
-    top: 0;
+    position: fixed;
     border-radius: 0; /* Remove border radius on mobile */
+  }
+  
+  .fixedPadding {
+    height: 110px; /* Increased height for mobile */
   }
 }
 
@@ -263,41 +292,10 @@
   padding-top: 0.5rem;
 }
 
-@media (max-width: 768px) {
-  .stickySearchBar {
-    margin-top: 0;
-    padding: 0.5rem 1rem 0.75rem;
-    max-width: 100%;
-    left: 0;
-    transform: none;
-    position: fixed; /* Keep using fixed position for better mobile support */
-    top: 0;
-    border-radius: 0; /* Remove border radius on mobile */
-  }
-}
-
 /* Container for the search bar */
 .searchBarContainer {
   position: relative;
   width: 100%;
-}
-
-/* Add padding when search bar is sticky */
-.stickyPadding {
-  height: 0;
-  width: 100%;
-  transition: height 0.2s ease;
-}
-
-.stickyPadding.active {
-  height: 76px; /* Adjust to match your search bar height */
-}
-
-@media (max-width: 768px) {
-  /* Add padding to prevent content jump when search bar becomes fixed */
-  .stickyPadding.active {
-    height: 110px; /* Increased height for mobile to account for the search bar and sort options */
-  }
 }
 
 .searchContainer {
@@ -472,6 +470,7 @@
   .searchContainer {
     width: 100%; /* Search takes full width */
     margin-bottom: 0.5rem; /* Add space between search and sort */
+   
   }
   
   .sortOptions {

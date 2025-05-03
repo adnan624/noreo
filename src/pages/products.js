@@ -12,11 +12,10 @@ export default function Products() {
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSticky, setIsSticky] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
-  // Refs for sticky behavior
+  // Refs for containers
   const searchBarRef = useRef(null);
   const filterPanelRef = useRef(null);
   const searchBarContainerRef = useRef(null);
@@ -55,11 +54,8 @@ export default function Products() {
       if (isKeyboardLikelyOpen !== keyboardOpen) {
         setKeyboardOpen(isKeyboardLikelyOpen);
         
-        // When keyboard opens, adjust scroll if needed
+        // When keyboard opens, ensure search bar is in view if needed
         if (isKeyboardLikelyOpen && searchBarRef.current) {
-          // Disable sticky to prevent jumping
-          setIsSticky(false);
-          
           // Ensure search bar is in view when keyboard opens
           const rect = searchBarRef.current.getBoundingClientRect();
           if (rect.top < 0 || rect.bottom > window.innerHeight) {
@@ -81,46 +77,6 @@ export default function Products() {
     return () => window.removeEventListener('resize', detectKeyboard);
   }, [isMobile, keyboardOpen]);
 
-  // Create memoized scroll handler to prevent recreating on each render
-  const handleScroll = useCallback(() => {
-    // Skip scroll handling if keyboard is open on mobile
-    if (isMobile && keyboardOpen) return;
-    
-    if (filterPanelRef.current && searchBarRef.current) {
-      // Get the position of the filter panel bottom relative to viewport
-      const filterPanelRect = filterPanelRef.current.getBoundingClientRect();
-      
-      // If we've scrolled past the filter panel, make the search bar sticky
-      if (filterPanelRect.bottom <= 0) {
-        if (!isSticky) {
-          setIsSticky(true);
-        }
-      } else {
-        if (isSticky) {
-          setIsSticky(false);
-        }
-      }
-    }
-  }, [isSticky, isMobile, keyboardOpen]);
-  
-  // Handle scroll event to make search bar sticky
-  useEffect(() => {
-    // Add event listener with passive option for better performance
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Initial check
-    handleScroll();
-    
-    // Add resize listener to handle orientation changes
-    window.addEventListener('resize', handleScroll, { passive: true });
-    
-    // Clean up
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-    };
-  }, [handleScroll]);
-
   // Add focus/blur event listeners to handle keyboard appearance on mobile
   useEffect(() => {
     const searchInput = document.querySelector(`.${styles.searchInput}`);
@@ -128,9 +84,6 @@ export default function Products() {
     if (searchInput) {
       const handleFocus = () => {
         if (isMobile) {
-          // When focusing on mobile, disable sticky temporarily
-          setIsSticky(false);
-          
           // Mark keyboard as open - this may happen before resize event
           setKeyboardOpen(true);
           
@@ -150,8 +103,6 @@ export default function Products() {
         if (isMobile) {
           setTimeout(() => {
             setKeyboardOpen(false);
-            // Recalculate sticky state based on scroll position
-            handleScroll();
           }, 300);
         }
       };
@@ -164,7 +115,7 @@ export default function Products() {
         searchInput.removeEventListener('blur', handleBlur);
       };
     }
-  }, [isMobile, handleScroll]);
+  }, [isMobile]);
 
   // Filter products
   const filteredProducts = products.filter(product => {
@@ -267,20 +218,20 @@ export default function Products() {
               </button>
             </div>
 
-            {/* Search Bar Container with padding placeholder */}
+            {/* Search Bar Container - now with fixed positioning instead of sticky */}
             <div 
               className={`${styles.searchBarContainer} ${keyboardOpen ? styles.keyboardOpenContainer : ''}`} 
               ref={searchBarContainerRef}
             >
-              {/* Padding placeholder that activates when search bar is sticky */}
-              <div className={`${styles.stickyPadding} ${isSticky && !keyboardOpen ? styles.active : ''}`}></div>
+              {/* Padding placeholder with fixed height for the search bar */}
+              {/* <div className={styles.fixedPadding}></div> */}
               
-              {/* Search/Sort Bar */}
+              {/* Search/Sort Bar with fixed positioning */}
               <div
                 ref={searchBarRef}
                 className={`
                   ${styles.searchSortBar} 
-                  ${isSticky && !keyboardOpen ? styles.stickySearchBar : ''} 
+                  ${styles.fixedSearchBar} 
                   ${keyboardOpen ? styles.keyboardOpenSearchBar : ''}
                 `}
               >
