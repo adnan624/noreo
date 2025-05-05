@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../store/slices/cartSlice';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Rating from '../../components/Rating';
@@ -13,10 +15,12 @@ import ProductCard from '@/components/ProductCard';
 export default function ProductDetail() {
   const router = useRouter();
   const { id } = router.query;
+  const dispatch = useDispatch();
   
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showAddedToCart, setShowAddedToCart] = useState(false);
   const mainImageRef = useRef(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -42,9 +46,22 @@ export default function ProductDetail() {
 
   // Handle add to cart
   const handleAddToCart = () => {
-    if (product) {
-      // Here you would implement your cart logic
-      alert(`Added ${quantity} ${product.name} to cart`);
+    if (product && product.inStock && quantity > 0) {
+      // Add the product to cart multiple times based on quantity
+      for (let i = 0; i < quantity; i++) {
+        dispatch(addToCart(product));
+      }
+      
+      // Show the added to cart popup
+      setShowAddedToCart(true);
+      
+      // Hide the popup after 3 seconds
+      setTimeout(() => {
+        setShowAddedToCart(false);
+      }, 3000);
+      
+      // Reset quantity to 0 after adding to cart
+      setQuantity(0);
     }
   };
 
@@ -150,7 +167,7 @@ export default function ProductDetail() {
       
       <main className={styles.productPage}>
         {/* Breadcrumb Navigation */}
-        {/* <div className={styles.circuitBackground}> */}
+        <div className={styles.circuitBackground}>
         <div className={styles.container}>
           <nav className={styles.breadcrumb}>
             <ul>
@@ -159,6 +176,29 @@ export default function ProductDetail() {
               <li className={styles.active}>{product.name}</li>
             </ul>
           </nav>
+          
+          {/* Added to Cart Popup */}
+          {showAddedToCart && (
+            <div className={styles.addedToCartPopup}>
+              <div className={styles.popupContent}>
+                <div className={styles.popupIcon}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <div className={styles.popupMessage}>
+                  <h4>Added to Cart!</h4>
+                  <p>{`${product.name} × ${quantity} has been added to your cart.`}</p>
+                </div>
+                <button 
+                  className={styles.viewCartBtn}
+                  onClick={() => router.push('/cart')}
+                >
+                  View Cart
+                </button>
+              </div>
+            </div>
+          )}
           
           <div className={styles.productDetail}>
             <div className={styles.productGallery}>
@@ -274,13 +314,21 @@ export default function ProductDetail() {
                     </button>
                   </div>
                   
-                  <button 
-                    className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
-                    onClick={handleAddToCart}
-                    disabled={!product.inStock}
-                  >
-                    {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-                  </button>
+                  <div className={styles.addToCartContainer}>
+                    <button 
+                      className={`${styles.addToCartBtn} ${!product.inStock || quantity === 0 ? styles.disabled : ''}`}
+                      onClick={handleAddToCart}
+                      disabled={!product.inStock || quantity === 0}
+                      title={quantity === 0 ? "Please add quantity" : ""}
+                      data-tooltip={quantity === 0 ? "Please add quantity" : ""}
+                    >
+                      {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                    </button>
+                    
+                    {quantity === 0 && (
+                      <div className={styles.tooltip}>Please add quantity</div>
+                    )}
+                  </div>
                 </div>
                 
                 <button className={styles.wishlistBtn}>
@@ -502,7 +550,7 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
-        {/* </div> */}
+        </div>
       </main>
       
       <Footer />
