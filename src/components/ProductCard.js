@@ -30,7 +30,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link href={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div 
         className={styles.productCard}
         style={{ cursor: 'pointer' }} 
