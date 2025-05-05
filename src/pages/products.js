@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
@@ -8,7 +10,9 @@ import products from '@/data/products';
 import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
 
 export default function Products() {
-  const [categoryFilter, setCategoryFilter] = useState('All');
+  const router = useRouter();
+  const isInitialRender = useRef(true);
+  const [categoryFilter, setCategoryFilter] = useState(null);
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,6 +27,24 @@ export default function Products() {
   
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
+
+  // Handle URL changes only once on initial load
+  useEffect(() => {
+    if (!router.isReady) return;
+    
+    // Initialize category from URL on first load only
+    if (isInitialRender.current) {
+      const { category } = router.query;
+      
+      if (category && categories.includes(category)) {
+        setCategoryFilter(category);
+      } else {
+        setCategoryFilter('All');
+      }
+      
+      isInitialRender.current = false;
+    }
+  }, [router.isReady, router.query, categories]);
 
   // Check if we're on mobile
   useEffect(() => {
@@ -117,6 +139,30 @@ export default function Products() {
     }
   }, [isMobile]);
 
+  // If categoryFilter is null (initial state), don't render products yet
+  if (categoryFilter === null) {
+    return (
+      <>
+        <Head>
+          <title>Products | ElectroShop</title>
+          <meta name="description" content="Browse our wide selection of electrical appliances" />
+          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        </Head>
+        <Header />
+        <main className={styles.productsPage}>
+          <div className={styles.circuitBackground}></div>
+          <div className={styles.container}>
+            <div className={styles.loadingContainer}>
+              <div className={styles.spinner}></div>
+              <p>Loading products...</p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   // Filter products
   const filteredProducts = products.filter(product => {
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
@@ -150,19 +196,53 @@ export default function Products() {
     return a.id - b.id; // Featured
   });
 
+  // Handle category filter change with URL update
+  const handleCategoryChange = (category) => {
+    // First update the state directly (immediate UI change)
+    setCategoryFilter(category);
+    
+    // Then update the URL without causing a refresh
+    const newQuery = {...router.query};
+    
+    if (category === 'All') {
+      delete newQuery.category;
+    } else {
+      newQuery.category = category;
+    }
+    
+    // Use replace instead of push to avoid adding to history
+    router.replace({
+      pathname: router.pathname,
+      query: newQuery
+    }, undefined, { shallow: true });
+    
+    // Scroll to top when changing category on mobile
+    if (isMobile) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   // Handle search reset
   const handleResetAll = () => {
+    // Reset all filters in component state first
     setCategoryFilter('All');
     setPriceFilter('All');
     setSortOption('featured');
     setSearchQuery('');
+    
+    // Remove all query parameters from URL
+    router.replace({
+      pathname: router.pathname
+    }, undefined, { shallow: true });
   };
 
   return (
     <>
       <Head>
-        <title>Products | ElectroShop</title>
-        <meta name="description" content="Browse our wide selection of electrical appliances" />
+        <title>{categoryFilter !== 'All' ? `${categoryFilter} | ElectroShop` : 'Products | ElectroShop'}</title>
+        <meta name="description" content={categoryFilter !== 'All' 
+          ? `Browse our selection of ${categoryFilter.toLowerCase()}`
+          : "Browse our wide selection of electrical appliances"} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <Header />
@@ -184,7 +264,7 @@ export default function Products() {
                     <button
                       key={category}
                       className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
-                      onClick={() => setCategoryFilter(category)}
+                      onClick={() => handleCategoryChange(category)}
                     >
                       {category}
                     </button>
@@ -218,15 +298,11 @@ export default function Products() {
               </button>
             </div>
 
-            {/* Search Bar Container - now with fixed positioning instead of sticky */}
+            {/* Search Bar Container */}
             <div 
               className={`${styles.searchBarContainer} ${keyboardOpen ? styles.keyboardOpenContainer : ''}`} 
               ref={searchBarContainerRef}
             >
-              {/* Padding placeholder with fixed height for the search bar */}
-              {/* <div className={styles.fixedPadding}></div> */}
-              
-              {/* Search/Sort Bar with fixed positioning */}
               <div
                 ref={searchBarRef}
                 className={`
@@ -275,6 +351,14 @@ export default function Products() {
 
             {/* Products Content */}
             <div className={`${styles.productsContent} ${keyboardOpen ? styles.keyboardOpenContent : ''}`}>
+              {/* Category Title when filtered */}
+              {categoryFilter !== 'All' && (
+                <div className={styles.categoryHeader}>
+                  <h2>{categoryFilter}</h2>
+                  <p>{sortedProducts.length} products found</p>
+                </div>
+              )}
+              
               {sortedProducts.length > 0 ? (
                 <div className={styles.productsGrid}>
                   {sortedProducts.map(product => (
@@ -307,17 +391,4 @@ export default function Products() {
       <Footer />
     </>
   );
-}
-
-// Helper function to get icons for categories
-function getCategoryIcon(category) {
-  switch(category) {
-    case 'Televisions': return 'fas fa-tv';
-    case 'Computers': return 'fas fa-laptop';
-    case 'Phones': return 'fas fa-mobile-alt';
-    case 'Audio': return 'fas fa-headphones';
-    case 'Gaming': return 'fas fa-gamepad';
-    case 'Home Appliances': return 'fas fa-blender';
-    default: return 'fas fa-plug';
-  }
 }
