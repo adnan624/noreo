@@ -1,10 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Cart.module.css';
 import { addToCart, removeFromCart } from '../store/slices/cartSlice';
+import PaymentButton from '../components/PaymentButton'
 
 
 // CartItem component with quantity controls similar to ProductCard
@@ -58,6 +60,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
 
 export default function Cart() {
   // Replace useState with useSelector and useDispatch
+  const router = useRouter();
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
   const totalAmount = useSelector(state => state.cart.totalAmount);
@@ -80,6 +83,13 @@ export default function Cart() {
       dispatch(removeFromCart(id));
     }
   };
+
+  const handleCheckout = () => {
+    // If user is authenticated, go to the payment page
+    // href="/auth/login"
+    router.push('/auth/login');
+ 
+  };
   
   // Calculate tax and shipping based on totalAmount
   const subtotal = totalAmount;
@@ -88,61 +98,65 @@ export default function Cart() {
   const total = subtotal + tax + shipping;
 
   return (
-    <>
+    
+    // <Link>
+      <>
+
       <Head>
         <title>Your Cart | ElectroShop</title>
         <meta name="description" content="Review your cart items" />
-      </Head>
-      
-      <Header />
-      <div className={styles.circuitBackground}></div>
-      <main className={styles.cartPage}>
+      </Head><Header /><div className={styles.circuitBackground}></div><main className={styles.cartPage}>
         <div className="container">
           <div className={styles.pageHeader}>
             <h1>Your Shopping Cart</h1>
             <p>Review your items before checkout</p>
           </div>
-          
+
           {cartItems.length > 0 ? (
             <div className={styles.cartLayout}>
               <div className={styles.cartItems}>
                 {cartItems.map(item => (
-                  <CartItem 
-                    key={item.id} 
-                    item={item} 
+                  <CartItem
+                    key={item.id}
+                    item={item}
                     onRemove={handleRemoveItem}
-                    onQuantityChange={handleQuantityChange}
-                  />
+                    onQuantityChange={handleQuantityChange} />
                 ))}
               </div>
-              
+
               <div className={styles.cartSummary}>
                 <h2>Order Summary</h2>
-                
+
                 <div className={styles.summaryRow}>
                   <span>Subtotal</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
-                
+
                 <div className={styles.summaryRow}>
                   <span>Shipping</span>
                   <span>
                     {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
-                
+
                 <div className={styles.summaryRow}>
                   <span>Tax (10%)</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
-                
+
                 <div className={`${styles.summaryRow} ${styles.totalRow}`}>
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
-                
-                <button className={styles.checkoutButton}>Proceed to Checkout</button>
-                
+
+                <button
+                  onClick={handleCheckout}
+                  className={styles.checkoutButton}>Proceed to Checkout</button>
+{/* <PaymentButton
+name={'adnan'}
+ email={'adnan@gmail.com'}
+  phone={'8109257552'}
+/> */}
                 <div className={styles.paymentMethods}>
                   <p>We accept:</p>
                   <div className={styles.paymentIcons}>
@@ -163,8 +177,8 @@ export default function Cart() {
           )}
         </div>
       </main>
-      
       <Footer />
-    </>
+      </>
+    
   );
 }

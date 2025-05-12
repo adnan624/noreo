@@ -1034,7 +1034,7 @@
   }
   
   .addToCartBtn {
-    padding: 0 0.5rem;
+    padding: 0 1rem !important;
     font-size: 0.95rem;
     max-width: none;
     flex-grow: 1;
@@ -1147,7 +1147,7 @@
   
   .addToCartBtn {
     font-size: 0.9rem;
-    padding: 0 0.25rem;
+ padding: 0 1rem !important;
   }
   
   .tabHeader {

@@ -1,0 +1,809 @@
+/* login.module.css */
+
+/* Base Layout */
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F0EEE6;
+  background-blend-mode: soft-light;
+  background-size: cover;
+  z-index: -1;
+  padding: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.loginContainer {
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  min-height: 650px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Form Container */
+.loginFormContainer {
+  flex: 1;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Styles */
+.loginHeader {
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.welcomeTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.welcomeSubtitle {
+  font-size: 16px;
+  color: #718096;
+  font-weight: 400;
+}
+
+/* Message Styles */
+.errorMessage {
+  background-color: #fff5f5;
+  color: #e53e3e;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  border-left: 4px solid #e53e3e;
+}
+
+.errorIcon {
+  background-color: #e53e3e;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.successMessage {
+  background-color: #f0fff4;
+  color: #38a169;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-left: 4px solid #38a169;
+}
+
+.checkmarkIcon {
+  background-color: #38a169;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Form Styles */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.loginForm h2 {
+  font-size: 24px;
+  color: #1a202c;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+/* Input Styles */
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  font-size: 18px;
+}
+
+.formGroup input {
+  padding: 16px;
+  padding-left: 44px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 16px;
+  transition: all 0.2s;
+  width: 100%;
+  background-color: #f8fafc;
+}
+
+.formGroup input:focus {
+  border-color: #4299e1;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  background-color: white;
+}
+
+.disabledInput {
+  background-color: #edf2f7 !important;
+  color: #718096;
+}
+
+.otpInput {
+  font-size: 18px !important;
+  letter-spacing: 2px;
+  text-align: center;
+  padding-left: 44px !important;
+  font-weight: 600;
+}
+
+.otpSentMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.infoIcon {
+  font-size: 14px;
+}
+
+/* Form Options */
+.formOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.rememberMe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rememberMe input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #4299e1;
+  cursor: pointer;
+}
+
+.rememberMe label {
+  font-size: 14px;
+  color: #4a5568;
+  cursor: pointer;
+}
+
+.forgotPassword {
+  font-size: 14px;
+  color: #3182ce;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgotPassword:hover {
+  text-decoration: underline;
+}
+
+/* Button Styles */
+.loginButton {
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.loginButton:hover {
+  background-color: #3182ce;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+}
+
+.loginButton:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading Spinner */
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.backButton {
+  background-color: #a0aec0;
+  color: #FFFFFF;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.backButton:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+  color: black;
+}
+
+.backIcon {
+  font-size: 16px;
+}
+
+.resendButton {
+  background-color: transparent;
+  color: #4299e1;
+  border: none;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-top: 0;
+  align-self: center;
+}
+
+.resendButton:hover {
+  color: #3182ce;
+  text-decoration: underline;
+}
+
+.resendButton:disabled {
+  color: #a0aec0;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.resendCountdown {
+  color: #718096;
+  font-size: 14px;
+}
+
+/* Login Method Selection */
+.loginMethodSelection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin: 12px 0 32px;
+}
+
+.chooseMethodText {
+  font-size: 16px;
+  color: #4a5568;
+  margin-bottom: 4px;
+}
+
+.loginMethodButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.methodButton {
+  background-color: #D9B968;
+  color: #1a202c;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.methodButton:hover {
+  background-color: #4299e1;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  color: #FFFFFF;
+}
+
+.methodIcon {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.methodText {
+  flex: 1;
+  text-align: center;
+}
+
+/* Divider */
+.divider {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.divider span {
+  margin: 0 16px;
+}
+
+/* Social Login */
+.socialLogin {
+  width: 100%;
+  max-width: 360px;
+}
+
+.socialButton {
+  width: 100%;
+  background-color: #fff;
+  color: #1a202c;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.socialButton:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.socialIcon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Google Button Custom Style */
+.googleButton {
+  border-color: #dadce0;
+}
+
+.googleButton:hover {
+  background-color: #f8fafc;
+}
+
+/* Footer Styles */
+.loginFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.loginFooter p {
+  color: #718096;
+  font-size: 15px;
+}
+
+.registerLink {
+  color: #4299e1;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.registerLink:hover {
+  text-decoration: underline;
+}
+
+.securityNote {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.securityNote p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #a0aec0;
+  font-size: 13px;
+}
+
+.lockIcon {
+  font-size: 14px;
+}
+
+/* Image Side */
+.loginImageContainer {
+  flex: 1.2;
+  position: relative;
+  display: none;
+}
+
+.loginImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/electronics-banner.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(26, 32, 44, 0.7), rgba(45, 55, 72, 0.9));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+  color: white;
+}
+
+.brandHighlight {
+  max-width: 80%;
+}
+
+.imageOverlay h2 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  font-size: 20px;
+  max-width: 80%;
+  margin-bottom: 36px;
+  opacity: 0.9;
+}
+
+.imageBenefits {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.benefitIcon {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loginForm, 
+.loginMethodSelection, 
+.successMessage, 
+.errorMessage {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Media Queries */
+@media (min-width: 1024px) {
+  .loginImageContainer {
+    display: block;
+  }
+}
+
+@media (max-width: 1023px) {
+  .loginContainer {
+    flex-direction: column;
+    max-width: 600px;
+  }
+  
+  .loginFormContainer {
+    padding: 36px 32px;
+  }
+}
+
+/* For tablets */
+@media (max-width: 768px) {
+  .loginFormContainer {
+    padding: 32px 24px;
+  }
+  
+  .welcomeTitle {
+    font-size: 28px;
+  }
+  
+  .loginMethodButtons, 
+  .socialLogin, 
+  .divider {
+    max-width: 100%;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .loginFormContainer {
+    padding: 28px 20px;
+  }
+  
+  .welcomeTitle {
+    font-size: 24px;
+  }
+  
+  .welcomeSubtitle {
+    font-size: 14px;
+  }
+  
+  .formOptions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .loginButton, 
+  .backButton {
+    padding: 14px;
+  }
+  
+  .methodButton {
+    padding: 14px 12px;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .inputIcon {
+  left: auto;
+  right: 14px;
+}
+
+[dir="rtl"] .formGroup input {
+  padding-left: 16px;
+  padding-right: 44px;
+}
+
+[dir="rtl"] .backIcon {
+  transform: rotate(180deg);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .loginPage {
+    background-color: #1a202c;
+  }
+  
+  .loginContainer {
+    background-color: #2d3748;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  }
+  
+  .welcomeTitle {
+    color: #f7fafc;
+  }
+  
+  .welcomeSubtitle {
+    color: #cbd5e0;
+  }
+  
+  .loginForm h2 {
+    color: #f7fafc;
+  }
+  
+  .formGroup label {
+    color: #e2e8f0;
+  }
+  
+  .formGroup input {
+    background-color: #4a5568;
+    border-color: #4a5568;
+    color: #f7fafc;
+  }
+  
+  .formGroup input:focus {
+    border-color: #63b3ed;
+    background-color: #4a5568;
+    box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.15);
+  }
+  
+  .disabledInput {
+    background-color: #2d3748 !important;
+    color: #a0aec0;
+  }
+  
+  .rememberMe label {
+    color: #e2e8f0;
+  }
+  
+  .methodButton, 
+  .socialButton, 
+  .backButton {
+    background-color: #2d3748;
+    color: #f7fafc;
+    border-color: #4a5568;
+  }
+  
+  .methodButton:hover, 
+  .socialButton:hover, 
+  .backButton:hover {
+    background-color: #4a5568;
+    border-color: #718096;
+  }
+  
+  .divider {
+    color: #cbd5e0;
+  }
+  
+  .divider::before,
+  .divider::after {
+    border-bottom: 1px solid #4a5568;
+  }
+  
+  .loginFooter p {
+    color: #cbd5e0;
+  }
+  
+  .securityNote p {
+    color: #a0aec0;
+  }
+}
+.gmailButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: white;
+    color: #333;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  /* Divider Styles */
+  .orDivider {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Adds horizontal centering */
+    margin: 5px 0;
+    color: #777;
+    width: 100%;
+    position: relative;
+    text-align: center; /* Ensures text is centered */
+  }
+  .orDivider::before,
+.orDivider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.orDivider::before {
+  margin-right: 15px;
+}
+
+.orDivider::after {
+    margin-left: 15px;
+  }
