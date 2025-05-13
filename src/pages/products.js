@@ -8,8 +8,11 @@ import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
 import products from '@/data/products';
 import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
+import { getProductList } from '@/redux/productSlice/action';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Products() {
+  const dispatch = useDispatch()
   const router = useRouter();
   const isInitialRender = useRef(true);
   const [categoryFilter, setCategoryFilter] = useState(null);
@@ -27,6 +30,15 @@ export default function Products() {
   
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
+
+  const data = useSelector((state) => state.products.productList);
+console.log('gokuuu',data?.data?.products)
+  useEffect(()=>{
+    console.log('bhaii kooooo')
+    dispatch(getProductList())
+
+    
+  },[])
 
   // Handle URL changes only once on initial load
   useEffect(() => {

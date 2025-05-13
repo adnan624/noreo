@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
 import cartReducer from './slices/cartSlice';  // Note the semicolon
-import productReducer from './slices/productSlice';
+import productListReducer from '../redux/productSlice/productListSlice';
 import userReducer from './slices/userSlice';
 
 const makeStore = () => 
   configureStore({
     reducer: {
       cart: cartReducer,
-      products: productReducer,
+      products: productListReducer,
       user: userReducer,
     },
     devTools: process.env.NODE_ENV !== 'production',
