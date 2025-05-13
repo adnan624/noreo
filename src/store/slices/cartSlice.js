@@ -5,6 +5,7 @@ const initialState = {
   items: [],
   totalQuantity: 0,
   totalAmount: 0,
+  showNotification: false, // Added notification state
 };
 
 export const cartSlice = createSlice({
@@ -28,6 +29,7 @@ export const cartSlice = createSlice({
       
       state.totalQuantity++;
       state.totalAmount = state.totalAmount + newItem.price;
+      state.showNotification = true; // Show notification when adding items
     },
     removeFromCart: (state, action) => {
       const id = action.payload;
@@ -47,9 +49,22 @@ export const cartSlice = createSlice({
       state.items = [];
       state.totalQuantity = 0;
       state.totalAmount = 0;
+    },
+    showCartNotification: (state) => {
+      state.showNotification = true;
+    },
+    hideCartNotification: (state) => {
+      state.showNotification = false;
     }
   }
 });
 
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
+export const { 
+  addToCart, 
+  removeFromCart, 
+  clearCart,
+  showCartNotification,
+  hideCartNotification
+} = cartSlice.actions;
+
 export default cartSlice.reducer;
