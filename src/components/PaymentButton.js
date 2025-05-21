@@ -10,26 +10,30 @@ export default function PaymentButton({ amount, name, email, phone }) {
     
     try {
       // Create order on server
-      const response = await fetch('/api/createOrder', {
+      const response = await fetch('http://localhost:3000/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount })
+        body: JSON.stringify({
+          amount: "100",
+          currency: "INR",
+          receipt: "order create"
+      })
       });
       
       const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to create order');
-      }
+      console.log('athe fffff', data)
+      // if (!data.success) {
+      //   throw new Error(data.error || 'Failed to create order');
+      // }
       
       // Initialize Razorpay payment
       const options = {
-        key: 'rzp_test_KPpMfl2Cc4OX7O', // Test key ID
-        amount: data.order.amount,
-        currency: data.order.currency,
+        key: 'rzp_test_6oLnOqJOIMdIwf', // Test key ID
+        amount: data.amount,
+        currency: data.currency,
         name: "Noreo",
         description: "Test Transaction",
-        order_id: data.order.id,
+        order_id: data.id,
         handler: function (response) {
           // Handle successful payment
           console.log(response);

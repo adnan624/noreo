@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Head from 'next/head';
 import Link from 'next/link';
+import { unwrapResult } from '@reduxjs/toolkit';
+
 // import { login } from '../store/slices/authSlice';
 import styles from '../../styles/login.module.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
+// Import Firebase auth
+import { auth } from '../../firebase/config';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { login, setRememberEmail, clearRememberEmail, setRegistrationSuccess  } from '@/store/slices/authSlice';
+
 export default function Login() {
+  const { registrationSuccess } = useSelector(state => state.user);
   const router = useRouter();
   const dispatch = useDispatch();
   const [loginMethod, setLoginMethod] = useState(''); // 'email' or 'phone'
@@ -26,6 +34,14 @@ export default function Login() {
   
   // Get the redirect URL from query params or default to homepage
   const redirectUrl = router.query.redirect || '/';
+
+  useEffect(() => {
+    if (registrationSuccess) {
+      setShowRegistrationMessage(true);
+      // Clear the flag after showing the message
+      dispatch(setRegistrationSuccess(false));
+    }
+  }, [registrationSuccess, dispatch]);
   
   // Check if user just registered
   useEffect(() => {
@@ -50,19 +66,42 @@ export default function Login() {
   };
   
   // Handle Gmail sign-in
-  const handleGmailSignIn = () => {
+  const handleGmailSignIn = async () => {
     setIsLoading(true);
+    setErrorMessage('');
     
-    // Simulate Google OAuth login
-    setTimeout(() => {
-      // In a real implementation, you would redirect to Google OAuth URL
-      // or use a library like next-auth or firebase-auth
-      console.log('Gmail sign-in clicked');
-      setIsLoading(false);
+    try {
+      // Create a Google provider instance
+      const provider = new GoogleAuthProvider();
       
-      // For demo, we'll just redirect
+      // Sign in with popup
+      const result = await signInWithPopup(auth, provider);
+      
+      // The signed-in user info
+      const user = result.user;
+    
+    // Also log the raw user object (with non-enumerable properties)
+    console.log('Raw User Object:', user);
+      
+      // Get the authentication token
+      const token = await user.getIdToken();
+      
+      // Log user info and token
+      console.log('Gmail sign-in success:', user.email);
+      console.log('Authentication token:', token);
+      
+      // Here you would typically save the user to your Redux store or context
+      // await dispatch(login({ user, token }));
+      
+      // Redirect after successful login
       router.push(redirectUrl);
-    }, 1000);
+    } catch (error) {
+      // Handle errors
+      console.error('Gmail sign-in error:', error.message);
+      setErrorMessage('Failed to sign in with Gmail. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   // Handle sending OTP
@@ -105,30 +144,35 @@ export default function Login() {
     setIsLoading(true);
     
     try {
-      // Dispatch login action
-      // For demo purposes we're commenting this out
-      /*
-      await dispatch(login({ 
-        email: formData.email, 
-        password: formData.password 
+      // Dispatch login thunk action
+      const resultAction = await dispatch(login({
+        email: formData.email,
+        password: formData.password
       })).unwrap();
-      */
       
-      // Simulate API call
-      setTimeout(() => {
-        // Save to localStorage if remember me is checked
-        if (rememberMe) {
-          localStorage.setItem('userEmail', formData.email);
-        } else {
-          localStorage.removeItem('userEmail');
-        }
-        
-        // Redirect after successful login
-        router.push(redirectUrl);
-      }, 1000);
+      console.log('Login successful', resultAction);
+      
+      // Track remember me preference in Redux instead of localStorage
+      // You could dispatch another action here if needed
+      if (rememberMe) {
+        dispatch(setRememberEmail(formData.email));
+      } else {
+        dispatch(clearRememberEmail());
+      }
+      
+      setIsLoading(false);
+      
+      // Get redirect URL from query parameters or use default
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectParam = urlParams.get('redirect');
+      const finalRedirectUrl = redirectParam || redirectUrl || '/dashboard';
+      
+      // Redirect after successful login
+      router.push(finalRedirectUrl);
     } catch (error) {
       setIsLoading(false);
-      setErrorMessage(error || 'Invalid email or password');
+      setErrorMessage(typeof error === 'string' ? error : 'Invalid email or password');
+      console.error('Login error:', error);
     }
   };
   
@@ -254,7 +298,7 @@ export default function Login() {
                 <div className={styles.formGroup}>
                   <label htmlFor="password">Password</label>
                   <input
-                    type="password"
+                    // type="password"
                     id="password"
                     name="password"
                     value={formData.password}
@@ -293,6 +337,7 @@ export default function Login() {
                 </div>
                 
                 <button 
+                // onClick={handleSign}
                   type="submit" 
                   className={styles.loginButton}
                   disabled={isLoading}

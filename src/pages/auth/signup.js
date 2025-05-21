@@ -6,6 +6,7 @@ import Link from 'next/link';
 import styles from '../../styles/signup.module.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { register, setRegistrationSuccess } from '@/store/slices/authSlice';
 // import { register } from '../st  ore/slices/authSlice';
 
 export default function Signup() {
@@ -32,45 +33,55 @@ export default function Signup() {
   };
   
   // Handle form submission
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
-//     // Validate inputs
-//     if (!formData.name || !formData.email || !formData.password || !formData.passwordConfirm || !formData.phone) {
-//       setErrorMessage('Please fill in all fields');
-//       return;
-//     }
+    // Validate inputs
+    if (!formData.name || !formData.email || !formData.password || !formData.passwordConfirm || !formData.phone) {
+      setErrorMessage('Please fill in all fields');
+      return;
+    }
     
-//     if (formData.password !== formData.passwordConfirm) {
-//       setErrorMessage('Passwords do not match');
-//       return;
-//     }
+    if (formData.password !== formData.passwordConfirm) {
+      setErrorMessage('Passwords do not match');
+      return;
+    }
     
-//     if (!acceptTerms) {
-//       setErrorMessage('Please accept the terms and conditions');
-//       return;
-//     }
+    if (!acceptTerms) {
+      setErrorMessage('Please accept the terms and conditions');
+      return;
+    }
     
-//     // Clear previous errors
-//     setErrorMessage('');
-//     setIsLoading(true);
+    // Clear previous errors
+    setErrorMessage('');
+    setIsLoading(true);
     
-//     try {
-//       // Dispatch register action
-//       await dispatch(register({ 
-//         name: formData.name,
-//         email: formData.email, 
-//         password: formData.password,
-//         phone: formData.phone
-//       })).unwrap();
+    try {
+      // Use Redux register thunk
+      const resultAction = await dispatch(register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirmpassword: formData.passwordConfirm,
+        phone: formData.phone
+      })).unwrap();
       
-//       // Redirect after successful registration
-//       router.push('/auth/login?registered=true');
-//     } catch (error) {
-//       setIsLoading(false);
-//       setErrorMessage(error || 'Registration failed. Please try again.');
-//     }
-//   };
+      console.log('Registration successful', resultAction);
+      
+      // Set registration success flag in Redux instead of localStorage
+      dispatch(setRegistrationSuccess(true));
+      
+      setIsLoading(false);
+      
+      // Redirect after successful registration
+      // router.push('/auth/login?registered=true');
+      console.log('Registration completed successfully');
+    } catch (error) {
+      setIsLoading(false);
+      setErrorMessage(typeof error === 'string' ? error : 'Registration failed. Please try again.');
+      console.error('Registration error:', error);
+    }
+  };
   
   return (
     <>
@@ -97,7 +108,7 @@ export default function Signup() {
             )}
             
             <form 
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
              className={styles.signupForm}>
               <div className={styles.formGroup}>
                 <label htmlFor="name">Full Name</label>

@@ -255,3 +255,24 @@
       font-size: 1rem;
     }
   }
+
+  .profileLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .profileLink:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* For desktop view, you might want to add a profile icon */
+  @media (min-width: 769px) {
+    .profileLink:before {
+      content: '\1F464'; /* Unicode character for user icon */
+      font-size: 1.2rem;
+    }
+  }

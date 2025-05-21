@@ -85,10 +85,24 @@ export default function Cart() {
   };
 
   const handleCheckout = () => {
-    // If user is authenticated, go to the payment page
-    // href="/auth/login"
-    router.push('/auth/login');
- 
+    // Get the auth token from localStorage
+    const token = localStorage.getItem('authToken');
+    console.log('token', token);
+    
+    // If user is authenticated (token exists), go to the payment page
+    // Otherwise redirect to login page
+    if (token) {
+      // User is authenticated, proceed to payment
+      // router.push('/checkout/payment');
+      console.log('token333',token)
+      router.push('/auth/login');
+
+    } else {
+      // User is not authenticated, redirect to login
+      // Store the current path to redirect back after login
+      // localStorage.setItem('redirectAfterLogin', '/checkout/payment');
+      router.push('/auth/login');
+    }
   };
   
   // Calculate tax and shipping based on totalAmount
@@ -152,11 +166,11 @@ export default function Cart() {
                 <button
                   onClick={handleCheckout}
                   className={styles.checkoutButton}>Proceed to Checkout</button>
-{/* <PaymentButton
+<PaymentButton
 name={'adnan'}
  email={'adnan@gmail.com'}
   phone={'8109257552'}
-/> */}
+/>
                 <div className={styles.paymentMethods}>
                   <p>We accept:</p>
                   <div className={styles.paymentIcons}>
