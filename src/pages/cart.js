@@ -2,10 +2,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Cart.module.css';
-import { addToCart, removeFromCart } from '../store/slices/cartSlice';
+import { addToCart, removeFromCart } from '../store/slices/cartSlice/cartSlice';
 import PaymentButton from '../components/PaymentButton'
 
 
@@ -16,16 +15,16 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
       <div className={styles.itemImage}>
         <img src={item.image} alt={item.name} />
       </div>
-      
+
       <div className={styles.itemDetails}>
         <h3>{item.name}</h3>
         <p className={styles.itemPrice}>${item.price.toFixed(2)}</p>
       </div>
-      
+
       <div className={styles.itemActions}>
         <div className={styles.quantityControl}>
-          <button 
-            className={styles.quantityButton} 
+          <button
+            className={styles.quantityButton}
             onClick={() => onQuantityChange(item.id, false)}
             disabled={item.quantity <= 1}
             aria-label="Decrease quantity"
@@ -33,20 +32,20 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
             -
           </button>
           <span className={styles.quantityValue}>{item.quantity}</span>
-          <button 
-            className={styles.quantityButton} 
+          <button
+            className={styles.quantityButton}
             onClick={() => onQuantityChange(item.id, true)}
             aria-label="Increase quantity"
           >
             +
           </button>
         </div>
-        
+
         <div className={styles.itemTotal}>
           ${item.totalPrice ? item.totalPrice.toFixed(2) : (item.price * item.quantity).toFixed(2)}
         </div>
-        
-        <button 
+
+        <button
           className={styles.removeButton}
           onClick={() => onRemove(item.id)}
           aria-label="Remove item"
@@ -64,7 +63,7 @@ export default function Cart() {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
   const totalAmount = useSelector(state => state.cart.totalAmount);
-  
+
   // Function to handle complete removal (regardless of quantity)
   const handleRemoveItem = (id) => {
     const item = cartItems.find(item => item.id === id);
@@ -72,7 +71,7 @@ export default function Cart() {
       dispatch(removeFromCart(id));
     }
   };
-  
+
   // Function to handle quantity changes
   const handleQuantityChange = (id, isIncrease) => {
     if (isIncrease) {
@@ -88,13 +87,13 @@ export default function Cart() {
     // Get the auth token from localStorage
     const token = localStorage.getItem('authToken');
     console.log('token', token);
-    
+
     // If user is authenticated (token exists), go to the payment page
     // Otherwise redirect to login page
     if (token) {
       // User is authenticated, proceed to payment
       // router.push('/checkout/payment');
-      console.log('token333',token)
+      console.log('token333', token)
       router.push('/auth/login');
 
     } else {
@@ -104,7 +103,7 @@ export default function Cart() {
       router.push('/auth/login');
     }
   };
-  
+
   // Calculate tax and shipping based on totalAmount
   const subtotal = totalAmount;
   const tax = subtotal * 0.1; // 10% tax
@@ -112,14 +111,14 @@ export default function Cart() {
   const total = subtotal + tax + shipping;
 
   return (
-    
+
     // <Link>
-      <>
+    <>
 
       <Head>
         <title>Your Cart | ElectroShop</title>
         <meta name="description" content="Review your cart items" />
-      </Head><Header /><div className={styles.circuitBackground}></div><main className={styles.cartPage}>
+      </Head><div className={styles.circuitBackground}></div><main className={styles.cartPage}>
         <div className="container">
           <div className={styles.pageHeader}>
             <h1>Your Shopping Cart</h1>
@@ -166,11 +165,11 @@ export default function Cart() {
                 <button
                   onClick={handleCheckout}
                   className={styles.checkoutButton}>Proceed to Checkout</button>
-<PaymentButton
-name={'adnan'}
- email={'adnan@gmail.com'}
-  phone={'8109257552'}
-/>
+                <PaymentButton
+                  name={'adnan'}
+                  email={'adnan@gmail.com'}
+                  phone={'8109257552'}
+                />
                 <div className={styles.paymentMethods}>
                   <p>We accept:</p>
                   <div className={styles.paymentIcons}>
@@ -192,7 +191,7 @@ name={'adnan'}
         </div>
       </main>
       <Footer />
-      </>
-    
+    </>
+
   );
 }

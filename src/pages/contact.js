@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Contact.module.css';
 
@@ -95,9 +94,7 @@ export default function Contact() {
         <meta name="description" content="Get in touch with our team" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
       </Head>
-      
-      <Header />
-      
+         
       <main className={styles.contactPage}>
         <div className={styles.container}>
           <motion.div 

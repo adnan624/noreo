@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../../store/slices/cartSlice';
+import { addToCart } from '../../store/slices/cartSlice/cartSlice';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Rating from '../../components/Rating';

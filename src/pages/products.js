@@ -8,7 +8,7 @@ import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
 import products from '@/data/products';
 import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
-import { getProductList } from '@/redux/productSlice/action';
+import { getProductList } from '@/store/slices/productSlice/action';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function Products() {

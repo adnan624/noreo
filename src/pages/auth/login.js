@@ -7,22 +7,22 @@ import { unwrapResult } from '@reduxjs/toolkit';
 
 // import { login } from '../store/slices/authSlice';
 import styles from '../../styles/login.module.css';
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 // Import Firebase auth
 import { auth } from '../../firebase/config';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { login, setRememberEmail, clearRememberEmail, setRegistrationSuccess  } from '@/store/slices/authSlice';
+import { login } from '@/store/slices/authSlice/action';
+import { clearRememberEmail, setRememberEmail } from '@/store/slices/authSlice/authSlice';
+
 
 export default function Login() {
-  const { registrationSuccess } = useSelector(state => state.user);
   const router = useRouter();
   const dispatch = useDispatch();
   const [loginMethod, setLoginMethod] = useState(''); // 'email' or 'phone'
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "rohan.singh87@example.com",
+    password: "SecurePass123!",
     phone: '',
     otp: ''
   });
@@ -35,13 +35,6 @@ export default function Login() {
   // Get the redirect URL from query params or default to homepage
   const redirectUrl = router.query.redirect || '/';
 
-  useEffect(() => {
-    if (registrationSuccess) {
-      setShowRegistrationMessage(true);
-      // Clear the flag after showing the message
-      dispatch(setRegistrationSuccess(false));
-    }
-  }, [registrationSuccess, dispatch]);
   
   // Check if user just registered
   useEffect(() => {
@@ -212,7 +205,7 @@ export default function Login() {
         <title>Login | ElectroShop</title>
         <meta name="description" content="Login to your account" />
       </Head>
-      <Header/>
+    
       <div className={styles.loginPage}>
         <div className={styles.loginContainer}>
           <div className={styles.loginFormContainer}>

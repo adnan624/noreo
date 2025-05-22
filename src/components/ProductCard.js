@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import styles from '../styles/ProductCard.module.css';
-import { addToCart, removeFromCart } from '../store/slices/cartSlice';
+import { addToCart, removeFromCart } from '../store/slices/cartSlice/cartSlice';
 import CartNotification from '../components/CartNotification';
 
 const ProductCard = ({ product }) => {

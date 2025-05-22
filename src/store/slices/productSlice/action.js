@@ -10,7 +10,7 @@ export const getProductList = createAsyncThunk(
       try {
         const response = await axios.get(
         //   `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_CLIENT_UUID}/ladderboard/${COMPETITION_UUID}`,
-        'http://localhost:3000/products',
+        'http://localhost:5000/products',
           {
             headers: {
               'Content-Type': 'application/json',

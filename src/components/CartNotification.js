@@ -1,6 +1,6 @@
 // components/CartNotification.js
 import { useSelector, useDispatch } from 'react-redux';
-import { hideCartNotification } from '../store/slices/cartSlice';
+import { hideCartNotification } from '../store/slices/cartSlice/cartSlice';
 import Link from 'next/link';
 import { FaShoppingCart } from 'react-icons/fa';
 import styles from '../styles/CartNotification.module.css';

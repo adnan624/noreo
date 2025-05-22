@@ -6,7 +6,7 @@ import Link from 'next/link';
 import styles from '../../styles/signup.module.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { register, setRegistrationSuccess } from '@/store/slices/authSlice';
+import { register } from '@/store/slices/authSlice/action';
 // import { register } from '../st  ore/slices/authSlice';
 
 export default function Signup() {
@@ -67,9 +67,8 @@ export default function Signup() {
       })).unwrap();
       
       console.log('Registration successful', resultAction);
-      
-      // Set registration success flag in Redux instead of localStorage
-      dispatch(setRegistrationSuccess(true));
+
+   router.push('/')
       
       setIsLoading(false);
       
@@ -89,7 +88,7 @@ export default function Signup() {
         <title>Create Account | Your App</title>
         <meta name="description" content="Create a new account" />
       </Head>
-      <Header/>
+     
       <div className={styles.signupPage}>
         <div className={styles.signupContainer}>
           <div className={styles.signupFormContainer}>

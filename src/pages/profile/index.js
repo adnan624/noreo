@@ -4,20 +4,21 @@ import Image from 'next/image';
 import styles from '../../styles/Profile.module.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { logoutAsync } from '@/store/slices/authSlice';
-import { useDispatch } from 'react-redux';
+import { logoutAsync } from '@/store/slices/authSlice/action';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-// Import your auth context if available
-// import { useAuth } from '../../context/AuthContext'; // Adjust the path based on your structure
+
 
 export default function Profile() {
-  // Use your authentication context if available
-  // const { user, logout } = useAuth();
+
 
   const dispatch = useDispatch()
   const router = useRouter();
+  const { isAuthenticated, user } = useSelector(state => state.auth);
+  console.log(user, 567890)
+
   const [userData, setUserData] = useState({
-    name: 'Rahul Sharma',
+    name: '',
     email: 'rahul.sharma@example.com',
     phone: '+91 9876543210',
     address: '123 Main Street, Vijay Nagar',
@@ -29,38 +30,49 @@ export default function Profile() {
   const redirectUrl = router.query.redirect || '/';
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState({...userData});
+  const [editedUser, setEditedUser] = useState({ ...userData });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // You could fetch user data from your API here
-    // Example:
-    // const fetchUserData = async () => {
-    //   try {
-    //     const response = await fetch('/api/user/profile');
-    //     const data = await response.json();
-    //     setUserData(data);
-    //     setEditedUser(data);
-    //     setIsLoading(false);
-    //   } catch (error) {
-    //     console.error('Error fetching user data:', error);
-    //     setIsLoading(false);
-    //   }
-    // };
-    // fetchUserData();
+    {
+      user && setUserData({
+        name: user?.username,
+        email: user?.email,
+        phone: user?.phoneNumber,
+        address: user?.address,
+        city: user?.city,
+        state: user?.state,
+        pincode: user?.pincode,
+        avatar: user?.photoUrl,
+      })
+    }
+    {
+      user && setEditedUser({
+        name: user?.username,
+        email: user?.email,
+        phone: user?.phoneNumber,
+        address: user?.address,
+        city: user?.city,
+        state: user?.state,
+        pincode: user?.pincode,
+        avatar: user?.photoUrl,
+      })
+    }
 
-    // For demonstration, using a timer instead
+  }, [])
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
   const handleLogout = async () => {
     try {
       // Dispatch the async logout action
-       dispatch(logoutAsync());
+      dispatch(logoutAsync());
       // Redirect to login page after successful logout
       router.push(redirectUrl);
     } catch (error) {
@@ -80,38 +92,20 @@ export default function Profile() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Save the edited user data
-    setUserData({...editedUser});
+    setUserData({ ...editedUser });
     setIsEditing(false);
 
-    // You would typically call an API here to update the user data
-    // Example:
-    // const updateUserData = async () => {
-    //   try {
-    //     const response = await fetch('/api/user/profile', {
-    //       method: 'PUT',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(editedUser),
-    //     });
-    //     const data = await response.json();
-    //     // Handle the response
-    //   } catch (error) {
-    //     console.error('Error updating user data:', error);
-    //   }
-    // };
-    // updateUserData();
+
   };
 
   const handleCancel = () => {
-    setEditedUser({...userData});
+    setEditedUser({ ...userData });
     setIsEditing(false);
   };
 
   if (isLoading) {
     return (
       <>
-        <Header />
         <div className={styles.loadingContainer}>
           <div className={styles.spinner}></div>
           <p>Loading your profile...</p>
@@ -123,13 +117,13 @@ export default function Profile() {
 
   return (
     <>
-      <Header />
+
       <div className={styles.profileContainer}>
         <div className={styles.profileHeader}>
           <h1 className={styles.profileTitle}>My Profile</h1>
           {!isEditing && (
-            <button 
-              className={styles.editButton} 
+            <button
+              className={styles.editButton}
               onClick={() => setIsEditing(true)}
             >
               Edit Profile
@@ -140,11 +134,11 @@ export default function Profile() {
         <div className={styles.profileContent}>
           <div className={styles.profileSidebar}>
             <div className={styles.avatarContainer}>
-              <Image 
-                src={userData.avatar} 
-                alt={userData.name} 
-                width={150} 
-                height={150} 
+              <Image
+                src={{ uri: userData.avatar }}
+                alt={userData.name}
+                width={150}
+                height={150}
                 className={styles.avatar}
               />
               {isEditing && (
@@ -153,7 +147,7 @@ export default function Profile() {
                 </button>
               )}
             </div>
-            
+
             <div className={styles.userNameCard}>
               <h2 className={styles.userName}>{userData.name}</h2>
               <p className={styles.userEmail}>{userData.email}</p>
@@ -181,20 +175,20 @@ export default function Profile() {
                 Payment Methods
               </a>
             </div>
-            <button 
-                type="Logout" 
-             
+            <button
+              type="Logout"
+
               onClick={handleLogout}
-              >
-               Logout
-              </button>
+            >
+              Logout
+            </button>
           </div>
 
           <div className={styles.profileDetails}>
             {isEditing ? (
               <form onSubmit={handleSubmit} className={styles.editForm}>
                 <h2 className={styles.sectionTitle}>Edit Personal Information</h2>
-                
+
                 <div className={styles.formGroup}>
                   <div className={styles.formField}>
                     <label className={styles.inputLabel}>Full Name</label>
@@ -207,7 +201,7 @@ export default function Profile() {
                       required
                     />
                   </div>
-                  
+
                   <div className={styles.formField}>
                     <label className={styles.inputLabel}>Email Address</label>
                     <input
@@ -220,7 +214,7 @@ export default function Profile() {
                     />
                   </div>
                 </div>
-                
+
                 <div className={styles.formGroup}>
                   <div className={styles.formField}>
                     <label className={styles.inputLabel}>Phone Number</label>
@@ -233,7 +227,7 @@ export default function Profile() {
                       required
                     />
                   </div>
-                  
+
                   <div className={styles.formField}>
                     <label className={styles.inputLabel}>Delivery Address</label>
                     <input
@@ -246,7 +240,7 @@ export default function Profile() {
                     />
                   </div>
                 </div>
-                
+
                 <div className={styles.formGroup}>
                   <div className={styles.formField}>
                     <label className={styles.inputLabel}>City</label>
@@ -259,7 +253,7 @@ export default function Profile() {
                       required
                     />
                   </div>
-                  
+
                   <div className={styles.formField}>
                     <label className={styles.inputLabel}>State</label>
                     <input
@@ -272,7 +266,7 @@ export default function Profile() {
                     />
                   </div>
                 </div>
-                
+
                 <div className={styles.formGroup}>
                   <div className={styles.formField}>
                     <label className={styles.inputLabel}>Pincode</label>
@@ -285,18 +279,18 @@ export default function Profile() {
                       required
                     />
                   </div>
-                  
+
                   <div className={styles.formField}>
                     {/* Empty field for layout balance */}
                   </div>
                 </div>
-                
+
                 <div className={styles.formActions}>
                   <button type="submit" className={styles.saveButton}>
                     Save Changes
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className={styles.cancelButton}
                     onClick={handleCancel}
                   >
@@ -307,43 +301,43 @@ export default function Profile() {
             ) : (
               <div className={styles.userInfoDisplay}>
                 <h2 className={styles.sectionTitle}>Personal Information</h2>
-                
+
                 <div className={styles.infoGroup}>
                   <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>Full Name</span>
                     <span className={styles.infoValue}>{userData.name}</span>
                   </div>
-                  
+
                   <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>Email Address</span>
                     <span className={styles.infoValue}>{userData.email}</span>
                   </div>
                 </div>
-                
+
                 <div className={styles.infoGroup}>
                   <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>Phone Number</span>
                     <span className={styles.infoValue}>{userData.phone}</span>
                   </div>
-                  
+
                   <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>Delivery Address</span>
                     <span className={styles.infoValue}>{userData.address}</span>
                   </div>
                 </div>
-                
+
                 <div className={styles.infoGroup}>
                   <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>City</span>
                     <span className={styles.infoValue}>{userData.city}</span>
                   </div>
-                  
+
                   <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>State</span>
                     <span className={styles.infoValue}>{userData.state}</span>
                   </div>
                 </div>
-                
+
                 <div className={styles.infoGroup}>
                   <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>Pincode</span>
@@ -363,7 +357,7 @@ export default function Profile() {
                     <h2 className={styles.sectionTitle}>Recent Orders</h2>
                     <a href="/orders" className={styles.viewAllLink}>View All</a>
                   </div>
-                  
+
                   <div className={styles.emptyOrdersMessage}>
                     <span className={styles.emptyIcon}>🛍️</span>
                     <p>You haven't placed any orders yet.</p>
