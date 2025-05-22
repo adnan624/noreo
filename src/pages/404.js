@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/404.module.css';
 
@@ -11,9 +10,6 @@ export default function NotFound() {
         <title>Page Not Found | ElectroShop</title>
         <meta name="description" content="The page you're looking for doesn't exist" />
       </Head>
-      
-      <Header />
-      
       <main className={styles.notFound}>
         <div className="container">
           <div className={styles.content}>

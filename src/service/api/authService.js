@@ -1,9 +1,7 @@
-// api/authService.js
 import api from './axiosConfig';
 
-// Auth services using the axios instance with interceptors
 const authService = {
-  // Register a new user
+  
   register: async (userData) => {
     try {
       const response = await api.post('/auth/signup', {
@@ -14,48 +12,56 @@ const authService = {
         phoneNumber: userData.phone,
         address: userData.address || ''
       });
-      
-      // Return the response data including token and user info
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Registration failed';
     }
   },
   
-  // Login user
   login: async (credentials) => {
     try {
       const response = await api.post('/auth/login', {
         email: credentials.email,
         password: credentials.password
       });
-      
-      // Return the response data
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Invalid email or password';
     }
   },
   
-  // Logout user
   logout: async () => {
     try {
-      // Optionally, you could call a logout endpoint here if your API has one
-      // const response = await api.post('/auth/logout');
-      
       return { success: true };
     } catch (error) {
       throw error.response?.data?.message || 'Logout failed';
     }
   },
   
-  // Get current user profile
   getCurrentUser: async () => {
     try {
       const response = await api.get('/auth/profile');
+
+      console.log(response , 57689)
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || 'Failed to get user profile';
+    }
+  },
+
+  updateProfile: async (userData) => {
+    try {
+      const response = await api.put(`/auth/profile/${userData._id}`, {
+        username: userData.name,
+        phoneNumber: userData.phone,
+        address: userData.address,
+        city: userData.city,
+        state: userData.state,
+        pincode: userData.pincode,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Failed to update user profile';
     }
   }
 };

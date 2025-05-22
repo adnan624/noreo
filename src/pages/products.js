@@ -160,7 +160,6 @@ console.log('gokuuu',data?.data?.products)
           <meta name="description" content="Browse our wide selection of electrical appliances" />
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         </Head>
-        <Header />
         <main className={styles.productsPage}>
           <div className={styles.circuitBackground}></div>
           <div className={styles.container}>
@@ -257,7 +256,6 @@ console.log('gokuuu',data?.data?.products)
           : "Browse our wide selection of electrical appliances"} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
-      <Header />
       <main className={styles.productsPage} ref={mainRef}>
         {/* Animated Circuit Background */}
         <div className={styles.circuitBackground}></div>

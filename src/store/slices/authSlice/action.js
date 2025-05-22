@@ -35,6 +35,34 @@ export const login = createAsyncThunk(
     }
   }
 );
+// Udpate  Profile thunk
+export const updateUserProfile = createAsyncThunk(
+  'auth/updateUserProfile',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await authService.updateProfile(userData);
+      // Store token safely
+    
+      return response;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+export const getUserProfile = createAsyncThunk(
+  'auth/getUserProfile',
+  async (_ ,{ rejectWithValue }) => {
+    try {
+      console.log("getUSerProfile")
+      const response = await authService.getCurrentUser();
+      // Store token safely
+    
+      return response;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
 
 // Logout thunk
 export const logoutAsync = createAsyncThunk(

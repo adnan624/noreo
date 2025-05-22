@@ -145,7 +145,6 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <>
-        <Header />
         <div className={styles.loadingContainer}>
           <div className={styles.spinner}></div>
           <p>Loading product...</p>
@@ -163,7 +162,6 @@ export default function ProductDetail() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       
-      <Header />
       
       <main className={styles.productPage}>
         {/* Breadcrumb Navigation */}

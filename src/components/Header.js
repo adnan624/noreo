@@ -72,9 +72,9 @@ const Header = () => {
         <nav className={`${styles.nav} ${isMenuOpen ? styles.open : ''}`}>
           <ul className={styles.navList}>
             <li><Link href="/" onClick={closeMenu}>Home</Link></li>
-            <li><Link href="/products" onClick={closeMenu}>Products</Link></li>
-            <li><Link href="/about" onClick={closeMenu}>About</Link></li>
-            <li><Link href="/contact" onClick={closeMenu}>Contact</Link></li>
+            {/* <li><Link href="/products" onClick={closeMenu}>Products</Link></li> */}
+            {/* <li><Link href="/about" onClick={closeMenu}>About</Link></li>
+            <li><Link href="/contact" onClick={closeMenu}>Contact</Link></li> */}
             <li>
               <Link href="/cart" className={styles.cartLink} onClick={closeMenu}>
                 Cart <span className={styles.cartCount}>{totalQuantity}</span>

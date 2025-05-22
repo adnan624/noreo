@@ -2,22 +2,20 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 import styles from '../../styles/Profile.module.css';
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { logoutAsync } from '@/store/slices/authSlice/action';
+import { getUserProfile, logoutAsync, updateUserProfile } from '../../store/slices/authSlice/action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-
+import authService from '../../service/api/authService';
+import { setUser } from '@/store/slices/authSlice/authSlice';
 
 export default function Profile() {
-
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const router = useRouter();
   const { isAuthenticated, user } = useSelector(state => state.auth);
-  console.log(user, 567890)
 
   const [userData, setUserData] = useState({
+    _id: '',
     name: '',
     email: 'rahul.sharma@example.com',
     phone: '+91 9876543210',
@@ -25,17 +23,20 @@ export default function Profile() {
     city: 'Indore',
     state: 'Madhya Pradesh',
     pincode: '452010',
-    avatar: '/api/placeholder/150/150',
+    avatar: '/default-avatar.png',
   });
   const redirectUrl = router.query.redirect || '/';
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({ ...userData });
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    {
-      user && setUserData({
+    if (user) {
+      setUserData({
+        _id: user._id,
         name: user?.username,
         email: user?.email,
         phone: user?.phoneNumber,
@@ -43,11 +44,10 @@ export default function Profile() {
         city: user?.city,
         state: user?.state,
         pincode: user?.pincode,
-        avatar: user?.photoUrl,
-      })
-    }
-    {
-      user && setEditedUser({
+        avatar: user?.photoUrl || '/default-avatar.png',
+      });
+      setEditedUser({
+        _id: user._id,
         name: user?.username,
         email: user?.email,
         phone: user?.phoneNumber,
@@ -55,10 +55,13 @@ export default function Profile() {
         city: user?.city,
         state: user?.state,
         pincode: user?.pincode,
-        avatar: user?.photoUrl,
-      })
+        avatar: user?.photoUrl || '/default-avatar.png',
+      });
     }
+  }, [user]);
 
+  useEffect(() => {
+    dispatch(getUserProfile())
   }, [])
 
   useEffect(() => {
@@ -71,13 +74,10 @@ export default function Profile() {
 
   const handleLogout = async () => {
     try {
-      // Dispatch the async logout action
       dispatch(logoutAsync());
-      // Redirect to login page after successful logout
       router.push(redirectUrl);
     } catch (error) {
       console.error('Logout failed:', error);
-      // You could add some error handling UI here
     }
   };
 
@@ -89,18 +89,43 @@ export default function Profile() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    
+    if (file) {
+      setSelectedImage(file);
+      setEditedUser(prev => ({
+        ...prev,
+        avatar: URL.createObjectURL(file)
+      }));
+    }
+
+    console.log(editedUser , 76890)
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Save the edited user data
-    setUserData({ ...editedUser });
-    setIsEditing(false);
+    setIsUpdating(true);
+    try {
+      const resultAction = await dispatch(updateUserProfile(editedUser)).unwrap();
 
+      if (resultAction.success) {
+        dispatch(getUserProfile())
+        setUserData(resultAction);
+        setIsEditing(false);
+      }
 
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const handleCancel = () => {
     setEditedUser({ ...userData });
     setIsEditing(false);
+    setSelectedImage(null);
   };
 
   if (isLoading) {
@@ -117,15 +142,11 @@ export default function Profile() {
 
   return (
     <>
-
       <div className={styles.profileContainer}>
         <div className={styles.profileHeader}>
           <h1 className={styles.profileTitle}>My Profile</h1>
           {!isEditing && (
-            <button
-              className={styles.editButton}
-              onClick={() => setIsEditing(true)}
-            >
+            <button className={styles.editButton} onClick={() => setIsEditing(true)}>
               Edit Profile
             </button>
           )}
@@ -135,16 +156,25 @@ export default function Profile() {
           <div className={styles.profileSidebar}>
             <div className={styles.avatarContainer}>
               <Image
-                src={{ uri: userData.avatar }}
+                src={editedUser.avatar || userData.avatar}
                 alt={userData.name}
                 width={150}
                 height={150}
                 className={styles.avatar}
               />
               {isEditing && (
-                <button className={styles.changePhotoButton}>
-                  Change Photo
-                </button>
+                <>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className={styles.fileInput}
+                    disabled={isUpdating}
+                  />
+                  <button className={styles.changePhotoButton} disabled={isUpdating}>
+                    Change Photo
+                  </button>
+                </>
               )}
             </div>
 
@@ -175,11 +205,7 @@ export default function Profile() {
                 Payment Methods
               </a>
             </div>
-            <button
-              type="Logout"
-
-              onClick={handleLogout}
-            >
+            <button type="button" onClick={handleLogout} disabled={isUpdating}>
               Logout
             </button>
           </div>
@@ -199,18 +225,19 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className={styles.inputField}
                       required
+                      disabled={isUpdating}
                     />
                   </div>
-
                   <div className={styles.formField}>
-                    <label className={styles.inputLabel}>Email Address</label>
+                    <label className={styles.inputLabel}>Pincode</label>
                     <input
-                      type="email"
-                      name="email"
-                      value={editedUser.email}
+                      type="text"
+                      name="pincode"
+                      value={editedUser.pincode}
                       onChange={handleInputChange}
                       className={styles.inputField}
                       required
+                      disabled={isUpdating}
                     />
                   </div>
                 </div>
@@ -225,6 +252,7 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className={styles.inputField}
                       required
+                      disabled={isUpdating}
                     />
                   </div>
 
@@ -237,6 +265,7 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className={styles.inputField}
                       required
+                      disabled={isUpdating}
                     />
                   </div>
                 </div>
@@ -251,6 +280,7 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className={styles.inputField}
                       required
+                      disabled={isUpdating}
                     />
                   </div>
 
@@ -263,36 +293,20 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className={styles.inputField}
                       required
+                      disabled={isUpdating}
                     />
-                  </div>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <div className={styles.formField}>
-                    <label className={styles.inputLabel}>Pincode</label>
-                    <input
-                      type="text"
-                      name="pincode"
-                      value={editedUser.pincode}
-                      onChange={handleInputChange}
-                      className={styles.inputField}
-                      required
-                    />
-                  </div>
-
-                  <div className={styles.formField}>
-                    {/* Empty field for layout balance */}
                   </div>
                 </div>
 
                 <div className={styles.formActions}>
-                  <button type="submit" className={styles.saveButton}>
-                    Save Changes
+                  <button type="submit" className={styles.saveButton} disabled={isUpdating}>
+                    {isUpdating ? 'Updating...' : 'Save Changes'}
                   </button>
                   <button
                     type="button"
                     className={styles.cancelButton}
                     onClick={handleCancel}
+                    disabled={isUpdating}
                   >
                     Cancel
                   </button>

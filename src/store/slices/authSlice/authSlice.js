@@ -1,12 +1,13 @@
 // store/slices/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { register, login, logoutAsync } from './action';
+import { register, login, logoutAsync,updateUserProfile, getUserProfile } from './action';
 
 const initialState = {
   user: null,
   isAuthenticated: false,
   loading: false,
   error: null,
+  token:null,
   registrationSuccess: false,
   rememberedEmail: null,
 };
@@ -58,6 +59,7 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
+        state.token = action.payload.token;
         state.isAuthenticated = true;
       })
       .addCase(register.rejected, (state, action) => {
@@ -73,12 +75,44 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
+        state.token = action.payload.token;
         state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+
+      
+      // Udpatre
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.data;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Udpatre
+      .addCase(getUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(getUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+
 
       // Logout
       .addCase(logoutAsync.fulfilled, (state) => {

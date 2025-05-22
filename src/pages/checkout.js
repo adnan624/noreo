@@ -75,7 +75,6 @@ export default function Checkout() {
         <meta name="description" content="Complete your purchase" />
       </Head>
       
-      <Header />
       
       <main className={styles.checkoutPage}>
         <div className="container">

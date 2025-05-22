@@ -22,6 +22,7 @@ api.interceptors.request.use(
   (config) => {
     // Get token from localStorage (this remains as we need it for auth headers)
     const token = localStorage.getItem('authToken');
+    console.log(token , 7689)
     
     // If token exists, add it to the headers
     if (token) {
