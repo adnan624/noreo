@@ -24,6 +24,106 @@ export default function Profile() {
     pincode: '452010',
     avatar: '/default-avatar.png',
   });
+
+  // Sample recent orders data
+  const [recentOrders] = useState([
+    {
+      id: 'ORD001',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Premium Wireless Headphones',
+      price: '₹2,999',
+      status: 'Delivered',
+      orderDate: '2025-05-20'
+    },
+    {
+      id: 'ORD002',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Smart Fitness Watch',
+      price: '₹4,499',
+      status: 'Shipped',
+      orderDate: '2025-05-22'
+    },
+    {
+      id: 'ORD003',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Bluetooth Speaker',
+      price: '₹1,799',
+      status: 'Processing',
+      orderDate: '2025-05-23'
+    }
+  ]);
+
+  // All orders data (including more orders for the full view)
+  const [allOrders] = useState([
+    {
+      id: 'ORD001',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Premium Wireless Headphones',
+      price: '₹2,999',
+      status: 'Delivered',
+      orderDate: '2025-05-20'
+    },
+    {
+      id: 'ORD002',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Smart Fitness Watch',
+      price: '₹4,499',
+      status: 'Shipped',
+      orderDate: '2025-05-22'
+    },
+    {
+      id: 'ORD003',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Bluetooth Speaker',
+      price: '₹1,799',
+      status: 'Processing',
+      orderDate: '2025-05-23'
+    },
+    {
+      id: 'ORD004',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Gaming Keyboard',
+      price: '₹3,299',
+      status: 'Delivered',
+      orderDate: '2025-05-18'
+    },
+    {
+      id: 'ORD005',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Wireless Mouse',
+      price: '₹899',
+      status: 'Delivered',
+      orderDate: '2025-05-15'
+    },
+    {
+      id: 'ORD006',
+      productImage: '/api/placeholder/100/100',
+      productName: 'USB-C Hub',
+      price: '₹1,299',
+      status: 'Delivered',
+      orderDate: '2025-05-12'
+    },
+    {
+      id: 'ORD007',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Phone Case',
+      price: '₹599',
+      status: 'Delivered',
+      orderDate: '2025-05-10'
+    },
+    {
+      id: 'ORD008',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Power Bank',
+      price: '₹1,999',
+      status: 'Cancelled',
+      orderDate: '2025-05-08'
+    }
+  ]);
+
+  // State to toggle between profile view and all orders view
+  const [showAllOrders, setShowAllOrders] = useState(false);
+
   const redirectUrl = router.query.redirect || '/';
 
   const [isEditing, setIsEditing] = useState(false);
@@ -140,6 +240,36 @@ export default function Profile() {
     setShowPasswordModal(false);
   };
 
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case 'delivered':
+        return '#10b981';
+      case 'shipped':
+        return '#3b82f6';
+      case 'processing':
+        return '#f59e0b';
+      case 'cancelled':
+        return '#ef4444';
+      default:
+        return '#64748b';
+    }
+  };
+
+  const handleViewAllOrders = () => {
+    setShowAllOrders(true);
+    // Scroll to top when viewing all orders
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToProfile = () => {
+    setShowAllOrders(false);
+  };
+
+  const handlePersonalInfoClick = (e) => {
+    e.preventDefault();
+    setShowAllOrders(false);
+  };
+
   if (isLoading) {
     return (
       <>
@@ -160,7 +290,7 @@ export default function Profile() {
         <div className={styles.profileInner}>
           <div className={styles.profileHeader}>
             <h1 className={styles.profileTitle}>My Profile</h1>
-            {!isEditing && (
+            {!isEditing && !showAllOrders && (
               <button className={styles.editButton} onClick={() => setIsEditing(true)}>
                 ✨ Edit Profile
               </button>
@@ -196,14 +326,21 @@ export default function Profile() {
               </div>
 
               <div className={styles.sidebarLinks}>
-                <a href="#" className={`${styles.sidebarLink} ${styles.activeLink}`}>
+                <a 
+                  href="#" 
+                  onClick={handlePersonalInfoClick}
+                  className={`${styles.sidebarLink} ${!showAllOrders ? styles.activeLink : ''}`}
+                >
                   <span className={styles.linkIcon}>👤</span>
                   Personal Info
                 </a>
-                <a href="/orders" className={styles.sidebarLink}>
+                <button 
+                  onClick={handleViewAllOrders}
+                  className={`${styles.sidebarLink} ${showAllOrders ? styles.activeLink : ''}`}
+                >
                   <span className={styles.linkIcon}>📦</span>
                   My Orders
-                </a>
+                </button>
                 <a href="/wishlist" className={styles.sidebarLink}>
                   <span className={styles.linkIcon}>❤️</span>
                   Wishlist
@@ -229,7 +366,53 @@ export default function Profile() {
             </div>
 
             <div className={styles.profileDetails}>
-              {isEditing ? (
+              {showAllOrders ? (
+                // All Orders View
+                <div className={styles.allOrdersView}>
+                  <div className={styles.allOrdersHeader}>
+                    <button 
+                      onClick={handleBackToProfile}
+                      className={styles.backButton}
+                    >
+                      ← Back to Profile
+                    </button>
+                    <h2 className={styles.sectionTitle}>All Orders ({allOrders.length})</h2>
+                  </div>
+
+                  <div className={styles.ordersGrid}>
+                    {allOrders.map((order) => (
+                      <div key={order.id} className={styles.orderCard}>
+                        <div className={styles.orderImageContainer}>
+                          <Image
+                            src={order.productImage}
+                            alt={order.productName}
+                            width={80}
+                            height={80}
+                            className={styles.orderImage}
+                          />
+                        </div>
+                        <div className={styles.orderInfo}>
+                          <div className={styles.orderProductName}>{order.productName}</div>
+                          <div className={styles.orderPrice}>{order.price}</div>
+                          <div 
+                            className={styles.orderStatus}
+                            style={{ color: getStatusColor(order.status) }}
+                          >
+                            {order.status}
+                          </div>
+                          <div className={styles.orderDate}>
+                            Ordered on {new Date(order.orderDate).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric'
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : isEditing ? (
                 <form onSubmit={handleSubmit} className={styles.editForm}>
                   <h2 className={styles.sectionTitle}>Edit Personal Information</h2>
 
@@ -396,14 +579,46 @@ export default function Profile() {
                   <div className={styles.recentOrdersSection}>
                     <div className={styles.sectionHeader}>
                       <h2 className={styles.sectionTitle}>Recent Orders</h2>
-                      <a href="/orders" className={styles.viewAllLink}>View All →</a>
+                      <button 
+                        onClick={handleViewAllOrders}
+                        className={styles.viewAllLink}
+                      >
+                        View All →
+                      </button>
                     </div>
 
-                    <div className={styles.emptyOrdersMessage}>
-                      <span className={styles.emptyIcon}>🛍️</span>
-                      <p>You haven't placed any orders yet.</p>
-                      <a href="/products" className={styles.shopNowButton}>🛒 Shop Now</a>
-                    </div>
+                    {recentOrders.length > 0 ? (
+                      <div className={styles.ordersGrid}>
+                        {recentOrders.map((order) => (
+                          <div key={order.id} className={styles.orderCard}>
+                            <div className={styles.orderImageContainer}>
+                              <Image
+                                src={order.productImage}
+                                alt={order.productName}
+                                width={80}
+                                height={80}
+                                className={styles.orderImage}
+                              />
+                            </div>
+                            <div className={styles.orderInfo}>
+                              <div className={styles.orderPrice}>{order.price}</div>
+                              <div 
+                                className={styles.orderStatus}
+                                style={{ color: getStatusColor(order.status) }}
+                              >
+                                {order.status}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={styles.emptyOrdersMessage}>
+                        <span className={styles.emptyIcon}>🛍️</span>
+                        <p>You haven't placed any orders yet.</p>
+                        <a href="/products" className={styles.shopNowButton}>🛒 Shop Now</a>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
