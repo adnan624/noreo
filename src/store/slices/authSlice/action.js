@@ -38,9 +38,9 @@ export const login = createAsyncThunk(
 // Udpate  Profile thunk
 export const updateUserProfile = createAsyncThunk(
   'auth/updateUserProfile',
-  async (userData, { rejectWithValue }) => {
+  async ({ userId, formData }, { rejectWithValue }) => {
     try {
-      const response = await authService.updateProfile(userData);
+      const response = await authService.updateProfile(userId, formData);
       // Store token safely
     
       return response;

@@ -49,15 +49,12 @@ const authService = {
     }
   },
 
-  updateProfile: async (userData) => {
+  updateProfile: async (userId, formData) => {
     try {
-      const response = await api.put(`/auth/profile/${userData._id}`, {
-        username: userData.name,
-        phoneNumber: userData.phone,
-        address: userData.address,
-        city: userData.city,
-        state: userData.state,
-        pincode: userData.pincode,
+      const response = await api.put(`/auth/profile/${userId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
       return response.data;
     } catch (error) {

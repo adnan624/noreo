@@ -8,6 +8,8 @@ import cartReducer from './slices/cartSlice/cartSlice';
 import productListReducer from './slices/productSlice/productListSlice';
 import authReducer from './slices/authSlice/authSlice';
 
+import { injectStore } from '../service/api/axiosConfig.js';
+
 const rootReducer = combineReducers({
   cart: cartReducer,
   products: productListReducer,
@@ -27,6 +29,8 @@ const makeStore = () => {
     reducer: persistedReducer,
     devTools: process.env.NODE_ENV !== 'production',
   });
+
+  injectStore(store);
 
   store.__persistor = persistStore(store); // Nasty hack for next-redux-wrapper
 

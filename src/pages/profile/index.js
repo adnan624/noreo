@@ -6,8 +6,6 @@ import Footer from '@/components/Footer';
 import { getUserProfile, logoutAsync, updateUserProfile } from '../../store/slices/authSlice/action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import authService from '../../service/api/authService';
-import { setUser } from '@/store/slices/authSlice/authSlice';
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -61,10 +59,6 @@ export default function Profile() {
   }, [user]);
 
   useEffect(() => {
-    dispatch(getUserProfile())
-  }, [])
-
-  useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -91,7 +85,6 @@ export default function Profile() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    
     if (file) {
       setSelectedImage(file);
       setEditedUser(prev => ({
@@ -99,22 +92,33 @@ export default function Profile() {
         avatar: URL.createObjectURL(file)
       }));
     }
-
-    console.log(editedUser , 76890)
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
     try {
-      const resultAction = await dispatch(updateUserProfile(editedUser)).unwrap();
-
-      if (resultAction.success) {
-        dispatch(getUserProfile())
-        setUserData(resultAction);
-        setIsEditing(false);
+      const formData = new FormData();
+      formData.append('username', editedUser.name);
+      formData.append('phoneNumber', editedUser.phone);
+      formData.append('address', editedUser.address);
+      formData.append('city', editedUser.city);
+      formData.append('state', editedUser.state);
+      formData.append('pincode', editedUser.pincode);
+      if (selectedImage) {
+        formData.append('avatar', selectedImage);
       }
 
+      const resultAction = await dispatch(updateUserProfile({ userId: editedUser._id, formData }));
+
+      if (updateUserProfile.fulfilled.match(resultAction)) {
+        dispatch(getUserProfile());
+        setUserData(resultAction.payload);
+        setIsEditing(false);
+        setSelectedImage(null);
+      } else {
+        console.error('Failed to update profile:', resultAction.payload);
+      }
     } catch (error) {
       console.error('Failed to update profile:', error);
     } finally {
@@ -163,7 +167,7 @@ export default function Profile() {
                 className={styles.avatar}
               />
               {isEditing && (
-                <>
+                <div style={{marginTop:20}}>
                   <input
                     type="file"
                     accept="image/*"
@@ -171,10 +175,8 @@ export default function Profile() {
                     className={styles.fileInput}
                     disabled={isUpdating}
                   />
-                  <button className={styles.changePhotoButton} disabled={isUpdating}>
-                    Change Photo
-                  </button>
-                </>
+                
+                </div>
               )}
             </div>
 
@@ -262,34 +264,6 @@ export default function Profile() {
                       type="text"
                       name="address"
                       value={editedUser.address}
-                      onChange={handleInputChange}
-                      className={styles.inputField}
-                      required
-                      disabled={isUpdating}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <div className={styles.formField}>
-                    <label className={styles.inputLabel}>City</label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={editedUser.city}
-                      onChange={handleInputChange}
-                      className={styles.inputField}
-                      required
-                      disabled={isUpdating}
-                    />
-                  </div>
-
-                  <div className={styles.formField}>
-                    <label className={styles.inputLabel}>State</label>
-                    <input
-                      type="text"
-                      name="state"
-                      value={editedUser.state}
                       onChange={handleInputChange}
                       className={styles.inputField}
                       required
