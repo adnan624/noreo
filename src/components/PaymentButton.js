@@ -10,7 +10,7 @@ export default function PaymentButton({ amount, name, email, phone }) {
     
     try {
       // Create order on server
-      const response = await fetch('http://localhost:3000/api/payment/create-order', {
+      const response = await fetch('http://localhost:3001/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
