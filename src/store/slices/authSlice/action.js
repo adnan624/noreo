@@ -64,6 +64,19 @@ export const getUserProfile = createAsyncThunk(
   }
 );
 
+// Change Password thunk
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async (passwordData, { rejectWithValue }) => {
+    try {
+      const response = await authService.changePassword(passwordData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
 // Logout thunk
 export const logoutAsync = createAsyncThunk(
   'auth/logout',
@@ -79,3 +92,5 @@ export const logoutAsync = createAsyncThunk(
     }
   }
 );
+
+

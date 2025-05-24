@@ -60,7 +60,17 @@ const authService = {
     } catch (error) {
       throw error.response?.data?.message || 'Failed to update user profile';
     }
+  },
+
+  changePassword: async (passwordData) => {
+    try {
+      const response = await api.post('/auth/change-password', passwordData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Failed to change password';
+    }
   }
 };
+
 
 export default authService;

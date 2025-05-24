@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import styles from '../../styles/Profile.module.css';
 import Footer from '@/components/Footer';
+import ChangePasswordModal from '../../components/profile/changePasswordModal';
 import { getUserProfile, logoutAsync, updateUserProfile } from '../../store/slices/authSlice/action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -31,21 +32,8 @@ export default function Profile() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Password change modal states
+  // Password change modal state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false
-  });
-  const [passwordError, setPasswordError] = useState('');
-  const [passwordSuccess, setPasswordSuccess] = useState('');
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -148,86 +136,8 @@ export default function Profile() {
     setSelectedImage(null);
   };
 
-  // Password change handlers
-  const handlePasswordInputChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear errors when user starts typing
-    if (passwordError) setPasswordError('');
-    if (passwordSuccess) setPasswordSuccess('');
-  };
-
-  const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({
-      ...prev,
-      [field]: !prev[field]
-    }));
-  };
-
-  const validatePasswords = () => {
-    if (!passwordData.currentPassword) {
-      setPasswordError('Current password is required');
-      return false;
-    }
-    if (!passwordData.newPassword) {
-      setPasswordError('New password is required');
-      return false;
-    }
-    if (passwordData.newPassword.length < 6) {
-      setPasswordError('New password must be at least 6 characters long');
-      return false;
-    }
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordError('New passwords do not match');
-      return false;
-    }
-    if (passwordData.currentPassword === passwordData.newPassword) {
-      setPasswordError('New password must be different from current password');
-      return false;
-    }
-    return true;
-  };
-
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    if (!validatePasswords()) return;
-
-    setIsChangingPassword(true);
-    setPasswordError('');
-    setPasswordSuccess('');
-
-    // try {
-    //   const resultAction = await dispatch(changePassword({
-    //     currentPassword: passwordData.currentPassword,
-    //     newPassword: passwordData.newPassword
-    //   }));
-
-    //   if (changePassword.fulfilled.match(resultAction)) {
-    //     setPasswordSuccess('Password changed successfully!');
-    //     setTimeout(() => {
-    //       setShowPasswordModal(false);
-    //       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    //       setPasswordSuccess('');
-    //     }, 2000);
-    //   } else {
-    //     setPasswordError(resultAction.payload?.message || 'Failed to change password');
-    //   }
-    // } catch (error) {
-    //   setPasswordError('An error occurred while changing password');
-    // } finally {
-    //   setIsChangingPassword(false);
-    // }
-  };
-
   const handlePasswordModalClose = () => {
     setShowPasswordModal(false);
-    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    setPasswordError('');
-    setPasswordSuccess('');
-    setShowPasswords({ current: false, new: false, confirm: false });
   };
 
   if (isLoading) {
@@ -503,129 +413,11 @@ export default function Profile() {
       </div>
       </div>
 
-      {/* Password Change Modal */}
-      {showPasswordModal && (
-        <div className={styles.modalOverlay} onClick={handlePasswordModalClose}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>Change Password</h2>
-              <button 
-                className={styles.closeButton}
-                onClick={handlePasswordModalClose}
-                type="button"
-              >
-                ×
-              </button>
-            </div>
-
-            <form onSubmit={handlePasswordSubmit} className={styles.passwordForm}>
-              <div className={styles.formField}>
-                <label className={styles.inputLabel}>Current Password</label>
-                <div className={styles.passwordField}>
-                  <input
-                    type={showPasswords.current ? "text" : "password"}
-                    name="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordInputChange}
-                    className={styles.passwordInput}
-                    required
-                    disabled={isChangingPassword}
-                    placeholder="Enter your current password"
-                  />
-                  <button
-                    type="button"
-                    className={styles.togglePassword}
-                    onClick={() => togglePasswordVisibility('current')}
-                    disabled={isChangingPassword}
-                  >
-                    {showPasswords.current ? '🙈' : '👁️'}
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.formField}>
-                <label className={styles.inputLabel}>New Password</label>
-                <div className={styles.passwordField}>
-                  <input
-                    type={showPasswords.new ? "text" : "password"}
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordInputChange}
-                    className={styles.passwordInput}
-                    required
-                    disabled={isChangingPassword}
-                    placeholder="Enter your new password"
-                    minLength="6"
-                  />
-                  <button
-                    type="button"
-                    className={styles.togglePassword}
-                    onClick={() => togglePasswordVisibility('new')}
-                    disabled={isChangingPassword}
-                  >
-                    {showPasswords.new ? '🙈' : '👁️'}
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.formField}>
-                <label className={styles.inputLabel}>Confirm New Password</label>
-                <div className={styles.passwordField}>
-                  <input
-                    type={showPasswords.confirm ? "text" : "password"}
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordInputChange}
-                    className={styles.passwordInput}
-                    required
-                    disabled={isChangingPassword}
-                    placeholder="Confirm your new password"
-                    minLength="6"
-                  />
-                  <button
-                    type="button"
-                    className={styles.togglePassword}
-                    onClick={() => togglePasswordVisibility('confirm')}
-                    disabled={isChangingPassword}
-                  >
-                    {showPasswords.confirm ? '🙈' : '👁️'}
-                  </button>
-                </div>
-              </div>
-
-              {passwordError && (
-                <div className={styles.errorMessage}>
-                  ❌ {passwordError}
-                </div>
-              )}
-
-              {passwordSuccess && (
-                <div className={styles.successMessage}>
-                  ✅ {passwordSuccess}
-                </div>
-              )}
-
-              <div className={styles.modalActions}>
-                <button 
-                  type="submit" 
-                  className={styles.submitButton}
-                  disabled={isChangingPassword}
-                >
-                  {isChangingPassword ? '🔄 Changing...' : '🔐 Change Password'}
-                </button>
-                <button
-                  type="button"
-                  className={styles.cancelModalButton}
-                  onClick={handlePasswordModalClose}
-                  disabled={isChangingPassword}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Change Password Modal */}
+      <ChangePasswordModal 
+        isOpen={showPasswordModal}
+        onClose={handlePasswordModalClose}
+      />
 
       <Footer />
     </>
