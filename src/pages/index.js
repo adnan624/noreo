@@ -15,7 +15,7 @@ export default function Home() {
   const searchBarRef = useRef(null);
   const searchBarContainerRef = useRef(null);
 
-  const featuredProducts = products.slice(0, 10);
+  const featuredProducts = products.slice(0, 12);
   const onSaleProducts = products.slice(2, 6);
 
   // Handle search input click - navigate to products page

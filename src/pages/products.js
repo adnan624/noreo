@@ -10,40 +10,87 @@ import products from '@/data/products';
 import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
 import { getProductList } from '@/store/slices/productSlice/action';
 import { useDispatch, useSelector } from 'react-redux';
+import productService from '../../src/service/api/productService';
 
 export default function Products() {
   const dispatch = useDispatch()
   const router = useRouter();
   const isInitialRender = useRef(true);
-  const hasAutoFocused = useRef(false); // Track if we've already auto-focused
+  const hasAutoFocused = useRef(false);
   const [categoryFilter, setCategoryFilter] = useState(null);
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [apiProducts, setApiProducts] = useState([]); // Store API products
+  const [loading, setLoading] = useState(true);
   
   // Refs for containers
   const searchBarRef = useRef(null);
   const filterPanelRef = useRef(null);
   const searchBarContainerRef = useRef(null);
   const mainRef = useRef(null);
-  const searchInputRef = useRef(null); // Direct ref to search input
+  const searchInputRef = useRef(null);
   
-  // Get unique categories
+  // Get unique categories from static products (for filters)
   const categories = ['All', ...new Set(products.map(product => product.category))];
 
   const data = useSelector((state) => state.products.productList);
-  console.log('gokuuu',data?.data?.products)
+  console.log('Redux data:', data);
 
-  useEffect(()=>{
-    console.log('bhaii kooooo')
-    dispatch(getProductList())
-  },[])
+  // Transform API product to match expected structure
+  const transformApiProduct = (apiProduct) => {
+    return {
+      id: apiProduct._id,
+      name: apiProduct.name,
+      description: apiProduct.description,
+      price: apiProduct.price,
+      rating: apiProduct.rating,
+      reviews: apiProduct.reviews,
+      image: apiProduct.image,
+      inStock: apiProduct.inStock,
+      features: apiProduct.features,
+      watt: apiProduct.watt, // This is the key field
+      quantity: apiProduct.quantity,
+      category: 'Electronics' // Default category
+    };
+  };
+
+  // Call productService API and store data
+  useEffect(() => {
+    const callProductAPI = async () => {
+      try {
+        setLoading(true);
+        const apiResponse = await productService.productList();
+        
+        console.log('API Response:', apiResponse);
+        
+        if (apiResponse && Array.isArray(apiResponse)) {
+          // Transform and store API products
+          const transformedProducts = apiResponse.map(transformApiProduct);
+          setApiProducts(transformedProducts);
+          console.log('Transformed products:', transformedProducts);
+        } else {
+          console.log('No valid API response');
+          setApiProducts([]);
+        }
+        
+      } catch (error) {
+        console.error('API Error:', error);
+        setApiProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    callProductAPI();
+    dispatch(getProductList());
+  }, [dispatch]);
 
   // Handle URL changes and search parameter on initial load
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!router.isReady || loading) return;
     
     // Initialize on first load only
     if (isInitialRender.current) {
@@ -63,12 +110,12 @@ export default function Products() {
       
       isInitialRender.current = false;
     }
-  }, [router.isReady, router.query, categories]);
+  }, [router.isReady, router.query, categories, loading]);
 
   // Auto-focus search input when component mounts or when coming from home page
   useEffect(() => {
     // Only auto-focus once and after a short delay to ensure DOM is ready
-    if (!hasAutoFocused.current && categoryFilter !== null) {
+    if (!hasAutoFocused.current && categoryFilter !== null && !loading) {
       const timer = setTimeout(() => {
         const searchInput = searchInputRef.current || document.querySelector(`.${styles.searchInput}`);
         if (searchInput) {
@@ -97,7 +144,7 @@ export default function Products() {
       
       return () => clearTimeout(timer);
     }
-  }, [categoryFilter, searchQuery, isMobile]);
+  }, [categoryFilter, searchQuery, isMobile, loading]);
 
   // Check if we're on mobile or tablet
   useEffect(() => {
@@ -192,8 +239,8 @@ export default function Products() {
     }
   }, [isMobile, searchInputRef.current]);
 
-  // If categoryFilter is null (initial state), don't render products yet
-  if (categoryFilter === null) {
+  // Show loading while fetching API data
+  if (loading || categoryFilter === null) {
     return (
       <>
         <Head>
@@ -215,8 +262,12 @@ export default function Products() {
     );
   }
 
-  // Filter products
-  const filteredProducts = products.filter(product => {
+  // Use API products instead of static products
+  const productsToUse = apiProducts.length > 0 ? apiProducts : products;
+  console.log('Using products:', productsToUse.length, 'API products');
+
+  // Filter products (now using API data)
+  const filteredProducts = productsToUse.filter(product => {
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
     
     let matchesPrice = true;
@@ -287,6 +338,12 @@ export default function Products() {
       pathname: router.pathname
     }, undefined, { shallow: true });
   };
+
+  // Debug log
+  console.log('Final products for display:', sortedProducts.map(p => ({
+    name: p.name,
+    watt: p.watt
+  })));
 
   return (
     <>

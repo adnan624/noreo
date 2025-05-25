@@ -1,4 +1,5 @@
 import api from '@/service/api/axiosConfig';
+import productService from '@/service/api/productService';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 // import {REACT_APP_BASE_URL} from 'react-native-dotenv';
@@ -6,20 +7,14 @@ import axios from 'axios';
 
 
 export const getProductList = createAsyncThunk(
-  'productList',
-  async (_, thunkAPI) => {
+  'product/getProductList',
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/products');
-      console.log('response', response.data);
-      return response.data;
+      const response = await productService.productList();
+      console.log('response090909', response);
+      return response;
     } catch (error) {
-      // Axios error handling
-      const errorMessage = 
-        error.response?.data?.message || 
-        error.message || 
-        'An unknown error occurred';
-      
-      return thunkAPI.rejectWithValue(errorMessage);
+      return rejectWithValue(error?.response?.data || error.message);
     }
   }
 );
