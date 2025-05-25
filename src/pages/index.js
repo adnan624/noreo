@@ -1,5 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState, useRef } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import products from '../data/products';
@@ -7,8 +10,23 @@ import styles from '../styles/Home.module.css';
 import Footer from '@/components/Footer';
 
 export default function Home() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchBarRef = useRef(null);
+  const searchBarContainerRef = useRef(null);
+
   const featuredProducts = products.slice(0, 10);
   const onSaleProducts = products.slice(2, 6);
+
+  // Handle search input click - navigate to products page
+  const handleSearchClick = () => {
+    router.push('/products');
+  };
+
+  // Handle search input focus - navigate to products page
+  const handleSearchFocus = () => {
+    router.push('/products');
+  };
 
   return (
     <>
@@ -18,11 +36,9 @@ export default function Home() {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
       </Head>
       
-     
-      
       <main>
-          <div className={styles.circuitBackground}></div>
-        {/* // */}
+        <div className={styles.circuitBackground}></div>
+        
         {/* Hero Section with Particles */}
         <section className={styles.hero}>
           <div className={styles.particles}>
@@ -48,6 +64,38 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Search Bar Container - Only Search, No Sort */}
+        <div className={styles.searchBarContainer} ref={searchBarContainerRef}>
+          <div className="container">
+            <div ref={searchBarRef} className={styles.searchSortBar}>
+              <div className={styles.searchContainer}>
+                <div className={styles.searchInputWrapper}>
+                  <FaSearch className={styles.searchIcon} />
+                  <input
+                    type="text"
+                    placeholder="Search products, categories, or features..."
+                    className={styles.searchInput}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onClick={handleSearchClick}
+                    onFocus={handleSearchFocus}
+                    readOnly
+                  />
+                  {searchQuery && (
+                    <button
+                      className={styles.searchClearButton}
+                      onClick={() => setSearchQuery('')}
+                      aria-label="Clear search"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         
         {/* Featured Products */}
         <section className={`${styles.section}`}>
@@ -113,14 +161,6 @@ export default function Home() {
                 <p>On orders over $100</p>
                 <div className={styles.featureHoverEffect}></div>
               </div>
-              {/* <div className={styles.feature}>
-                <div className={styles.featureIcon}>
-                  <i className="fas fa-undo"></i>
-                </div>
-                <h3>Easy Returns</h3>
-                <p>30-day return policy</p>
-                <div className={styles.featureHoverEffect}></div>
-              </div> */}
               <div className={styles.feature}>
                 <div className={styles.featureIcon}>
                   <i className="fas fa-lock"></i>

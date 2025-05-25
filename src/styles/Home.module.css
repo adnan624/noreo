@@ -63,10 +63,115 @@
   justify-content: center;
 }
 
-/* Section Styles */
-.section {
-  padding: 6rem 0;
+/* Search Bar Container Styles - Updated to reduce gap */
+.searchBarContainer {
   position: relative;
+  width: 100%;
+  z-index: 100;
+  margin: 2rem 0 1rem 0; /* Reduced bottom margin from 2rem to 1rem */
+}
+
+.searchSortBar {
+  background-color: #B9B4A9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.searchContainer {
+  width: 100%;
+  max-width: 600px;
+}
+
+.searchInputWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.875rem 2.75rem 0.875rem 2.5rem;
+  border-radius: 50px;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  background-color: white;
+}
+
+.searchInput:hover {
+  border-color: 0 2px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.05);
+}
+
+.searchInput::placeholder {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  font-size: 1rem;
+  z-index: 2;
+}
+
+.searchClearButton {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.searchClearButton:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+}
+
+/* Section Styles - Updated to reduce gap */
+.section {
+  padding: 3rem 0 6rem 0; /* Reduced top padding from 6rem to 3rem */
+  position: relative;
+}
+
+/* Specific styling for featured section with even smaller gap */
+.featuredSection {
+  background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
+  padding: 1.5rem 0 6rem 0; /* Even smaller top padding for featured section */
 }
 
 .sectionHeader {
@@ -148,7 +253,7 @@
 }
 
 .btnOutline {
-  background-color: rgba(85, 97, 187, 0.8);
+  background-color: #B9B4A9;
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(5px);
@@ -170,11 +275,6 @@
   background: rgba(255, 255, 255, 0.9);
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-}
-
-/* Featured Section */
-.featuredSection {
-  background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
 }
 
 /* Updated Products Grid for Blinkit-style cards */
@@ -388,7 +488,56 @@
   }
 }
 
-/* Responsive */
+/* Mobile Responsive for Search Bar */
+@media (max-width: 768px) {
+  .searchSortBar {
+    padding: 0.75rem 1rem;
+  }
+  
+  .searchInput {
+    font-size: 0.9rem;
+    padding: 0.75rem 2.25rem 0.75rem 2.25rem;
+    height: 48px;
+  }
+  
+  .searchInput::placeholder {
+    font-size: 0.85rem;
+  }
+  
+  .searchIcon {
+    font-size: 0.9rem;
+    left: 0.875rem;
+  }
+  
+  .searchClearButton {
+    width: 20px;
+    height: 20px;
+    font-size: 1.2rem;
+    right: 0.875rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .searchInput {
+    font-size: 0.85rem;
+    padding: 0.6875rem 2rem 0.6875rem 2rem;
+    height: 44px;
+  }
+  
+  .searchIcon {
+    font-size: 0.8rem;
+    left: 0.75rem;
+  }
+  
+  .searchClearButton {
+    width: 18px;
+    height: 18px;
+    font-size: 1.1rem;
+    right: 0.75rem;
+  }
+}
+
+/* Responsive - Updated with smaller gaps */
 @media (max-width: 1024px) {
   .hero {
     padding: 8rem 0;
@@ -399,7 +548,15 @@
   }
   
   .section {
-    padding: 5rem 0;
+    padding: 2.5rem 0 5rem 0; /* Reduced gap for tablets */
+  }
+  
+  .featuredSection {
+    padding: 1.25rem 0 5rem 0; /* Smaller gap for featured section on tablets */
+  }
+  
+  .searchBarContainer {
+    margin: 1.5rem 0 0.75rem 0; /* Reduced margin for tablets */
   }
   
   .heroButtons {
@@ -428,6 +585,18 @@
     font-size: 2rem;
   }
   
+  .section {
+    padding: 2rem 0 4rem 0; /* Further reduced for mobile */
+  }
+  
+  .featuredSection {
+    padding: 1rem 0 4rem 0; /* Smaller gap for featured section on mobile */
+  }
+  
+  .searchBarContainer {
+    margin: 1rem 0 0.5rem 0; /* Reduced margin for mobile */
+  }
+  
   .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 0.75rem;
@@ -448,7 +617,15 @@
   }
   
   .section {
-    padding: 4rem 0;
+    padding: 1.5rem 0 3rem 0; /* Minimal gap for small screens */
+  }
+  
+  .featuredSection {
+    padding: 0.75rem 0 3rem 0; /* Very small gap for featured section on small screens */
+  }
+  
+  .searchBarContainer {
+    margin: 0.75rem 0 0.25rem 0; /* Minimal margin for small screens */
   }
   
   .feature {

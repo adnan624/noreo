@@ -15,6 +15,7 @@ export default function Products() {
   const dispatch = useDispatch()
   const router = useRouter();
   const isInitialRender = useRef(true);
+  const hasAutoFocused = useRef(false); // Track if we've already auto-focused
   const [categoryFilter, setCategoryFilter] = useState(null);
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
@@ -27,41 +28,81 @@ export default function Products() {
   const filterPanelRef = useRef(null);
   const searchBarContainerRef = useRef(null);
   const mainRef = useRef(null);
+  const searchInputRef = useRef(null); // Direct ref to search input
   
   // Get unique categories
   const categories = ['All', ...new Set(products.map(product => product.category))];
 
   const data = useSelector((state) => state.products.productList);
-console.log('gokuuu',data?.data?.products)
+  console.log('gokuuu',data?.data?.products)
+
   useEffect(()=>{
     console.log('bhaii kooooo')
     dispatch(getProductList())
-
-    
   },[])
 
-  // Handle URL changes only once on initial load
+  // Handle URL changes and search parameter on initial load
   useEffect(() => {
     if (!router.isReady) return;
     
-    // Initialize category from URL on first load only
+    // Initialize on first load only
     if (isInitialRender.current) {
-      const { category } = router.query;
+      const { category, search } = router.query;
       
+      // Set category from URL
       if (category && categories.includes(category)) {
         setCategoryFilter(category);
       } else {
         setCategoryFilter('All');
       }
       
+      // Set search query from URL if coming from home page
+      if (search && typeof search === 'string') {
+        setSearchQuery(search);
+      }
+      
       isInitialRender.current = false;
     }
   }, [router.isReady, router.query, categories]);
 
-  // Check if we're on mobile
+  // Auto-focus search input when component mounts or when coming from home page
+  useEffect(() => {
+    // Only auto-focus once and after a short delay to ensure DOM is ready
+    if (!hasAutoFocused.current && categoryFilter !== null) {
+      const timer = setTimeout(() => {
+        const searchInput = searchInputRef.current || document.querySelector(`.${styles.searchInput}`);
+        if (searchInput) {
+          // Focus the input to open keyboard on mobile/tablet
+          searchInput.focus();
+          
+          // Force focus and trigger keyboard on mobile devices
+          if (isMobile || window.innerWidth <= 1024) {
+            // Trigger click event to ensure keyboard opens on mobile
+            searchInput.click();
+            
+            // For iOS devices, sometimes we need to trigger focus multiple times
+            setTimeout(() => {
+              searchInput.focus();
+            }, 100);
+          }
+          
+          // If there's existing search text, position cursor at the end
+          if (searchQuery) {
+            searchInput.setSelectionRange(searchQuery.length, searchQuery.length);
+          }
+          
+          hasAutoFocused.current = true;
+        }
+      }, 500); // Increased delay for mobile devices
+      
+      return () => clearTimeout(timer);
+    }
+  }, [categoryFilter, searchQuery, isMobile]);
+
+  // Check if we're on mobile or tablet
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 1024); // Include tablets
     };
     
     // Check on initial load
@@ -73,7 +114,7 @@ console.log('gokuuu',data?.data?.products)
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
 
-  // Detect keyboard open state on mobile
+  // Detect keyboard open state on mobile and tablet
   useEffect(() => {
     if (!isMobile) return;
     
@@ -83,7 +124,7 @@ console.log('gokuuu',data?.data?.products)
     const detectKeyboard = () => {
       // On most mobile devices, when keyboard opens, the window height becomes smaller
       const heightDifference = initialWindowHeight - window.innerHeight;
-      const isKeyboardLikelyOpen = heightDifference > 200; // Threshold of 200px for keyboard
+      const isKeyboardLikelyOpen = heightDifference > 150; // Reduced threshold for tablets
       
       if (isKeyboardLikelyOpen !== keyboardOpen) {
         setKeyboardOpen(isKeyboardLikelyOpen);
@@ -113,7 +154,7 @@ console.log('gokuuu',data?.data?.products)
 
   // Add focus/blur event listeners to handle keyboard appearance on mobile
   useEffect(() => {
-    const searchInput = document.querySelector(`.${styles.searchInput}`);
+    const searchInput = searchInputRef.current || document.querySelector(`.${styles.searchInput}`);
     
     if (searchInput) {
       const handleFocus = () => {
@@ -149,7 +190,7 @@ console.log('gokuuu',data?.data?.products)
         searchInput.removeEventListener('blur', handleBlur);
       };
     }
-  }, [isMobile]);
+  }, [isMobile, searchInputRef.current]);
 
   // If categoryFilter is null (initial state), don't render products yet
   if (categoryFilter === null) {
@@ -325,11 +366,18 @@ console.log('gokuuu',data?.data?.products)
                   <div className={styles.searchInputWrapper}>
                     <FaSearch className={styles.searchIcon} />
                     <input
+                      ref={searchInputRef}
                       type="text"
                       placeholder="Search products, categories, or features..."
                       className={styles.searchInput}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck="false"
+                      inputMode="search"
+                      enterKeyHint="search"
                     />
                     {searchQuery && (
                       <button
@@ -366,6 +414,14 @@ console.log('gokuuu',data?.data?.products)
                 <div className={styles.categoryHeader}>
                   <h2>{categoryFilter}</h2>
                   <p>{sortedProducts.length} products found</p>
+                </div>
+              )}
+
+              {/* Search Results Title */}
+              {searchQuery && (
+                <div className={styles.searchResultsHeader}>
+                  <h2>Search Results for "{searchQuery}"</h2>
+                  <p>{sortedProducts.length} product{sortedProducts.length !== 1 ? 's' : ''} found</p>
                 </div>
               )}
               
