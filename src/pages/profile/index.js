@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import styles from '../../styles/Profile.module.css';
 import Footer from '@/components/Footer';
@@ -12,6 +12,9 @@ export default function Profile() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isAuthenticated, user } = useSelector(state => state.auth);
+  
+  // Ref for edit form
+  const editFormRef = useRef(null);
 
   const [userData, setUserData] = useState({
     _id: '',
@@ -224,6 +227,41 @@ export default function Profile() {
     }
   };
 
+  // Effect to handle scrolling when edit mode is enabled
+  useEffect(() => {
+    if (isEditing && window.innerWidth <= 768 && editFormRef.current) {
+      // Small delay to ensure the form is rendered
+      const timer = setTimeout(() => {
+        try {
+          // Method 1: Scroll to the edit form
+          editFormRef.current.scrollIntoView({ 
+            behavior: 'auto', 
+            block: 'start' 
+          });
+          
+          // Method 2: Get the form's position and scroll manually
+          const rect = editFormRef.current.getBoundingClientRect();
+          const scrollTop = window.pageYOffset + rect.top - 20; // 20px offset from top
+          
+          window.scrollTo({
+            top: scrollTop,
+            behavior: 'auto'
+          });
+          
+        } catch (error) {
+          // Fallback: just scroll to top
+          window.scrollTo(0, 0);
+        }
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isEditing]);
+
+  const handleEditProfile = () => {
+    setIsEditing(true);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedUser({
@@ -346,8 +384,6 @@ export default function Profile() {
     );
   }
 
-
-
   return (
     <>
       <div className={styles.profileWrapper}>
@@ -356,7 +392,7 @@ export default function Profile() {
             <div className={styles.profileHeader}>
               <h1 className={styles.profileTitle}>My Profile</h1>
               {!isEditing && activeView === 'personalInfo' && (
-                <button className={styles.editButton} onClick={() => setIsEditing(true)}>
+                <button className={styles.editButton} onClick={handleEditProfile}>
                   ✨ Edit Profile
                 </button>
               )}
@@ -562,7 +598,7 @@ export default function Profile() {
                     <AddressManagement />
                   </div>
                 ) : isEditing ? (
-                  <form onSubmit={handleSubmit} className={styles.editForm}>
+                  <form ref={editFormRef} onSubmit={handleSubmit} className={styles.editForm}>
                     <h2 className={styles.sectionTitle}>Edit Personal Information</h2>
 
                     <div className={styles.formGroup}>
