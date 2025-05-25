@@ -3,6 +3,7 @@ import Image from 'next/image';
 import styles from '../../styles/Profile.module.css';
 import Footer from '@/components/Footer';
 import ChangePasswordModal from '../../components/profile/changePasswordModal';
+import AddressManagement from '../../components/profile/addressManagment';
 import { getUserProfile, logoutAsync, updateUserProfile } from '../../store/slices/authSlice/action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -169,7 +170,7 @@ export default function Profile() {
   ]);
 
   // State to manage active view
-  const [activeView, setActiveView] = useState('personalInfo'); // 'personalInfo', 'orders', 'wishlist'
+  const [activeView, setActiveView] = useState('personalInfo'); // 'personalInfo', 'orders', 'wishlist', 'addresses'
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({ ...userData });
   const [isLoading, setIsLoading] = useState(true);
@@ -318,6 +319,11 @@ export default function Profile() {
     setActiveView('wishlist');
   };
 
+  const handleAddressClick = (e) => {
+    e.preventDefault();
+    setActiveView('addresses');
+  };
+
   const handleRemoveFromWishlist = (itemId) => {
     // In a real app, you would call an API to remove the item from wishlist
     console.log('Removing item from wishlist:', itemId);
@@ -339,6 +345,8 @@ export default function Profile() {
       </>
     );
   }
+
+
 
   return (
     <>
@@ -405,10 +413,13 @@ export default function Profile() {
                     <span className={styles.linkIcon}>❤️</span>
                     Wishlist
                   </button>
-                  <a href="/address" className={styles.sidebarLink}>
+                  <button 
+                    onClick={handleAddressClick}
+                    className={`${styles.sidebarLink} ${activeView === 'addresses' ? styles.activeLink : ''}`}
+                  >
                     <span className={styles.linkIcon}>📍</span>
                     Addresses
-                  </a>
+                  </button>
                   <a href="/payments" className={styles.sidebarLink}>
                     <span className={styles.linkIcon}>💳</span>
                     Payment Methods
@@ -535,6 +546,20 @@ export default function Profile() {
                         <a href="/products" className={styles.shopNowButton}>🛍️ Browse Products</a>
                       </div>
                     )}
+                  </div>
+                ) : activeView === 'addresses' ? (
+                  // Address Management View
+                  <div className={styles.allOrdersView}>
+                    <div className={styles.allOrdersHeader}>
+                      <button 
+                        onClick={handleBackToProfile}
+                        className={styles.backButton}
+                      >
+                        ← Back to Profile
+                      </button>
+                      <h2 className={styles.sectionTitle}>My Addresses</h2>
+                    </div>
+                    <AddressManagement />
                   </div>
                 ) : isEditing ? (
                   <form onSubmit={handleSubmit} className={styles.editForm}>

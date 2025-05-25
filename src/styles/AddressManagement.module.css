@@ -1,0 +1,498 @@
+/* AddressManagement.module.css */
+.addressWrapper {
+    min-height: 100vh;
+    background: #f8fafc;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  
+  .addressContainer {
+    max-width: 1024px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .addressInner {
+    padding: 32px;
+    box-sizing: border-box;
+  }
+  
+  /* Header */
+  .addressHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .addressTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+  
+  .addButton {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    box-sizing: border-box;
+  }
+  
+  .addButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+  }
+  
+  /* Address Grid */
+  .addressGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 12px;
+  }
+  
+  .addressCard {
+    position: relative;
+    padding: 24px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .addressCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+  }
+  
+  .addressCardDefault {
+    border-color: #3b82f6;
+    background: #eff6ff;
+  }
+  
+  .defaultBadge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #3b82f6;
+    color: white;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  
+  .addressType {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .addressTypeIcon {
+    font-size: 18px;
+  }
+  
+  .addressTypeName {
+    font-weight: 600;
+    font-size: 16px;
+    color: #1e293b;
+    margin: 0;
+  }
+  
+  .addressDetails {
+    margin-bottom: 16px;
+  }
+  
+  .addressText {
+    color: #374151;
+    font-weight: 500;
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+  }
+  
+  .addressLocation {
+    color: #64748b;
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .addressActions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .setDefaultButton {
+    flex: 1;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .setDefaultButton:hover {
+    background: #e2e8f0;
+  }
+  
+  .editButton {
+    background: #fef3c7;
+    color: #d97706;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .editButton:hover {
+    background: #fde68a;
+  }
+  
+  .deleteButton {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .deleteButton:hover {
+    background: #fee2e2;
+  }
+  
+  .deleteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Empty State */
+  .emptyState {
+    text-align: center;
+    padding: 48px 0;
+  }
+  
+  .emptyIcon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+  
+  .emptyTitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 8px 0;
+  }
+  
+  .emptyDescription {
+    color: #64748b;
+    margin: 0 0 24px 0;
+  }
+  
+  .emptyAddButton {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    color: white;
+    padding: 12px 32px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    box-sizing: border-box;
+  }
+  
+  .emptyAddButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+  }
+  
+  /* Modal */
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 16px;
+    animation: fadeIn 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .modal {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  .modalContent {
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  
+  .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .modalTitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+  }
+  
+  .closeButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #64748b;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  
+  .closeButton:hover {
+    background: #f1f5f9;
+    color: #374151;
+  }
+  
+  /* Form */
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .formGroupRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+  
+  .select,
+  .input,
+  .textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background: white;
+    font-weight: 500;
+    box-sizing: border-box;
+  }
+  
+  .select:focus,
+  .input:focus,
+  .textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .inputError {
+    border-color: #dc2626;
+  }
+  
+  .textarea {
+    resize: none;
+    font-family: inherit;
+  }
+  
+  .errorMessage {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  
+  /* Form Actions */
+  .formActions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .cancelButton {
+    flex: 1;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .cancelButton:hover:not(:disabled) {
+    background: #e2e8f0;
+  }
+  
+  .submitButton {
+    flex: 1;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+    box-sizing: border-box;
+  }
+  
+  .submitButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  
+  .submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .loadingContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .addressWrapper {
+      padding: 8px;
+    }
+    
+    .addressInner {
+      padding: 20px;
+    }
+    
+    .addressHeader {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    
+    .addressGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .formGroupRow {
+      grid-template-columns: 1fr;
+    }
+    
+    .modalContent {
+      padding: 20px 16px;
+    }
+    
+    .formActions {
+      flex-direction: column;
+    }
+  }
