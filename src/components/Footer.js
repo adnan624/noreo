@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
 
-const Footer = () => {
+const Footer = ({ marginTop = '0px' }) => {
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} style={{ marginTop }}>
       <div className="container">
         <div className={styles.footerContent}>
           <div className={styles.footerSection}>
-            <h3 className={styles.footerTitle}>ElectroShop</h3>
+            <h3 className={styles.footerTitle}>Noreo</h3>
             <p>Your one-stop shop for all electrical appliances at competitive prices.</p>
           </div>
-          {/* // */}
+          
           <div className={styles.footerSection}>
             <h3 className={styles.footerTitle}>Quick Links</h3>
             <ul className={styles.footerLinks}>
@@ -26,7 +26,6 @@ const Footer = () => {
             <ul className={styles.footerLinks}>
               <li><Link href="/faq">FAQ</Link></li>
               <li><Link href="/shipping">Shipping Policy</Link></li>
-              <li><Link href="/returns">Return Policy</Link></li>
               <li><Link href="/privacy">Privacy Policy</Link></li>
             </ul>
           </div>
@@ -34,11 +33,10 @@ const Footer = () => {
           <div className={styles.footerSection}>
             <h3 className={styles.footerTitle}>Contact Us</h3>
             <address className={styles.footerAddress}>
-  123 Appliance Street<br />
-  Tech City, TC 12345<br />
-  Email: info@electroshop.com<br />
-  Phone: (123) 456-7890
-</address>
+              Shop no. 3, 120, near Siyaganj, Siyaganj, Indore, Madhya Pradesh 452001<br />
+              Email: life.noreo@gmail.com<br />
+              Phone: +91 70009 80324
+            </address>
           </div>
         </div>
         

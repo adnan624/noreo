@@ -23,13 +23,13 @@ const CartNotification = () => {
         <span className={styles.notificationText}>
           {totalQuantity} {totalQuantity === 1 ? 'item' : 'items'} in cart
         </span>
-        <button 
+        {/* <button 
           className={styles.closeButton} 
           onClick={handleClose}
           aria-label="Close notification"
         >
           ×
-        </button>
+        </button> */}
       </div>
       <Link href="/cart" className={styles.cartLink}>
         <div className={styles.goToCartButton}>

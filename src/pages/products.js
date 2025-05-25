@@ -398,7 +398,7 @@ console.log('gokuuu',data?.data?.products)
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer marginTop="3rem" />
     </>
   );
 }

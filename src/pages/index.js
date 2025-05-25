@@ -113,14 +113,14 @@ export default function Home() {
                 <p>On orders over $100</p>
                 <div className={styles.featureHoverEffect}></div>
               </div>
-              <div className={styles.feature}>
+              {/* <div className={styles.feature}>
                 <div className={styles.featureIcon}>
                   <i className="fas fa-undo"></i>
                 </div>
                 <h3>Easy Returns</h3>
                 <p>30-day return policy</p>
                 <div className={styles.featureHoverEffect}></div>
-              </div>
+              </div> */}
               <div className={styles.feature}>
                 <div className={styles.featureIcon}>
                   <i className="fas fa-lock"></i>
