@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-
 import styles from '../../styles/Profile.module.css';
 import Footer from '@/components/Footer';
 import ChangePasswordModal from '../../components/profile/changePasswordModal';
@@ -45,6 +44,14 @@ export default function Profile() {
     },
     {
       id: 'ORD003',
+      productImage: '/api/placeholder/100/100',
+      productName: 'Bluetooth Speaker',
+      price: '₹1,799',
+      status: 'Processing',
+      orderDate: '2025-05-23'
+    },
+    {
+      id: 'ORD004',
       productImage: '/api/placeholder/100/100',
       productName: 'Bluetooth Speaker',
       price: '₹1,799',
@@ -121,19 +128,56 @@ export default function Profile() {
     }
   ]);
 
-  // State to toggle between profile view and all orders view
-  const [showAllOrders, setShowAllOrders] = useState(false);
+  // Wishlist data
+  const [wishlistItems] = useState([
+    {
+      id: 'WISH001',
+      productImage: '/api/placeholder/300/300',
+      title: 'Premium Wireless Headphones',
+      currentPrice: '₹2,999',
+      originalPrice: '₹3,999',
+      discount: '25% off',
+      inStock: true
+    },
+    {
+      id: 'WISH002',
+      productImage: '/api/placeholder/300/300',
+      title: 'Smart Fitness Watch',
+      currentPrice: '₹4,499',
+      originalPrice: '₹5,999',
+      discount: '25% off',
+      inStock: true
+    },
+    {
+      id: 'WISH003',
+      productImage: '/api/placeholder/300/300',
+      title: 'Bluetooth Speaker - Waterproof',
+      currentPrice: '₹1,799',
+      originalPrice: '₹2,499',
+      discount: '28% off',
+      inStock: true
+    },
+    {
+      id: 'WISH004',
+      productImage: '/api/placeholder/300/300',
+      title: 'Ergonomic Wireless Keyboard and Mouse Combo',
+      currentPrice: '₹3,299',
+      originalPrice: '₹3,999',
+      discount: '18% off',
+      inStock: false
+    }
+  ]);
 
-  const redirectUrl = router.query.redirect || '/';
-
+  // State to manage active view
+  const [activeView, setActiveView] = useState('personalInfo'); // 'personalInfo', 'orders', 'wishlist'
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({ ...userData });
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-
-  // Password change modal state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  const redirectUrl = router.query.redirect || '/';
 
   useEffect(() => {
     if (user) {
@@ -256,18 +300,32 @@ export default function Profile() {
   };
 
   const handleViewAllOrders = () => {
-    setShowAllOrders(true);
-    // Scroll to top when viewing all orders
+    setActiveView('orders');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToProfile = () => {
-    setShowAllOrders(false);
+    setActiveView('personalInfo');
   };
 
   const handlePersonalInfoClick = (e) => {
     e.preventDefault();
-    setShowAllOrders(false);
+    setActiveView('personalInfo');
+  };
+
+  const handleWishlistClick = (e) => {
+    e.preventDefault();
+    setActiveView('wishlist');
+  };
+
+  const handleRemoveFromWishlist = (itemId) => {
+    // In a real app, you would call an API to remove the item from wishlist
+    console.log('Removing item from wishlist:', itemId);
+  };
+
+  const handleAddToCart = (itemId) => {
+    // In a real app, you would call an API to add the item to cart
+    console.log('Adding item to cart:', itemId);
   };
 
   if (isLoading) {
@@ -284,348 +342,414 @@ export default function Profile() {
 
   return (
     <>
-    <div className={styles.profileWrapper}>
-
-      <div className={styles.profileContainer}>
-        <div className={styles.profileInner}>
-          <div className={styles.profileHeader}>
-            <h1 className={styles.profileTitle}>My Profile</h1>
-            {!isEditing && !showAllOrders && (
-              <button className={styles.editButton} onClick={() => setIsEditing(true)}>
-                ✨ Edit Profile
-              </button>
-            )}
-          </div>
-
-          <div className={styles.profileContent}>
-            <div className={styles.profileSidebar}>
-              <div className={styles.avatarContainer}>
-                <Image
-                  src={editedUser.avatar || userData.avatar}
-                  alt={userData.name}
-                  width={150}
-                  height={150}
-                  className={styles.avatar}
-                />
-                {isEditing && (
-                  <div style={{marginTop: 20, width: '100%'}}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className={styles.fileInput}
-                      disabled={isUpdating}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.userNameCard}>
-                <h2 className={styles.userName}>{userData.name}</h2>
-                <p className={styles.userEmail}>{userData.email}</p>
-              </div>
-
-              <div className={styles.sidebarLinks}>
-                <a 
-                  href="#" 
-                  onClick={handlePersonalInfoClick}
-                  className={`${styles.sidebarLink} ${!showAllOrders ? styles.activeLink : ''}`}
-                >
-                  <span className={styles.linkIcon}>👤</span>
-                  Personal Info
-                </a>
-                <button 
-                  onClick={handleViewAllOrders}
-                  className={`${styles.sidebarLink} ${showAllOrders ? styles.activeLink : ''}`}
-                >
-                  <span className={styles.linkIcon}>📦</span>
-                  My Orders
+      <div className={styles.profileWrapper}>
+        <div className={styles.profileContainer}>
+          <div className={styles.profileInner}>
+            <div className={styles.profileHeader}>
+              <h1 className={styles.profileTitle}>My Profile</h1>
+              {!isEditing && activeView === 'personalInfo' && (
+                <button className={styles.editButton} onClick={() => setIsEditing(true)}>
+                  ✨ Edit Profile
                 </button>
-                <a href="/wishlist" className={styles.sidebarLink}>
-                  <span className={styles.linkIcon}>❤️</span>
-                  Wishlist
-                </a>
-                <a href="/address" className={styles.sidebarLink}>
-                  <span className={styles.linkIcon}>📍</span>
-                  Addresses
-                </a>
-                <a href="/payments" className={styles.sidebarLink}>
-                  <span className={styles.linkIcon}>💳</span>
-                  Payment Methods
-                </a>
-              </div>
-              
-              <button 
-                type="button" 
-                onClick={handleLogout} 
-                disabled={isUpdating}
-                className={styles.logoutButton}
-              >
-                🚪 Logout
-              </button>
+              )}
             </div>
 
-            <div className={styles.profileDetails}>
-              {showAllOrders ? (
-                // All Orders View
-                <div className={styles.allOrdersView}>
-                  <div className={styles.allOrdersHeader}>
-                    <button 
-                      onClick={handleBackToProfile}
-                      className={styles.backButton}
-                    >
-                      ← Back to Profile
-                    </button>
-                    <h2 className={styles.sectionTitle}>All Orders ({allOrders.length})</h2>
-                  </div>
-
-                  <div className={styles.ordersGrid}>
-                    {allOrders.map((order) => (
-                      <div key={order.id} className={styles.orderCard}>
-                        <div className={styles.orderImageContainer}>
-                          <Image
-                            src={order.productImage}
-                            alt={order.productName}
-                            width={80}
-                            height={80}
-                            className={styles.orderImage}
-                          />
-                        </div>
-                        <div className={styles.orderInfo}>
-                          <div className={styles.orderProductName}>{order.productName}</div>
-                          <div className={styles.orderPrice}>{order.price}</div>
-                          <div 
-                            className={styles.orderStatus}
-                            style={{ color: getStatusColor(order.status) }}
-                          >
-                            {order.status}
-                          </div>
-                          <div className={styles.orderDate}>
-                            Ordered on {new Date(order.orderDate).toLocaleDateString('en-IN', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric'
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+            <div className={styles.profileContent}>
+              <div className={styles.profileSidebar}>
+                <div className={styles.avatarContainer}>
+                  <Image
+                    src={editedUser.avatar || userData.avatar}
+                    alt={userData.name}
+                    width={150}
+                    height={150}
+                    className={styles.avatar}
+                  />
+                  {isEditing && (
+                    <div style={{marginTop: 20, width: '100%'}}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className={styles.fileInput}
+                        disabled={isUpdating}
+                      />
+                    </div>
+                  )}
                 </div>
-              ) : isEditing ? (
-                <form onSubmit={handleSubmit} className={styles.editForm}>
-                  <h2 className={styles.sectionTitle}>Edit Personal Information</h2>
 
-                  <div className={styles.formGroup}>
-                    <div className={styles.formField}>
-                      <label className={styles.inputLabel}>Full Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={editedUser.name}
-                        onChange={handleInputChange}
-                        className={styles.inputField}
-                        required
-                        disabled={isUpdating}
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                    <div className={styles.formField}>
-                      <label className={styles.inputLabel}>Pincode</label>
-                      <input
-                        type="text"
-                        name="pincode"
-                        value={editedUser.pincode}
-                        onChange={handleInputChange}
-                        className={styles.inputField}
-                        required
-                        disabled={isUpdating}
-                        placeholder="Enter your pincode"
-                      />
-                    </div>
-                  </div>
+                <div className={styles.userNameCard}>
+                  <h2 className={styles.userName}>{userData.name}</h2>
+                  <p className={styles.userEmail}>{userData.email}</p>
+                </div>
 
-                  <div className={styles.formGroup}>
-                    <div className={styles.formField}>
-                      <label className={styles.inputLabel}>Phone Number</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={editedUser.phone}
-                        onChange={handleInputChange}
-                        className={styles.inputField}
-                        required
-                        disabled={isUpdating}
-                        placeholder="Enter your phone number"
-                      />
-                    </div>
+                <div className={styles.sidebarLinks}>
+                  <a 
+                    href="#" 
+                    onClick={handlePersonalInfoClick}
+                    className={`${styles.sidebarLink} ${activeView === 'personalInfo' ? styles.activeLink : ''}`}
+                  >
+                    <span className={styles.linkIcon}>👤</span>
+                    Personal Info
+                  </a>
+                  <button 
+                    onClick={() => setActiveView('orders')}
+                    className={`${styles.sidebarLink} ${activeView === 'orders' ? styles.activeLink : ''}`}
+                  >
+                    <span className={styles.linkIcon}>📦</span>
+                    My Orders
+                  </button>
+                  <button 
+                    onClick={handleWishlistClick}
+                    className={`${styles.sidebarLink} ${activeView === 'wishlist' ? styles.activeLink : ''}`}
+                  >
+                    <span className={styles.linkIcon}>❤️</span>
+                    Wishlist
+                  </button>
+                  <a href="/address" className={styles.sidebarLink}>
+                    <span className={styles.linkIcon}>📍</span>
+                    Addresses
+                  </a>
+                  <a href="/payments" className={styles.sidebarLink}>
+                    <span className={styles.linkIcon}>💳</span>
+                    Payment Methods
+                  </a>
+                </div>
+                
+                <button 
+                  type="button" 
+                  onClick={handleLogout} 
+                  disabled={isUpdating}
+                  className={styles.logoutButton}
+                >
+                  🚪 Logout
+                </button>
+              </div>
 
-                    <div className={styles.formField}>
-                      <label className={styles.inputLabel}>Delivery Address</label>
-                      <input
-                        type="text"
-                        name="address"
-                        value={editedUser.address}
-                        onChange={handleInputChange}
-                        className={styles.inputField}
-                        required
-                        disabled={isUpdating}
-                        placeholder="Enter your delivery address"
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <div className={styles.formField}>
-                      <label className={styles.inputLabel}>City</label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={editedUser.city}
-                        onChange={handleInputChange}
-                        className={styles.inputField}
-                        required
-                        disabled={isUpdating}
-                        placeholder="Enter your city"
-                      />
-                    </div>
-
-                    <div className={styles.formField}>
-                      <label className={styles.inputLabel}>State</label>
-                      <input
-                        type="text"
-                        name="state"
-                        value={editedUser.state}
-                        onChange={handleInputChange}
-                        className={styles.inputField}
-                        required
-                        disabled={isUpdating}
-                        placeholder="Enter your state"
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.formActions}>
-                    <button type="submit" className={styles.saveButton} disabled={isUpdating}>
-                      {isUpdating ? '💫 Updating...' : '✅ Save Changes'}
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.cancelButton}
-                      onClick={handleCancel}
-                      disabled={isUpdating}
-                    >
-                      ❌ Cancel
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div className={styles.userInfoDisplay}>
-                  <h2 className={styles.sectionTitle}>Personal Information</h2>
-
-                  <div className={styles.infoGroup}>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Full Name</span>
-                      <span className={styles.infoValue}>{userData.name}</span>
-                    </div>
-
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Email Address</span>
-                      <span className={styles.infoValue}>{userData.email}</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.infoGroup}>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Phone Number</span>
-                      <span className={styles.infoValue}>{userData.phone}</span>
-                    </div>
-
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Delivery Address</span>
-                      <span className={styles.infoValue}>{userData.address}</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.infoGroup}>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>City</span>
-                      <span className={styles.infoValue}>{userData.city}</span>
-                    </div>
-
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>State</span>
-                      <span className={styles.infoValue}>{userData.state}</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.infoGroup}>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Pincode</span>
-                      <span className={styles.infoValue}>{userData.pincode}</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.securitySection}>
-                    <h2 className={styles.sectionTitle}>Security</h2>
-                    <button 
-                      onClick={() => setShowPasswordModal(true)}
-                      className={styles.passwordChangeLink}
-                    >
-                      🔐 Change Password
-                    </button>
-                  </div>
-
-                  <div className={styles.recentOrdersSection}>
-                    <div className={styles.sectionHeader}>
-                      <h2 className={styles.sectionTitle}>Recent Orders</h2>
+              <div className={styles.profileDetails}>
+                {activeView === 'orders' ? (
+                  // All Orders View
+                  <div className={styles.allOrdersView}>
+                    <div className={styles.allOrdersHeader}>
                       <button 
-                        onClick={handleViewAllOrders}
-                        className={styles.viewAllLink}
+                        onClick={handleBackToProfile}
+                        className={styles.backButton}
                       >
-                        View All →
+                        ← Back to Profile
                       </button>
+                      <h2 className={styles.sectionTitle}>All Orders ({allOrders.length})</h2>
                     </div>
 
-                    {recentOrders.length > 0 ? (
-                      <div className={styles.ordersGrid}>
-                        {recentOrders.map((order) => (
-                          <div key={order.id} className={styles.orderCard}>
-                            <div className={styles.orderImageContainer}>
+                    <div className={styles.ordersGrid}>
+                      {allOrders.map((order) => (
+                        <div key={order.id} className={styles.orderCard}>
+                          <div className={styles.orderImageContainer}>
+                            <Image
+                              src={order.productImage}
+                              alt={order.productName}
+                              width={80}
+                              height={80}
+                              className={styles.orderImage}
+                            />
+                          </div>
+                          <div className={styles.orderInfo}>
+                            <div className={styles.orderProductName}>{order.productName}</div>
+                            <div className={styles.orderPrice}>{order.price}</div>
+                            <div 
+                              className={styles.orderStatus}
+                              style={{ color: getStatusColor(order.status) }}
+                            >
+                              {order.status}
+                            </div>
+                            <div className={styles.orderDate}>
+                              Ordered on {new Date(order.orderDate).toLocaleDateString('en-IN', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric'
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : activeView === 'wishlist' ? (
+                  // Wishlist View
+                  <div className={styles.wishlistView}>
+                    <div className={styles.allOrdersHeader}>
+                      <button 
+                        onClick={handleBackToProfile}
+                        className={styles.backButton}
+                      >
+                        ← Back to Profile
+                      </button>
+                      <h2 className={styles.sectionTitle}>My Wishlist ({wishlistItems.length})</h2>
+                    </div>
+
+                    {wishlistItems.length > 0 ? (
+                      <div className={styles.wishlistGrid}>
+                        {wishlistItems.map((item) => (
+                          <div key={item.id} className={styles.wishlistItem}>
+                            <div className={styles.wishlistImageContainer}>
                               <Image
-                                src={order.productImage}
-                                alt={order.productName}
-                                width={80}
-                                height={80}
-                                className={styles.orderImage}
+                                src={item.productImage}
+                                alt={item.title}
+                                width={240}
+                                height={180}
+                                className={styles.wishlistImage}
                               />
                             </div>
-                            <div className={styles.orderInfo}>
-                              <div className={styles.orderPrice}>{order.price}</div>
-                              <div 
-                                className={styles.orderStatus}
-                                style={{ color: getStatusColor(order.status) }}
-                              >
-                                {order.status}
+                            <div className={styles.wishlistItemInfo}>
+                              <h3 className={styles.wishlistItemTitle}>{item.title}</h3>
+                              <div className={styles.wishlistItemPrice}>
+                                {item.currentPrice}
+                                {item.originalPrice && (
+                                  <>
+                                    {/* <span className={styles.wishlistItemOriginalPrice}>{item.originalPrice}</span> */}
+                                    {/* <span className={styles.wishlistItemDiscount}>{item.discount}</span> */}
+                                  </>
+                                )}
+                              </div>
+                              <div className={styles.wishlistItemActions}>
+                                <button 
+                                  className={styles.wishlistAddToCart}
+                                  onClick={() => handleAddToCart(item.id)}
+                                >
+                                  🛒 Add to Cart
+                                </button>
+                                <button 
+                                  className={styles.wishlistRemoveButton}
+                                  onClick={() => handleRemoveFromWishlist(item.id)}
+                                >
+                                  ❌
+                                </button>
                               </div>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className={styles.emptyOrdersMessage}>
-                        <span className={styles.emptyIcon}>🛍️</span>
-                        <p>You haven't placed any orders yet.</p>
-                        <a href="/products" className={styles.shopNowButton}>🛒 Shop Now</a>
+                      <div className={styles.wishlistEmptyMessage}>
+                        <span className={styles.wishlistEmptyIcon}>❤️</span>
+                        <p>Your wishlist is empty</p>
+                        <p>Start adding items you love!</p>
+                        <a href="/products" className={styles.shopNowButton}>🛍️ Browse Products</a>
                       </div>
                     )}
                   </div>
-                </div>
-              )}
+                ) : isEditing ? (
+                  <form onSubmit={handleSubmit} className={styles.editForm}>
+                    <h2 className={styles.sectionTitle}>Edit Personal Information</h2>
+
+                    <div className={styles.formGroup}>
+                      <div className={styles.formField}>
+                        <label className={styles.inputLabel}>Full Name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={editedUser.name}
+                          onChange={handleInputChange}
+                          className={styles.inputField}
+                          required
+                          disabled={isUpdating}
+                          placeholder="Enter your full name"
+                        />
+                      </div>
+                      <div className={styles.formField}>
+                        <label className={styles.inputLabel}>Pincode</label>
+                        <input
+                          type="text"
+                          name="pincode"
+                          value={editedUser.pincode}
+                          onChange={handleInputChange}
+                          className={styles.inputField}
+                          required
+                          disabled={isUpdating}
+                          placeholder="Enter your pincode"
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <div className={styles.formField}>
+                        <label className={styles.inputLabel}>Phone Number</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={editedUser.phone}
+                          onChange={handleInputChange}
+                          className={styles.inputField}
+                          required
+                          disabled={isUpdating}
+                          placeholder="Enter your phone number"
+                        />
+                      </div>
+
+                      <div className={styles.formField}>
+                        <label className={styles.inputLabel}>Delivery Address</label>
+                        <input
+                          type="text"
+                          name="address"
+                          value={editedUser.address}
+                          onChange={handleInputChange}
+                          className={styles.inputField}
+                          required
+                          disabled={isUpdating}
+                          placeholder="Enter your delivery address"
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <div className={styles.formField}>
+                        <label className={styles.inputLabel}>City</label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={editedUser.city}
+                          onChange={handleInputChange}
+                          className={styles.inputField}
+                          required
+                          disabled={isUpdating}
+                          placeholder="Enter your city"
+                        />
+                      </div>
+
+                      <div className={styles.formField}>
+                        <label className={styles.inputLabel}>State</label>
+                        <input
+                          type="text"
+                          name="state"
+                          value={editedUser.state}
+                          onChange={handleInputChange}
+                          className={styles.inputField}
+                          required
+                          disabled={isUpdating}
+                          placeholder="Enter your state"
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formActions}>
+                      <button type="submit" className={styles.saveButton} disabled={isUpdating}>
+                        {isUpdating ? '💫 Updating...' : '✅ Save Changes'}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.cancelButton}
+                        onClick={handleCancel}
+                        disabled={isUpdating}
+                      >
+                        ❌ Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className={styles.userInfoDisplay}>
+                    <h2 className={styles.sectionTitle}>Personal Information</h2>
+
+                    <div className={styles.infoGroup}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Full Name</span>
+                        <span className={styles.infoValue}>{userData.name}</span>
+                      </div>
+
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Email Address</span>
+                        <span className={styles.infoValue}>{userData.email}</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.infoGroup}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Phone Number</span>
+                        <span className={styles.infoValue}>{userData.phone}</span>
+                      </div>
+
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Delivery Address</span>
+                        <span className={styles.infoValue}>{userData.address}</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.infoGroup}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>City</span>
+                        <span className={styles.infoValue}>{userData.city}</span>
+                      </div>
+
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>State</span>
+                        <span className={styles.infoValue}>{userData.state}</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.infoGroup}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Pincode</span>
+                        <span className={styles.infoValue}>{userData.pincode}</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.securitySection}>
+                      <h2 className={styles.sectionTitle}>Security</h2>
+                      <button 
+                        onClick={() => setShowPasswordModal(true)}
+                        className={styles.passwordChangeLink}
+                      >
+                        🔐 Change Password
+                      </button>
+                    </div>
+
+                    <div className={styles.recentOrdersSection}>
+                      <div className={styles.sectionHeader}>
+                        <h2 className={styles.sectionTitle}>Recent Orders</h2>
+                        <button 
+                          onClick={handleViewAllOrders}
+                          className={styles.viewAllLink}
+                        >
+                          View All →
+                        </button>
+                      </div>
+
+                      {recentOrders.length > 0 ? (
+                        <div className={styles.ordersGrid}>
+                          {recentOrders.map((order) => (
+                            <div key={order.id} className={styles.orderCard}>
+                              <div className={styles.orderImageContainer}>
+                                <Image
+                                  src={order.productImage}
+                                  alt={order.productName}
+                                  width={80}
+                                  height={80}
+                                  className={styles.orderImage}
+                                />
+                              </div>
+                              <div className={styles.orderInfo}>
+                                <div className={styles.orderPrice}>{order.price}</div>
+                                <div 
+                                  className={styles.orderStatus}
+                                  style={{ color: getStatusColor(order.status) }}
+                                >
+                                  {order.status}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className={styles.emptyOrdersMessage}>
+                          <span className={styles.emptyIcon}>🛍️</span>
+                          <p>You haven't placed any orders yet.</p>
+                          <a href="/products" className={styles.shopNowButton}>🛒 Shop Now</a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
 
       {/* Change Password Modal */}
