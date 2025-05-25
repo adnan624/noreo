@@ -13,8 +13,11 @@ export default function Profile() {
   const router = useRouter();
   const { isAuthenticated, user } = useSelector(state => state.auth);
   
-  // Ref for edit form
+  // Refs for different sections
   const editFormRef = useRef(null);
+  const ordersViewRef = useRef(null);
+  const wishlistViewRef = useRef(null);
+  const addressViewRef = useRef(null);
 
   const [userData, setUserData] = useState({
     _id: '',
@@ -258,6 +261,84 @@ export default function Profile() {
     }
   }, [isEditing]);
 
+  // Effect to handle scrolling for orders view
+  useEffect(() => {
+    if (activeView === 'orders' && window.innerWidth <= 768 && ordersViewRef.current) {
+      const timer = setTimeout(() => {
+        try {
+          ordersViewRef.current.scrollIntoView({ 
+            behavior: 'auto', 
+            block: 'start' 
+          });
+          
+          const rect = ordersViewRef.current.getBoundingClientRect();
+          const scrollTop = window.pageYOffset + rect.top - 20;
+          
+          window.scrollTo({
+            top: scrollTop,
+            behavior: 'auto'
+          });
+        } catch (error) {
+          window.scrollTo(0, 0);
+        }
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [activeView]);
+
+  // Effect to handle scrolling for wishlist view
+  useEffect(() => {
+    if (activeView === 'wishlist' && window.innerWidth <= 768 && wishlistViewRef.current) {
+      const timer = setTimeout(() => {
+        try {
+          wishlistViewRef.current.scrollIntoView({ 
+            behavior: 'auto', 
+            block: 'start' 
+          });
+          
+          const rect = wishlistViewRef.current.getBoundingClientRect();
+          const scrollTop = window.pageYOffset + rect.top - 20;
+          
+          window.scrollTo({
+            top: scrollTop,
+            behavior: 'auto'
+          });
+        } catch (error) {
+          window.scrollTo(0, 0);
+        }
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [activeView]);
+
+  // Effect to handle scrolling for addresses view
+  useEffect(() => {
+    if (activeView === 'addresses' && window.innerWidth <= 768 && addressViewRef.current) {
+      const timer = setTimeout(() => {
+        try {
+          addressViewRef.current.scrollIntoView({ 
+            behavior: 'auto', 
+            block: 'start' 
+          });
+          
+          const rect = addressViewRef.current.getBoundingClientRect();
+          const scrollTop = window.pageYOffset + rect.top - 20;
+          
+          window.scrollTo({
+            top: scrollTop,
+            behavior: 'auto'
+          });
+        } catch (error) {
+          window.scrollTo(0, 0);
+        }
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [activeView]);
+
   const handleEditProfile = () => {
     setIsEditing(true);
   };
@@ -340,7 +421,6 @@ export default function Profile() {
 
   const handleViewAllOrders = () => {
     setActiveView('orders');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToProfile = () => {
@@ -475,7 +555,7 @@ export default function Profile() {
               <div className={styles.profileDetails}>
                 {activeView === 'orders' ? (
                   // All Orders View
-                  <div className={styles.allOrdersView}>
+                  <div ref={ordersViewRef} className={styles.allOrdersView}>
                     <div className={styles.allOrdersHeader}>
                       <button 
                         onClick={handleBackToProfile}
@@ -521,7 +601,7 @@ export default function Profile() {
                   </div>
                 ) : activeView === 'wishlist' ? (
                   // Wishlist View
-                  <div className={styles.wishlistView}>
+                  <div ref={wishlistViewRef} className={styles.wishlistView}>
                     <div className={styles.allOrdersHeader}>
                       <button 
                         onClick={handleBackToProfile}
@@ -585,7 +665,7 @@ export default function Profile() {
                   </div>
                 ) : activeView === 'addresses' ? (
                   // Address Management View
-                  <div className={styles.allOrdersView}>
+                  <div ref={addressViewRef} className={styles.allOrdersView}>
                     <div className={styles.allOrdersHeader}>
                       <button 
                         onClick={handleBackToProfile}
