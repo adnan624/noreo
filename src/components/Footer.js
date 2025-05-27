@@ -24,7 +24,7 @@ const Footer = ({ marginTop = '0px' }) => {
           <div className={styles.footerSection}>
             <h3 className={styles.footerTitle}>Customer Service</h3>
             <ul className={styles.footerLinks}>
-              <li><Link href="/faq">FAQ</Link></li>
+            <li><Link href="/FAQ">FAQ</Link></li> 
               <li><Link href="/shipping">Shipping Policy</Link></li>
               <li><Link href="/privacy">Privacy Policy</Link></li>
             </ul>

@@ -8,12 +8,8 @@ import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
 import products from '@/data/products';
 import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
-import { getProductList } from '@/store/slices/productSlice/action';
-import { useDispatch, useSelector } from 'react-redux';
-import productService from '../../src/service/api/productService';
 
 export default function Products() {
-  const dispatch = useDispatch()
   const router = useRouter();
   const isInitialRender = useRef(true);
   const hasAutoFocused = useRef(false);
@@ -23,7 +19,6 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState('');
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [apiProducts, setApiProducts] = useState([]); // Store API products
   const [loading, setLoading] = useState(true);
   
   // Refs for containers
@@ -36,57 +31,15 @@ export default function Products() {
   // Get unique categories from static products (for filters)
   const categories = ['All', ...new Set(products.map(product => product.category))];
 
-  const data = useSelector((state) => state.products.productList);
-  console.log('Redux data:', data);
-
-  // Transform API product to match expected structure
-  const transformApiProduct = (apiProduct) => {
-    return {
-      id: apiProduct._id,
-      name: apiProduct.name,
-      description: apiProduct.description,
-      price: apiProduct.price,
-      rating: apiProduct.rating,
-      reviews: apiProduct.reviews,
-      image: apiProduct.image,
-      inStock: apiProduct.inStock,
-      features: apiProduct.features,
-      watt: apiProduct.watt, // This is the key field
-      quantity: apiProduct.quantity,
-      category: 'Electronics' // Default category
-    };
-  };
-
-  // Call productService API and store data
+  // Initialize component - no API calls needed
   useEffect(() => {
-    const callProductAPI = async () => {
-      try {
-        setLoading(true);
-        const apiResponse = await productService.productList();
-        
-        console.log('API Response:', apiResponse);
-        
-        if (apiResponse && Array.isArray(apiResponse)) {
-          // Transform and store API products
-          const transformedProducts = apiResponse.map(transformApiProduct);
-          setApiProducts(transformedProducts);
-          console.log('Transformed products:', transformedProducts);
-        } else {
-          console.log('No valid API response');
-          setApiProducts([]);
-        }
-        
-      } catch (error) {
-        console.error('API Error:', error);
-        setApiProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    callProductAPI();
-    dispatch(getProductList());
-  }, [dispatch]);
+    // Simulate brief loading for smooth transition
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle URL changes and search parameter on initial load
   useEffect(() => {
@@ -239,7 +192,7 @@ export default function Products() {
     }
   }, [isMobile, searchInputRef.current]);
 
-  // Show loading while fetching API data
+  // Show loading while initializing
   if (loading || categoryFilter === null) {
     return (
       <>
@@ -262,11 +215,10 @@ export default function Products() {
     );
   }
 
-  // Use API products instead of static products
-  const productsToUse = apiProducts.length > 0 ? apiProducts : products;
-  console.log('Using products:', productsToUse.length, 'API products');
+  // Use static products data
+  const productsToUse = products;
 
-  // Filter products (now using API data)
+  // Filter products
   const filteredProducts = productsToUse.filter(product => {
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
     
@@ -338,12 +290,6 @@ export default function Products() {
       pathname: router.pathname
     }, undefined, { shallow: true });
   };
-
-  // Debug log
-  console.log('Final products for display:', sortedProducts.map(p => ({
-    name: p.name,
-    watt: p.watt
-  })));
 
   return (
     <>
