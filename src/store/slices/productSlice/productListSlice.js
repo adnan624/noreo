@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { getProductList, getProductById } from './action';
 
 const initialState = {
@@ -52,18 +52,28 @@ const productListSlice = createSlice({
         state.error = null;
       })
       .addCase(getProductList.fulfilled, (state, action) => {
-        state.productList = action.payload;
+        const { products = [], pagination = {} } = action.payload || {};
+        state.productList = {
+          products,
+          pagination: {
+            page: pagination.page ?? 1,
+            limit: pagination.limit ?? 15,
+            total: pagination.total ?? 0,
+            totalPages: pagination.totalPages ?? 0
+          }
+        };
         state.isLoading = false;
         state.isError = false;
         state.error = null;
       })
+
       .addCase(getProductList.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.error = action.payload;
         console.error('Redux error:', action.payload);
       })
-      
+
       // Get Product By ID (optional)
       .addCase(getProductById.pending, (state, action) => {
         state.isLoading = true;

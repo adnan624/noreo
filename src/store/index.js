@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 
 import cartReducer from './slices/cartSlice/cartSlice';
 import productListReducer from './slices/productSlice/productListSlice';
+import categroyListReducer from './slices/categorySlice/categorySlice';
 import authReducer from './slices/authSlice/authSlice';
 
 import { injectStore } from '../service/api/axiosConfig.js';
@@ -13,6 +14,7 @@ import { injectStore } from '../service/api/axiosConfig.js';
 const rootReducer = combineReducers({
   cart: cartReducer,
   products: productListReducer,
+  categroy: categroyListReducer,
   auth: authReducer,
 });
 

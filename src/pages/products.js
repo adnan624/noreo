@@ -1,178 +1,185 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Link from 'next/link';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
-import products from '@/data/products';
 import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProductList } from '@/store/slices/productSlice/action';
+import { getCategoryList } from '@/store/slices/categorySlice/action';
+
 
 export default function Products() {
   const router = useRouter();
   const isInitialRender = useRef(true);
   const hasAutoFocused = useRef(false);
-  const [categoryFilter, setCategoryFilter] = useState(null);
+  const [selectedCategory, setselectedCategory] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
   const [sortOption, setSortOption] = useState('featured');
   const [searchQuery, setSearchQuery] = useState('');
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+  const [currentPage, setCurrentPage] = useState(2);
+  const pageSize = 10;
+
+  const dispatch = useDispatch();
+  const { productList, isLoading } = useSelector((state) => state.products);
+  const  {categoryList}  = useSelector((state) => state.categroy);
+
+
+  // Fetch products from API with filters and pagination
+  const fetchProducts = () => {
+    // setLoading(true);
+    const params = {
+      page: currentPage,
+      limit: pageSize,
+    };
+    dispatch(getProductList(params));
+  }
+
   // Refs for containers
   const searchBarRef = useRef(null);
   const filterPanelRef = useRef(null);
   const searchBarContainerRef = useRef(null);
   const mainRef = useRef(null);
   const searchInputRef = useRef(null);
-  
-  // Get unique categories from static products (for filters)
-  const categories = ['All', ...new Set(products.map(product => product.category))];
+
 
   // Initialize component - no API calls needed
   useEffect(() => {
-    // Simulate brief loading for smooth transition
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    fetchProducts()
+    dispatch(getCategoryList())
+  }, [currentPage]);
 
   // Handle URL changes and search parameter on initial load
   useEffect(() => {
     if (!router.isReady || loading) return;
-    
+
     // Initialize on first load only
     if (isInitialRender.current) {
       const { category, search } = router.query;
-      
-      // Set category from URL
-      if (category && categories.includes(category)) {
-        setCategoryFilter(category);
-      } else {
-        setCategoryFilter('All');
-      }
-      
+
+
+
       // Set search query from URL if coming from home page
       if (search && typeof search === 'string') {
         setSearchQuery(search);
       }
-      
+
       isInitialRender.current = false;
     }
-  }, [router.isReady, router.query, categories, loading]);
+  }, [router.isReady, router.query, loading]);
 
   // Auto-focus search input when component mounts or when coming from home page
   useEffect(() => {
     // Only auto-focus once and after a short delay to ensure DOM is ready
-    if (!hasAutoFocused.current && categoryFilter !== null && !loading) {
+    if (!hasAutoFocused.current && selectedCategory !== null && !loading) {
       const timer = setTimeout(() => {
         const searchInput = searchInputRef.current || document.querySelector(`.${styles.searchInput}`);
         if (searchInput) {
           // Focus the input to open keyboard on mobile/tablet
           searchInput.focus();
-          
+
           // Force focus and trigger keyboard on mobile devices
           if (isMobile || window.innerWidth <= 1024) {
             // Trigger click event to ensure keyboard opens on mobile
             searchInput.click();
-            
+
             // For iOS devices, sometimes we need to trigger focus multiple times
             setTimeout(() => {
               searchInput.focus();
             }, 100);
           }
-          
+
           // If there's existing search text, position cursor at the end
           if (searchQuery) {
             searchInput.setSelectionRange(searchQuery.length, searchQuery.length);
           }
-          
+
           hasAutoFocused.current = true;
         }
       }, 500); // Increased delay for mobile devices
-      
+
       return () => clearTimeout(timer);
     }
-  }, [categoryFilter, searchQuery, isMobile, loading]);
+  }, [ searchQuery, isMobile, loading]);
 
   // Check if we're on mobile or tablet
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth <= 1024); // Include tablets
     };
-    
+
     // Check on initial load
     checkIfMobile();
-    
+
     // Listen for resize events
     window.addEventListener('resize', checkIfMobile);
-    
+
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
 
   // Detect keyboard open state on mobile and tablet
   useEffect(() => {
     if (!isMobile) return;
-    
+
     const initialWindowHeight = window.innerHeight;
-    
+
     // Function to detect keyboard
     const detectKeyboard = () => {
       // On most mobile devices, when keyboard opens, the window height becomes smaller
       const heightDifference = initialWindowHeight - window.innerHeight;
       const isKeyboardLikelyOpen = heightDifference > 150; // Reduced threshold for tablets
-      
+
       if (isKeyboardLikelyOpen !== keyboardOpen) {
         setKeyboardOpen(isKeyboardLikelyOpen);
-        
+
         // When keyboard opens, ensure search bar is in view if needed
         if (isKeyboardLikelyOpen && searchBarRef.current) {
           // Ensure search bar is in view when keyboard opens
           const rect = searchBarRef.current.getBoundingClientRect();
           if (rect.top < 0 || rect.bottom > window.innerHeight) {
-            window.scrollTo({ 
+            window.scrollTo({
               top: window.scrollY + rect.top - 10, // Position just below the top
-              behavior: 'smooth' 
+              behavior: 'smooth'
             });
           }
         }
       }
     };
-    
+
     // Listen for resize events that might indicate keyboard appearance
     window.addEventListener('resize', detectKeyboard);
-    
+
     // Initialize window height reference
     detectKeyboard();
-    
+
     return () => window.removeEventListener('resize', detectKeyboard);
   }, [isMobile, keyboardOpen]);
 
   // Add focus/blur event listeners to handle keyboard appearance on mobile
   useEffect(() => {
     const searchInput = searchInputRef.current || document.querySelector(`.${styles.searchInput}`);
-    
+
     if (searchInput) {
       const handleFocus = () => {
         if (isMobile) {
           // Mark keyboard as open - this may happen before resize event
           setKeyboardOpen(true);
-          
+
           // Ensure the input is visible - scroll to it if needed
           const rect = searchInput.getBoundingClientRect();
           if (rect.top < 0 || rect.bottom > window.innerHeight) {
-            window.scrollTo({ 
+            window.scrollTo({
               top: window.scrollY + rect.top - 60, // Position with some space above
               behavior: 'smooth'
             });
           }
         }
       };
-      
+
       const handleBlur = () => {
         // Reset keyboard state on blur after a delay
         if (isMobile) {
@@ -181,10 +188,10 @@ export default function Products() {
           }, 300);
         }
       };
-      
+
       searchInput.addEventListener('focus', handleFocus);
       searchInput.addEventListener('blur', handleBlur);
-      
+
       return () => {
         searchInput.removeEventListener('focus', handleFocus);
         searchInput.removeEventListener('blur', handleBlur);
@@ -193,7 +200,7 @@ export default function Products() {
   }, [isMobile, searchInputRef.current]);
 
   // Show loading while initializing
-  if (loading || categoryFilter === null) {
+  if (isLoading) {
     return (
       <>
         <Head>
@@ -215,55 +222,21 @@ export default function Products() {
     );
   }
 
-  // Use static products data
-  const productsToUse = products;
-
-  // Filter products
-  const filteredProducts = productsToUse.filter(product => {
-    const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
-    
-    let matchesPrice = true;
-    if (priceFilter === 'Under $100') {
-      matchesPrice = product.price < 100;
-    } else if (priceFilter === '$100 - $500') {
-      matchesPrice = product.price >= 100 && product.price <= 500;
-    } else if (priceFilter === '$500 - $1000') {
-      matchesPrice = product.price > 500 && product.price <= 1000;
-    } else if (priceFilter === 'Over $1000') {
-      matchesPrice = product.price > 1000;
-    } else if (priceFilter === 'Premium') {
-      matchesPrice = product.price > 2000;
-    }
-    
-    const matchesSearch = searchQuery === '' || 
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesCategory && matchesPrice && matchesSearch;
-  });
-
-  // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOption === 'price-low') return a.price - b.price;
-    if (sortOption === 'price-high') return b.price - a.price;
-    if (sortOption === 'rating') return b.rating - a.rating;
-    return a.id - b.id; // Featured
-  });
 
   // Handle category filter change with URL update
   const handleCategoryChange = (category) => {
     // First update the state directly (immediate UI change)
-    setCategoryFilter(category);
+    setselectedCategory(category.name);
+    console.log(selectedCategory , 657890)
     
     // Then update the URL without causing a refresh
     const newQuery = {...router.query};
     
-    if (category === 'All') {
-      delete newQuery.category;
-    } else {
-      newQuery.category = category;
-    }
+    // if (category === 'All') {
+    //   delete newQuery.category;
+    // } else {
+    //   newQuery.category = category;
+    // }
     
     // Use replace instead of push to avoid adding to history
     router.replace({
@@ -280,11 +253,11 @@ export default function Products() {
   // Handle search reset
   const handleResetAll = () => {
     // Reset all filters in component state first
-    setCategoryFilter('All');
+    setselectedCategory('All');
     setPriceFilter('All');
     setSortOption('featured');
     setSearchQuery('');
-    
+
     // Remove all query parameters from URL
     router.replace({
       pathname: router.pathname
@@ -294,9 +267,9 @@ export default function Products() {
   return (
     <>
       <Head>
-        <title>{categoryFilter !== 'All' ? `${categoryFilter} | ElectroShop` : 'Products | ElectroShop'}</title>
-        <meta name="description" content={categoryFilter !== 'All' 
-          ? `Browse our selection of ${categoryFilter.toLowerCase()}`
+        <title>{selectedCategory !== 'All' ? `${selectedCategory} | ElectroShop` : 'Products | ElectroShop'}</title>
+        <meta name="description" content={selectedCategory !== 'All'
+          ? `Browse our selection of `
           : "Browse our wide selection of electrical appliances"} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
@@ -314,13 +287,13 @@ export default function Products() {
                   <h3>Categories</h3>
                 </div>
                 <div className={styles.filterButtons}>
-                  {categories.map(category => (
+                  {categoryList.map(category => (
                     <button
                       key={category}
-                      className={`${styles.filterButton} ${categoryFilter === category ? styles.active : ''}`}
+                      className={`${styles.filterButton} ${selectedCategory === category.name ? styles.active : ''}`}
                       onClick={() => handleCategoryChange(category)}
                     >
-                      {category}
+                      {category.name}
                     </button>
                   ))}
                 </div>
@@ -353,8 +326,8 @@ export default function Products() {
             </div>
 
             {/* Search Bar Container */}
-            <div 
-              className={`${styles.searchBarContainer} ${keyboardOpen ? styles.keyboardOpenContainer : ''}`} 
+            <div
+              className={`${styles.searchBarContainer} ${keyboardOpen ? styles.keyboardOpenContainer : ''}`}
               ref={searchBarContainerRef}
             >
               <div
@@ -413,10 +386,10 @@ export default function Products() {
             {/* Products Content */}
             <div className={`${styles.productsContent} ${keyboardOpen ? styles.keyboardOpenContent : ''}`}>
               {/* Category Title when filtered */}
-              {categoryFilter !== 'All' && (
+              {selectedCategory !== 'All' && (
                 <div className={styles.categoryHeader}>
-                  <h2>{categoryFilter}</h2>
-                  <p>{sortedProducts.length} products found</p>
+                  <h2>{selectedCategory}</h2>
+                  <p>{productList.products.length} products found</p>
                 </div>
               )}
 
@@ -424,13 +397,13 @@ export default function Products() {
               {searchQuery && (
                 <div className={styles.searchResultsHeader}>
                   <h2>Search Results for "{searchQuery}"</h2>
-                  <p>{sortedProducts.length} product{sortedProducts.length !== 1 ? 's' : ''} found</p>
+                  <p>{productList.products.length} product{productList.products.length !== 1 ? 's' : ''} found</p>
                 </div>
               )}
-              
-              {sortedProducts.length > 0 ? (
+
+              {productList.products.length > 0 ? (
                 <div className={styles.productsGrid}>
-                  {sortedProducts.map(product => (
+                  {productList.products.map(product => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
@@ -457,6 +430,28 @@ export default function Products() {
           </div>
         </div>
       </main>
+
+      <div style={{ marginTop: '2rem' }}>
+        <button
+          disabled={productList.pagination.page <= 1}
+          onClick={() => setCurrentPage(productList.pagination.page - 1)}
+          style={{ marginRight: '1rem' }}
+        >
+          ⬅ Previous
+        </button>
+
+        <span>
+          Page {productList.pagination.page} of {productList.pagination.totalPages}
+        </span>
+
+        <button
+          disabled={productList.pagination.page >= productList.pagination.totalPages}
+          onClick={() => setCurrentPage(productList.pagination.page + 1)}
+          style={{ marginLeft: '1rem' }}
+        >
+          Next ➡
+        </button>
+      </div>
       <Footer marginTop="3rem" />
     </>
   );
