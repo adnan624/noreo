@@ -34,14 +34,14 @@ const ProductCard = ({ product }) => {
     dispatch(removeFromCart(product.uniqueId));
   };
 
-  useEffect(() => {
-    if (showNotification) {
-      const timer = setTimeout(() => {
-        dispatch(hideCartNotification());
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showNotification, dispatch]);
+  // useEffect(() => {
+  //   if (showNotification) {
+  //     const timer = setTimeout(() => {
+  //       dispatch(hideCartNotification());
+  //     }, 3000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [showNotification, dispatch]);
 
   return (
     <>
@@ -85,11 +85,11 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
       </Link>
-      <CartNotification
+      {/* <CartNotification
         product={product}
         onClose={() => dispatch(hideCartNotification())}
         show={showNotification}
-      />
+      /> */}
     </>
   );
 };
