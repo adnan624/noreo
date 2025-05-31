@@ -21,8 +21,8 @@ export default function Login() {
   const dispatch = useDispatch();
   const [loginMethod, setLoginMethod] = useState(''); // 'email' or 'phone'
   const [formData, setFormData] = useState({
-    email: "rohan.singh87@example.com",
-    password: "SecurePass123!",
+    email: "aziz3@gmail.com",
+    password: "Demo@1234",
     phone: '',
     otp: ''
   });

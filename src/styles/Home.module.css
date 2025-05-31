@@ -240,16 +240,16 @@
 }
 
 .btnPrimary {
-  background: var(--primary-color);
+  background: #B78727;
   color: white;
-  border: 2px solid var(--primary-color);
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  border: 2px solid #B78727;
+  box-shadow: #B78727;
 }
 
 .btnPrimary:hover {
   transform: translateY(-3px);
-  background: var(--primary-hover);
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+  background: #D9B968;
+  box-shadow:  #B78727;
 }
 
 .btnOutline {
