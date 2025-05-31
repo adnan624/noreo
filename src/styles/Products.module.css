@@ -586,3 +586,259 @@
   color: var(--secondary-color);
   font-size: 1rem;
 }
+
+/* Enhanced Pagination Styles */
+.paginationWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 2rem 0;
+}
+
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+}
+
+/* Previous and Next Buttons */
+.paginationButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #B9B4A9;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.paginationButton:hover:not(.disabled) {
+  background: #A5A096;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(185, 180, 169, 0.3);
+}
+
+.paginationButton.disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.paginationIcon {
+  font-size: 0.8rem;
+}
+
+/* Page Numbers Container */
+.pageNumbers {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 1rem;
+}
+
+/* Individual Page Number Buttons */
+.pageNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: var(--secondary-color);
+}
+
+.pageNumber:hover:not(.disabled):not(.activePage) {
+  background: #f1f5f9;
+  color: var(--dark-color);
+}
+
+/* Active Page */
+.pageNumber.activePage {
+  background: #B9B4A9;
+  color: white;
+  font-weight: 600;
+  transform: scale(1.05);
+}
+
+/* Ellipsis */
+.pageNumber.ellipsis {
+  cursor: default;
+  color: var(--secondary-color);
+  font-weight: normal;
+}
+
+.pageNumber.ellipsis:hover {
+  background: transparent;
+  color: var(--secondary-color);
+}
+
+/* Results Info */
+.resultsInfo {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.resultsInfo p {
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.resultNumber {
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+/* Responsive Design for Pagination */
+@media (max-width: 768px) {
+  .paginationContainer {
+    padding: 0.75rem 1rem;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .paginationButton {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .pageNumbers {
+    margin: 0 0.5rem;
+    gap: 0.1rem;
+  }
+  
+  .pageNumber {
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+  
+  .resultsInfo p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .paginationWrapper {
+    margin-top: 1.5rem;
+    padding: 1.5rem 0;
+  }
+  
+  .paginationContainer {
+    padding: 0.6rem 0.8rem;
+    border-radius: 40px;
+  }
+  
+  .paginationButton {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 20px;
+  }
+  
+  .paginationIcon {
+    font-size: 0.7rem;
+  }
+  
+  .pageNumbers {
+    margin: 0 0.3rem;
+  }
+  
+  .pageNumber {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+  
+  /* Hide some page numbers on very small screens */
+  .pageNumber:nth-child(n+6):nth-child(-n+10) {
+    display: none;
+  }
+}
+
+/* Extra small screens - show only current page and adjacent */
+@media (max-width: 400px) {
+  .pageNumbers {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .pageNumbers::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .paginationButton {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+  }
+  
+  .resultsInfo {
+    margin-top: 1rem;
+  }
+}
+
+/* Category Header Styles (if not already present) */
+.categoryHeader {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.categoryHeader h2 {
+  color: var(--dark-color);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.categoryHeader p {
+  color: var(--secondary-color);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Search Results Header */
+.searchResultsHeader {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.searchResultsHeader h2 {
+  color: var(--dark-color);
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.searchResultsHeader p {
+  color: var(--secondary-color);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Products Content */
+.productsContent {
+  margin-top: 1rem;
+}

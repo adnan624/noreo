@@ -4,11 +4,10 @@ import Head from 'next/head';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import styles from '../styles/Products.module.css';
-import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh } from 'react-icons/fa';
+import { FaSync, FaBroom, FaSearch, FaFilter, FaTag, FaTh, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProductList } from '@/store/slices/productSlice/action';
 import { getCategoryList } from '@/store/slices/categorySlice/action';
-
 
 export default function Products() {
   const router = useRouter();
@@ -21,17 +20,15 @@ export default function Products() {
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(2);
-  const pageSize = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
   const dispatch = useDispatch();
   const { productList, isLoading } = useSelector((state) => state.products);
-  const  {categoryList}  = useSelector((state) => state.categroy);
-
+  const { categoryList } = useSelector((state) => state.categroy);
 
   // Fetch products from API with filters and pagination
   const fetchProducts = () => {
-    // setLoading(true);
     const params = {
       page: currentPage,
       limit: pageSize,
@@ -46,7 +43,6 @@ export default function Products() {
   const mainRef = useRef(null);
   const searchInputRef = useRef(null);
 
-
   // Initialize component - no API calls needed
   useEffect(() => {
     fetchProducts()
@@ -60,8 +56,6 @@ export default function Products() {
     // Initialize on first load only
     if (isInitialRender.current) {
       const { category, search } = router.query;
-
-
 
       // Set search query from URL if coming from home page
       if (search && typeof search === 'string') {
@@ -104,7 +98,7 @@ export default function Products() {
 
       return () => clearTimeout(timer);
     }
-  }, [ searchQuery, isMobile, loading]);
+  }, [searchQuery, isMobile, loading]);
 
   // Check if we're on mobile or tablet
   useEffect(() => {
@@ -200,7 +194,7 @@ export default function Products() {
   }, [isMobile, searchInputRef.current]);
 
   // Show loading while initializing
-  if (isLoading) {
+  if (isLoading && !productList?.products) {
     return (
       <>
         <Head>
@@ -222,28 +216,21 @@ export default function Products() {
     );
   }
 
-
   // Handle category filter change with URL update
   const handleCategoryChange = (category) => {
     // First update the state directly (immediate UI change)
     setselectedCategory(category.name);
-    console.log(selectedCategory , 657890)
-    
+    console.log(selectedCategory, 657890)
+
     // Then update the URL without causing a refresh
-    const newQuery = {...router.query};
-    
-    // if (category === 'All') {
-    //   delete newQuery.category;
-    // } else {
-    //   newQuery.category = category;
-    // }
-    
+    const newQuery = { ...router.query };
+
     // Use replace instead of push to avoid adding to history
     router.replace({
       pathname: router.pathname,
       query: newQuery
     }, undefined, { shallow: true });
-    
+
     // Scroll to top when changing category on mobile
     if (isMobile) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -257,11 +244,61 @@ export default function Products() {
     setPriceFilter('All');
     setSortOption('featured');
     setSearchQuery('');
+    setCurrentPage(1);
 
     // Remove all query parameters from URL
     router.replace({
       pathname: router.pathname
     }, undefined, { shallow: true });
+  };
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Generate page numbers for pagination
+  const generatePageNumbers = () => {
+    const totalPages = productList?.pagination?.totalPages || 1;
+    const current = productList?.pagination?.page || 1;
+    const pages = [];
+
+    if (totalPages <= 7) {
+      // Show all pages if total pages is 7 or less
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Show first page
+      pages.push(1);
+
+      if (current <= 4) {
+        // Show pages 2, 3, 4, 5, ..., last
+        for (let i = 2; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (current >= totalPages - 3) {
+        // Show 1, ..., last-4, last-3, last-2, last-1, last
+        pages.push('...');
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        // Show 1, ..., current-1, current, current+1, ..., last
+        pages.push('...');
+        for (let i = current - 1; i <= current + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
   };
 
   return (
@@ -389,7 +426,7 @@ export default function Products() {
               {selectedCategory !== 'All' && (
                 <div className={styles.categoryHeader}>
                   <h2>{selectedCategory}</h2>
-                  <p>{productList.products.length} products found</p>
+                  <p>{productList?.products?.length || 0} products found</p>
                 </div>
               )}
 
@@ -397,11 +434,17 @@ export default function Products() {
               {searchQuery && (
                 <div className={styles.searchResultsHeader}>
                   <h2>Search Results for "{searchQuery}"</h2>
-                  <p>{productList.products.length} product{productList.products.length !== 1 ? 's' : ''} found</p>
+                  <p>{productList?.products?.length || 0} product{productList?.products?.length !== 1 ? 's' : ''} found</p>
                 </div>
               )}
 
-              {productList.products.length > 0 ? (
+              {/* Products Grid or Loading */}
+              {isLoading ? (
+                <div className={styles.loadingContainer}>
+                  <div className={styles.spinner}></div>
+                  <p>Loading products...</p>
+                </div>
+              ) : productList?.products?.length > 0 ? (
                 <div className={styles.productsGrid}>
                   {productList.products.map(product => (
                     <ProductCard key={product.id} product={product} />
@@ -426,33 +469,76 @@ export default function Products() {
                   </button>
                 </div>
               )}
+
+              {/* Enhanced Pagination - Only show when not loading and has products */}
+              {!isLoading && productList?.products?.length > 0 && productList?.pagination && (
+                <div className={styles.paginationWrapper}>
+                  <div className={styles.paginationContainer}>
+                    {/* Previous Button */}
+                    <button
+                      disabled={productList.pagination.page <= 1}
+                      onClick={() => handlePageChange(productList.pagination.page - 1)}
+                      className={`${styles.paginationButton} ${styles.prevButton} ${productList.pagination.page <= 1 ? styles.disabled : ''}`}
+                    >
+                      <FaChevronLeft className={styles.paginationIcon} />
+                      Previous
+                    </button>
+
+                    {/* Page Numbers */}
+                    <div className={styles.pageNumbers}>
+                      {generatePageNumbers().map((page, index) => (
+                        <button
+                          key={index}
+                          onClick={() => typeof page === 'number' ? handlePageChange(page) : null}
+                          className={`
+                            ${styles.pageNumber} 
+                            ${productList.pagination.page === page ? styles.activePage : ''} 
+                            ${typeof page !== 'number' ? styles.ellipsis : ''}
+                          `}
+                          disabled={typeof page !== 'number'}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Next Button */}
+                    <button
+                      disabled={productList.pagination.page >= productList.pagination.totalPages}
+                      onClick={() => handlePageChange(productList.pagination.page + 1)}
+                      className={`${styles.paginationButton} ${styles.nextButton} ${productList.pagination.page >= productList.pagination.totalPages ? styles.disabled : ''}`}
+                    >
+                      Next
+                      <FaChevronRight className={styles.paginationIcon} />
+                    </button>
+                  </div>
+
+                  {/* Results Info */}
+                  <div className={styles.resultsInfo}>
+                    <p>
+                      Showing{' '}
+                      <span className={styles.resultNumber}>
+                        {((productList.pagination.page - 1) * productList.pagination.limit) + 1}
+                      </span>
+                      -
+                      <span className={styles.resultNumber}>
+                        {Math.min(productList.pagination.page * productList.pagination.limit, productList.pagination.total)}
+                      </span>
+                      {' '}of{' '}
+                      <span className={styles.resultNumber}>
+                        {productList.pagination.total}
+                      </span>
+                      {' '}products
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </main>
 
-      <div style={{ marginTop: '2rem' }}>
-        <button
-          disabled={productList.pagination.page <= 1}
-          onClick={() => setCurrentPage(productList.pagination.page - 1)}
-          style={{ marginRight: '1rem' }}
-        >
-          ⬅ Previous
-        </button>
-
-        <span>
-          Page {productList.pagination.page} of {productList.pagination.totalPages}
-        </span>
-
-        <button
-          disabled={productList.pagination.page >= productList.pagination.totalPages}
-          onClick={() => setCurrentPage(productList.pagination.page + 1)}
-          style={{ marginLeft: '1rem' }}
-        >
-          Next ➡
-        </button>
-      </div>
-      <Footer marginTop="3rem" />
+      {/* <Footer marginTop="3rem" /> */}
     </>
   );
 }
