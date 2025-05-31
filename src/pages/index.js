@@ -18,14 +18,20 @@ export default function Home() {
   const featuredProducts = products.slice(0, 12);
   const onSaleProducts = products.slice(2, 6);
 
-  // Handle search input click - navigate to products page
+  // Handle search input click - navigate to products page with flag
   const handleSearchClick = () => {
-    router.push('/products');
+    router.push({
+      pathname: '/products',
+      query: { fromHome: 'true' }
+    });
   };
 
-  // Handle search input focus - navigate to products page
+  // Handle search input focus - navigate to products page with flag
   const handleSearchFocus = () => {
-    router.push('/products');
+    router.push({
+      pathname: '/products',
+      query: { fromHome: 'true' }
+    });
   };
 
   return (

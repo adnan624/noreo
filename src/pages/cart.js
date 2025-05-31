@@ -5,8 +5,7 @@ import Link from 'next/link';
 import Footer from '../components/Footer';
 import styles from '../styles/Cart.module.css';
 import { addToCart, removeFromCart } from '../store/slices/cartSlice/cartSlice';
-import PaymentButton from '../components/PaymentButton'
-
+import PaymentButton from '../components/PaymentButton';
 
 // CartItem component with quantity controls similar to ProductCard
 const CartItem = ({ item, onRemove, onQuantityChange }) => {
@@ -25,7 +24,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
         <div className={styles.quantityControl}>
           <button
             className={styles.quantityButton}
-            onClick={() => onQuantityChange(item.id, false)}
+            onClick={() => onQuantityChange(item.uniqueId, false)}
             disabled={item.quantity <= 1}
             aria-label="Decrease quantity"
           >
@@ -34,7 +33,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
           <span className={styles.quantityValue}>{item.quantity}</span>
           <button
             className={styles.quantityButton}
-            onClick={() => onQuantityChange(item.id, true)}
+            onClick={() => onQuantityChange(item.uniqueId, true)}
             aria-label="Increase quantity"
           >
             +
@@ -47,7 +46,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
 
         <button
           className={styles.removeButton}
-          onClick={() => onRemove(item.id)}
+          onClick={() => onRemove(item.uniqueId)}
           aria-label="Remove item"
         >
           <span>×</span>
@@ -58,48 +57,52 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
 };
 
 export default function Cart() {
-  // Replace useState with useSelector and useDispatch
   const router = useRouter();
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
   const totalAmount = useSelector(state => state.cart.totalAmount);
 
   // Function to handle complete removal (regardless of quantity)
-  const handleRemoveItem = (id) => {
-    const item = cartItems.find(item => item.id === id);
-    for (let i = 0; i < item.quantity; i++) {
-      dispatch(removeFromCart(id));
+  const handleRemoveItem = (uniqueId) => {
+    console.log('Removing item:', uniqueId);
+    const item = cartItems.find(item => item.uniqueId === uniqueId);
+    if (!item) {
+      console.log('Item not found:', uniqueId);
+      return;
     }
+    for (let i = 0; i < item.quantity; i++) {
+      dispatch(removeFromCart(uniqueId));
+    }
+    console.log('Cart state after removal:', cartItems.map(item => ({ uniqueId: item.uniqueId, id: item.id, name: item.name, quantity: item.quantity })));
   };
 
   // Function to handle quantity changes
-  const handleQuantityChange = (id, isIncrease) => {
-    if (isIncrease) {
-      // Find the item in cartItems to pass to addToCart
-      const item = cartItems.find(item => item.id === id);
-      dispatch(addToCart(item));
-    } else {
-      dispatch(removeFromCart(id));
+  const handleQuantityChange = (uniqueId, isIncrease) => {
+    console.log('Quantity change:', { uniqueId, isIncrease });
+    const item = cartItems.find(item => item.uniqueId === uniqueId);
+    if (!item) {
+      console.log('Item not found:', uniqueId);
+      return;
     }
+    if (isIncrease) {
+      dispatch(addToCart(item));
+      console.log('Added quantity for:', uniqueId);
+    } else {
+      dispatch(removeFromCart(uniqueId));
+      console.log('Removed quantity for:', uniqueId);
+    }
+    console.log('Cart state after quantity change:', cartItems.map(item => ({ uniqueId: item.uniqueId, id: item.id, name: item.name, quantity: item.quantity })));
   };
 
   const handleCheckout = () => {
-    // Get the auth token from localStorage
     const token = localStorage.getItem('authToken');
     console.log('token', token);
 
-    // If user is authenticated (token exists), go to the payment page
-    // Otherwise redirect to login page
     if (token) {
-      // User is authenticated, proceed to payment
-      // router.push('/checkout/payment');
-      console.log('token333', token)
-      router.push('/auth/login');
-
+      console.log('Authenticated, proceeding to payment');
+      router.push('/auth/login'); // Update to '/checkout/payment' when ready
     } else {
-      // User is not authenticated, redirect to login
-      // Store the current path to redirect back after login
-      // localStorage.setItem('redirectAfterLogin', '/checkout/payment');
+      console.log('Not authenticated, redirecting to login');
       router.push('/auth/login');
     }
   };
@@ -111,14 +114,13 @@ export default function Cart() {
   const total = subtotal + tax + shipping;
 
   return (
-
-    // <Link>
     <>
-
       <Head>
         <title>Your Cart | ElectroShop</title>
         <meta name="description" content="Review your cart items" />
-      </Head><div className={styles.circuitBackground}></div><main className={styles.cartPage}>
+      </Head>
+      <div className={styles.circuitBackground}></div>
+      <main className={styles.cartPage}>
         <div className="container">
           <div className={styles.pageHeader}>
             <h1>Your Shopping Cart</h1>
@@ -130,10 +132,11 @@ export default function Cart() {
               <div className={styles.cartItems}>
                 {cartItems.map(item => (
                   <CartItem
-                    key={item.id}
+                    key={item.uniqueId}
                     item={item}
                     onRemove={handleRemoveItem}
-                    onQuantityChange={handleQuantityChange} />
+                    onQuantityChange={handleQuantityChange}
+                  />
                 ))}
               </div>
 
@@ -147,9 +150,7 @@ export default function Cart() {
 
                 <div className={styles.summaryRow}>
                   <span>Shipping</span>
-                  <span>
-                    {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
-                  </span>
+                  <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
                 </div>
 
                 <div className={styles.summaryRow}>
@@ -162,14 +163,10 @@ export default function Cart() {
                   <span>${total.toFixed(2)}</span>
                 </div>
 
-                <button
-                  onClick={handleCheckout}
-                  className={styles.checkoutButton}>Proceed to Checkout</button>
-                <PaymentButton
-                  name={'adnan'}
-                  email={'adnan@gmail.com'}
-                  phone={'8109257552'}
-                />
+                <button onClick={handleCheckout} className={styles.checkoutButton}>
+                  Proceed to Checkout
+                </button>
+                <PaymentButton name={'adnan'} email={'adnan@gmail.com'} phone={'8109257552'} />
                 <div className={styles.paymentMethods}>
                   <p>We accept:</p>
                   <div className={styles.paymentIcons}>
@@ -185,13 +182,14 @@ export default function Cart() {
             <div className={styles.emptyCart}>
               <h2>Your cart is empty</h2>
               <p>Looks like you haven't added any items to your cart yet.</p>
-              <Link href="/products" className={styles.continueButton}>Continue Shopping</Link>
+              <Link href="/products" className={styles.continueButton}>
+                Continue Shopping
+              </Link>
             </div>
           )}
         </div>
       </main>
       <Footer />
     </>
-
   );
 }
