@@ -23,7 +23,7 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
-  const pageSize = 20;
+  const pageSize = 30;
 
   const dispatch = useDispatch();
   const { productList, isLoading } = useSelector((state) => state.products);

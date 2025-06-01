@@ -1,142 +1,198 @@
 .cartNotification {
-    position: fixed;
-    bottom: -150px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 420px;
-    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%); /* More refined green gradient */
-    color: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Lighter shadow */
-    z-index: 1000;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+  position: fixed;
+  bottom: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 420px;
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  pointer-events: none; /* Prevent blocking clicks on other elements */
+}
+
+.cartNotification > * {
+  pointer-events: auto; /* Re-enable clicks on notification content */
+}
+
+.visible {
+  bottom: 25px;
+  animation: gentleSlideUp 0.5s ease-out;
+}
+
+.notificationContent {
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+}
+
+.cartIcon {
+  font-size: 1.3rem;
+  margin-right: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationText {
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.closeButton {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.goToCartButton {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.goToCartButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.goToCartButton::after {
+  content: "→";
+  transition: transform 0.2s ease;
+}
+
+.goToCartButton:hover::after {
+  transform: translateX(2px);
+}
+
+/* Animations */
+@keyframes gentleSlideUp {
+  0% {
+      transform: translateX(-50%) translateY(30px);
+      opacity: 0;
+  }
+  100% {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+      transform: translateX(100%);
+      opacity: 0;
+  }
+  100% {
+      transform: translateX(0);
+      opacity: 1;
+  }
+}
+
+/* DESKTOP ONLY - Above 1024px to avoid any tablet conflicts */
+@media (min-width: 1025px) {
+  .cartNotification {
+      /* Position on the right side instead of center bottom */
+      right: 25px;
+      left: auto;
+      transform: none;
+      width: 320px;
+      max-width: 320px;
   }
   
   .visible {
-    bottom: 25px;
-    animation: gentleSlideUp 0.5s ease-out;
+      bottom: 20px; /* Higher position to avoid pagination */
+      animation: slideInFromRight 0.5s ease-out;
+  }
+}
+
+/* TABLET - 769px to 1024px - Keep original centered behavior */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .cartNotification {
+      width: 90%;
+      max-width: 380px;
+      left: 50%;
+      transform: translateX(-50%);
   }
   
-  .notificationContent {
-    display: flex;
-    align-items: center;
-    padding: 14px 18px;
+  .visible {
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: gentleSlideUp 0.5s ease-out;
   }
-  
-  .cartIcon {
-    font-size: 1.3rem;
-    margin-right: 12px;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .notificationText {
-    font-size: 0.95rem;
-    font-weight: 500;
-    flex: 1;
-  }
-  
-  .closeButton {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: white;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-left: 8px;
-  }
-  
-  .closeButton:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
-  
-  .goToCartButton {
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-    text-align: center;
-    padding: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  
-  .goToCartButton:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
-  
-  .goToCartButton::after {
-    content: "→";
-    transition: transform 0.2s ease;
-  }
-  
-  .goToCartButton:hover::after {
-    transform: translateX(2px);
-  }
-  
-  /* Animations */
-  @keyframes gentleSlideUp {
-    0% {
-      transform: translateX(-50%) translateY(30px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-  }
-  
-  /* Responsive Styles */
-  @media (max-width: 768px) {
-    .cartNotification {
+}
+
+/* MOBILE - Up to 768px - Preserve exact original behavior */
+@media (max-width: 768px) {
+  .cartNotification {
       width: 94%;
       max-width: 380px;
       bottom: -120px;
-    }
-    
-    .visible {
-      bottom: 20px;
-    }
-    
-    .notificationContent {
-      padding: 12px 16px;
-    }
-    
-    .cartIcon {
-      font-size: 1.2rem;
-      padding: 7px;
-    }
-    
-    .notificationText {
-      font-size: 0.9rem;
-    }
-    
-    .goToCartButton {
-      padding: 10px;
-      font-size: 0.85rem;
-    }
+      left: 50%;
+      transform: translateX(-50%);
   }
   
-  @media (max-width: 480px) {
-    .cartNotification {
+  .visible {
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: gentleSlideUp 0.5s ease-out;
+  }
+  
+  .notificationContent {
+      padding: 12px 16px;
+  }
+  
+  .cartIcon {
+      font-size: 1.2rem;
+      padding: 7px;
+  }
+  
+  .notificationText {
+      font-size: 0.9rem;
+  }
+  
+  .goToCartButton {
+      padding: 10px;
+      font-size: 0.85rem;
+  }
+}
+
+/* SMALL MOBILE - Up to 480px - Preserve exact original behavior */
+@media (max-width: 480px) {
+  .cartNotification {
       width: 100%;
       max-width: 100%;
       left: 0;
@@ -144,36 +200,36 @@
       border-radius: 0;
       bottom: -100px;
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-    }
-    
-    .visible {
+  }
+  
+  .visible {
       bottom: 0;
       left: 0;
       transform: none;
       animation: mobileSlideUp 0.4s ease-out;
-    }
-    
-    @keyframes mobileSlideUp {
+  }
+  
+  @keyframes mobileSlideUp {
       0% {
-        transform: translateY(30px);
-        opacity: 0;
+          transform: translateY(30px);
+          opacity: 0;
       }
       100% {
-        transform: translateY(0);
-        opacity: 1;
+          transform: translateY(0);
+          opacity: 1;
       }
-    }
-    
-    .notificationContent {
+  }
+  
+  .notificationContent {
       padding: 12px 14px;
-    }
-    
-    .goToCartButton {
+  }
+  
+  .goToCartButton {
       padding: 10px 12px;
-    }
-    
-    .closeButton {
+  }
+  
+  .closeButton {
       width: 24px;
       height: 24px;
-    }
   }
+}
