@@ -1,20 +1,25 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import styles from '../styles/ProductCard.module.css';
-import { addToCart, removeFromCart, hideCartNotification } from '../../src/store/slices/cartSlice/cartSlice';
-import CartNotification from '../components/CartNotification';
+import { addToCart, removeFromCart } from '../../src/store/slices/cartSlice/cartSlice';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { Tooltip } from 'react-tooltip';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
-  const { items: cartItems, notificationProductId } = useSelector(state => state.cart);
+  const { items: cartItems } = useSelector(state => state.cart);
+  const [isWishlisted, setIsWishlisted] = useState(false);
   
   const cartItem = cartItems.find(item => item.uniqueId === product.uniqueId);
   const quantityInCart = cartItem ? cartItem.quantity : 0;
   const isInCart = quantityInCart > 0;
-  const showNotification = notificationProductId === product.uniqueId;
 
-  console.log(`Product ${product.uniqueId} (id: ${product.id}, name: ${product.name}):`, { quantityInCart, isInCart, showNotification });
+  const toggleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsWishlisted(!isWishlisted);
+  };
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -34,24 +39,32 @@ const ProductCard = ({ product }) => {
     dispatch(removeFromCart(product.uniqueId));
   };
 
-  // useEffect(() => {
-  //   if (showNotification) {
-  //     const timer = setTimeout(() => {
-  //       dispatch(hideCartNotification());
-  //     }, 3000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [showNotification, dispatch]);
-
   return (
     <>
       <Link href={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
         <div className={styles.productCard} style={{ cursor: 'pointer' }}>
           <div className={styles.productImageContainer}>
             <img src={product.image} alt={product.name} className={styles.productImage} />
+            
+            {/* Wishlist Icon */}
+            <button 
+              className={styles.wishlistButton}
+              onClick={toggleWishlist}
+              data-tooltip-id={`wishlist-tooltip-${product.uniqueId}`}
+              data-tooltip-content={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              {isWishlisted ? (
+                <FaHeart className={styles.wishlistIconActive} />
+              ) : (
+                <FaRegHeart className={styles.wishlistIcon} />
+              )}
+            </button>
+            
+            {/* Status Badges */}
             {!product.inStock && <div className={styles.outOfStock}>Out of Stock</div>}
             {product.onSale && product.inStock && <div className={styles.saleBadge}>Sale</div>}
           </div>
+          
           <div className={styles.productInfo}>
             <h3 className={styles.productName}>{product.name}</h3>
             <p className={styles.quantityText}>{product.watt || 'NA W'}</p>
@@ -85,11 +98,14 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
       </Link>
-      {/* <CartNotification
-        product={product}
-        onClose={() => dispatch(hideCartNotification())}
-        show={showNotification}
-      /> */}
+      
+      {/* Tooltip for wishlist */}
+      <Tooltip 
+        id={`wishlist-tooltip-${product.uniqueId}`}
+        place="top"
+        effect="solid"
+        className={styles.wishlistTooltip}
+      />
     </>
   );
 };
