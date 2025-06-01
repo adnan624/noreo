@@ -23,11 +23,27 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const pageSize = 30;
+  
 
   const dispatch = useDispatch();
   const { productList, isLoading } = useSelector((state) => state.products);
+  const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
   const { categoryList } = useSelector((state) => state.categroy);
+
+useEffect(()=>{
+  const wishlistIds = wishlistItems.map(item => item._id);
+
+  const updatedProducts = productList.products.map(product => ({
+    ...product,
+    isWishlisted: wishlistIds.includes(product._id)
+  }));
+console.log('updatedProducts',updatedProducts)
+  setProducts(updatedProducts);
+  setWishlist(wishlistItems);
+},[productList])
 
   // Fetch products from API with filters and pagination
   const fetchProducts = () => {
@@ -466,7 +482,7 @@ export default function Products() {
                 </div>
               ) : productList?.products?.length > 0 ? (
                 <div className={styles.productsGrid}>
-                  {productList.products.map((product, index) => (
+                  {products.map((product, index) => (
                     <ProductCard 
                       key={`${product.id}-${index}`} 
                       product={{ ...product, uniqueId: `${product.id}-${index}` }} 

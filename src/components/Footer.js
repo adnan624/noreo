@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+
 
 const Footer = ({ marginTop = '0px' }) => {
   return (
@@ -43,11 +45,11 @@ const Footer = ({ marginTop = '0px' }) => {
         <div className={styles.footerBottom}>
           <p>&copy; {new Date().getFullYear()} ElectroShop. All rights reserved.</p>
           <div className={styles.socialIcons}>
-            <a href="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a>
-            <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
-            <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-            <a href="#" aria-label="LinkedIn"><i className="fab fa-linkedin"></i></a>
-          </div>
+  <a href="#" aria-label="Facebook"><FaFacebook /></a>
+  <a href="#" aria-label="Twitter"><FaTwitter /></a>
+  <a href="#" aria-label="Instagram"><FaInstagram /></a>
+  <a href="#" aria-label="LinkedIn"><FaLinkedin /></a>
+</div>
         </div>
       </div>
     </footer>

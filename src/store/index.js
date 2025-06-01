@@ -8,6 +8,7 @@ import cartReducer from './slices/cartSlice/cartSlice';
 import productListReducer from './slices/productSlice/productListSlice';
 import categroyListReducer from './slices/categorySlice/categorySlice';
 import authReducer from './slices/authSlice/authSlice';
+import wishlistReducer from './slices/wishlistSlice/wishlistSlice';
 
 import { injectStore } from '../service/api/axiosConfig.js';
 
@@ -16,6 +17,8 @@ const rootReducer = combineReducers({
   products: productListReducer,
   categroy: categroyListReducer,
   auth: authReducer,
+  wishlist: wishlistReducer,
+
 });
 
 const persistConfig = {
