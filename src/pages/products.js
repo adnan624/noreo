@@ -25,7 +25,7 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
   const [products, setProducts] = useState([]);
-  const pageSize = 10;
+  const pageSize = 30;
   
 
   const dispatch = useDispatch();
