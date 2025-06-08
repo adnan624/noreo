@@ -69,8 +69,21 @@ const authService = {
     } catch (error) {
       throw error.response?.data?.message || 'Failed to change password';
     }
+  },
+
+  signInWithGoogle: async (credentials) => {
+    try {
+      const response = await api.post('/auth/google-auth', credentials,{
+        email: credentials.email,
+       name: credentials.name,
+        photoUrl: credentials.photoUrl
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Google sign-in failed';
+    }
   }
-};
+}; 
 
 
 export default authService;

@@ -14,7 +14,19 @@ export const register = createAsyncThunk(
       }
       return response;
     } catch (error) {
-      return rejectWithValue(error?.response?.data || error.message);
+      // Since authService.register throws a string message, handle it properly
+      console.log('Redux thunk error:', error);
+      
+      if (typeof error === 'string') {
+        return rejectWithValue(error);
+      }
+      
+      // Fallback for other error types
+      return rejectWithValue(
+        error?.response?.data?.message || 
+        error?.message || 
+        'Registration failed'
+      );
     }
   }
 );
@@ -87,6 +99,23 @@ export const logoutAsync = createAsyncThunk(
         localStorage.removeItem('authToken');
       }
       return { success: true };
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
+// gmail Login thunk
+export const gmail = createAsyncThunk(
+  'auth/gmail',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await authService.signInWithGoogle(credentials);
+      // Store token safely
+      if (typeof window !== 'undefined' && response?.token) {
+        localStorage.setItem('authToken', response.token);
+      }
+      return response;
     } catch (error) {
       return rejectWithValue(error?.response?.data || error.message);
     }

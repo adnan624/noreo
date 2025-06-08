@@ -1,6 +1,6 @@
 // store/slices/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { register, login, logoutAsync,updateUserProfile, getUserProfile } from './action';
+import { register, login, logoutAsync,updateUserProfile, getUserProfile, gmail } from './action';
 
 const initialState = {
   user: null,
@@ -83,6 +83,23 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
+
+      // gmail
+      .addCase(gmail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(gmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+      })
+      .addCase(gmail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       
       // Udpatre
       .addCase(updateUserProfile.pending, (state) => {
@@ -118,6 +135,8 @@ const authSlice = createSlice({
       .addCase(logoutAsync.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+
+      
       });
   },
 });
