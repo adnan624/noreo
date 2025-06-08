@@ -7,12 +7,21 @@ import AddressManagement from '../../components/profile/addressManagment';
 import { getUserProfile, logoutAsync, updateUserProfile } from '../../store/slices/authSlice/action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import { getWishlist, removeWishlist } from '@/store/slices/wishlistSlice/action';
 
 export default function Profile() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isAuthenticated, user } = useSelector(state => state.auth);
-  
+  const { wishlist } = useSelector(state => state.wishlist.wishlistItems);
+
+  console.log(wishlist, 657890)
+
+  useEffect(() => {
+    dispatch(getWishlist())
+  }, [])
+
+
   // Refs for different sections
   const editFormRef = useRef(null);
   const ordersViewRef = useRef(null);
@@ -135,45 +144,6 @@ export default function Profile() {
     }
   ]);
 
-  // Wishlist data
-  const [wishlistItems] = useState([
-    {
-      id: 'WISH001',
-      productImage: '/api/placeholder/300/300',
-      title: 'Premium Wireless Headphones',
-      currentPrice: '₹2,999',
-      originalPrice: '₹3,999',
-      discount: '25% off',
-      inStock: true
-    },
-    {
-      id: 'WISH002',
-      productImage: '/api/placeholder/300/300',
-      title: 'Smart Fitness Watch',
-      currentPrice: '₹4,499',
-      originalPrice: '₹5,999',
-      discount: '25% off',
-      inStock: true
-    },
-    {
-      id: 'WISH003',
-      productImage: '/api/placeholder/300/300',
-      title: 'Bluetooth Speaker - Waterproof',
-      currentPrice: '₹1,799',
-      originalPrice: '₹2,499',
-      discount: '28% off',
-      inStock: true
-    },
-    {
-      id: 'WISH004',
-      productImage: '/api/placeholder/300/300',
-      title: 'Ergonomic Wireless Keyboard and Mouse Combo',
-      currentPrice: '₹3,299',
-      originalPrice: '₹3,999',
-      discount: '18% off',
-      inStock: false
-    }
-  ]);
 
   // State to manage active view
   const [activeView, setActiveView] = useState('personalInfo'); // 'personalInfo', 'orders', 'wishlist', 'addresses'
@@ -237,26 +207,26 @@ export default function Profile() {
       const timer = setTimeout(() => {
         try {
           // Method 1: Scroll to the edit form
-          editFormRef.current.scrollIntoView({ 
-            behavior: 'auto', 
-            block: 'start' 
+          editFormRef.current.scrollIntoView({
+            behavior: 'auto',
+            block: 'start'
           });
-          
+
           // Method 2: Get the form's position and scroll manually
           const rect = editFormRef.current.getBoundingClientRect();
           const scrollTop = window.pageYOffset + rect.top - 20; // 20px offset from top
-          
+
           window.scrollTo({
             top: scrollTop,
             behavior: 'auto'
           });
-          
+
         } catch (error) {
           // Fallback: just scroll to top
           window.scrollTo(0, 0);
         }
       }, 50);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isEditing]);
@@ -266,14 +236,14 @@ export default function Profile() {
     if (activeView === 'orders' && window.innerWidth <= 768 && ordersViewRef.current) {
       const timer = setTimeout(() => {
         try {
-          ordersViewRef.current.scrollIntoView({ 
-            behavior: 'auto', 
-            block: 'start' 
+          ordersViewRef.current.scrollIntoView({
+            behavior: 'auto',
+            block: 'start'
           });
-          
+
           const rect = ordersViewRef.current.getBoundingClientRect();
           const scrollTop = window.pageYOffset + rect.top - 20;
-          
+
           window.scrollTo({
             top: scrollTop,
             behavior: 'auto'
@@ -282,7 +252,7 @@ export default function Profile() {
           window.scrollTo(0, 0);
         }
       }, 50);
-      
+
       return () => clearTimeout(timer);
     }
   }, [activeView]);
@@ -292,14 +262,14 @@ export default function Profile() {
     if (activeView === 'wishlist' && window.innerWidth <= 768 && wishlistViewRef.current) {
       const timer = setTimeout(() => {
         try {
-          wishlistViewRef.current.scrollIntoView({ 
-            behavior: 'auto', 
-            block: 'start' 
+          wishlistViewRef.current.scrollIntoView({
+            behavior: 'auto',
+            block: 'start'
           });
-          
+
           const rect = wishlistViewRef.current.getBoundingClientRect();
           const scrollTop = window.pageYOffset + rect.top - 20;
-          
+
           window.scrollTo({
             top: scrollTop,
             behavior: 'auto'
@@ -308,7 +278,7 @@ export default function Profile() {
           window.scrollTo(0, 0);
         }
       }, 50);
-      
+
       return () => clearTimeout(timer);
     }
   }, [activeView]);
@@ -318,14 +288,14 @@ export default function Profile() {
     if (activeView === 'addresses' && window.innerWidth <= 768 && addressViewRef.current) {
       const timer = setTimeout(() => {
         try {
-          addressViewRef.current.scrollIntoView({ 
-            behavior: 'auto', 
-            block: 'start' 
+          addressViewRef.current.scrollIntoView({
+            behavior: 'auto',
+            block: 'start'
           });
-          
+
           const rect = addressViewRef.current.getBoundingClientRect();
           const scrollTop = window.pageYOffset + rect.top - 20;
-          
+
           window.scrollTo({
             top: scrollTop,
             behavior: 'auto'
@@ -334,7 +304,7 @@ export default function Profile() {
           window.scrollTo(0, 0);
         }
       }, 50);
-      
+
       return () => clearTimeout(timer);
     }
   }, [activeView]);
@@ -442,10 +412,23 @@ export default function Profile() {
     setActiveView('addresses');
   };
 
-  const handleRemoveFromWishlist = (itemId) => {
-    // In a real app, you would call an API to remove the item from wishlist
+const handleRemoveFromWishlist = async (itemId) => {
+  try {
     console.log('Removing item from wishlist:', itemId);
-  };
+    const res = await dispatch(removeWishlist({ productId: itemId }));
+
+    // Check if it was successful
+    if (removeWishlist.fulfilled.match(res)) {
+      dispatch(getWishlist());
+    } else {
+      console.error('Failed to remove from wishlist:', res.error);
+    }
+  } catch (error) {
+    console.error('Error removing item from wishlist:', error);
+  }
+};
+
+
 
   const handleAddToCart = (itemId) => {
     // In a real app, you would call an API to add the item to cart
@@ -489,7 +472,7 @@ export default function Profile() {
                     className={styles.avatar}
                   />
                   {isEditing && (
-                    <div style={{marginTop: 20, width: '100%'}}>
+                    <div style={{ marginTop: 20, width: '100%' }}>
                       <input
                         type="file"
                         accept="image/*"
@@ -507,29 +490,29 @@ export default function Profile() {
                 </div>
 
                 <div className={styles.sidebarLinks}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     onClick={handlePersonalInfoClick}
                     className={`${styles.sidebarLink} ${activeView === 'personalInfo' ? styles.activeLink : ''}`}
                   >
                     <span className={styles.linkIcon}>👤</span>
                     Personal Info
                   </a>
-                  <button 
+                  <button
                     onClick={() => setActiveView('orders')}
                     className={`${styles.sidebarLink} ${activeView === 'orders' ? styles.activeLink : ''}`}
                   >
                     <span className={styles.linkIcon}>📦</span>
                     My Orders
                   </button>
-                  <button 
+                  <button
                     onClick={handleWishlistClick}
                     className={`${styles.sidebarLink} ${activeView === 'wishlist' ? styles.activeLink : ''}`}
                   >
                     <span className={styles.linkIcon}>❤️</span>
                     Wishlist
                   </button>
-                  <button 
+                  <button
                     onClick={handleAddressClick}
                     className={`${styles.sidebarLink} ${activeView === 'addresses' ? styles.activeLink : ''}`}
                   >
@@ -541,10 +524,10 @@ export default function Profile() {
                     Payment Methods
                   </a>
                 </div>
-                
-                <button 
-                  type="button" 
-                  onClick={handleLogout} 
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
                   disabled={isUpdating}
                   className={styles.logoutButton}
                 >
@@ -557,7 +540,7 @@ export default function Profile() {
                   // All Orders View
                   <div ref={ordersViewRef} className={styles.allOrdersView}>
                     <div className={styles.allOrdersHeader}>
-                      <button 
+                      <button
                         onClick={handleBackToProfile}
                         className={styles.backButton}
                       >
@@ -581,7 +564,7 @@ export default function Profile() {
                           <div className={styles.orderInfo}>
                             <div className={styles.orderProductName}>{order.productName}</div>
                             <div className={styles.orderPrice}>{order.price}</div>
-                            <div 
+                            <div
                               className={styles.orderStatus}
                               style={{ color: getStatusColor(order.status) }}
                             >
@@ -603,49 +586,44 @@ export default function Profile() {
                   // Wishlist View
                   <div ref={wishlistViewRef} className={styles.wishlistView}>
                     <div className={styles.allOrdersHeader}>
-                      <button 
+                      <button
                         onClick={handleBackToProfile}
                         className={styles.backButton}
                       >
                         ← Back to Profile
                       </button>
-                      <h2 className={styles.sectionTitle}>My Wishlist ({wishlistItems.length})</h2>
+                      <h2 className={styles.sectionTitle}>My Wishlist ({wishlist.length})</h2>
                     </div>
 
-                    {wishlistItems.length > 0 ? (
+                    {wishlist?.length > 0 ? (
                       <div className={styles.wishlistGrid}>
-                        {wishlistItems.map((item) => (
+                        {wishlist.map((item) => (
                           <div key={item.id} className={styles.wishlistItem}>
                             <div className={styles.wishlistImageContainer}>
                               <Image
-                                src={item.productImage}
-                                alt={item.title}
+                                src={item.image}
+                                alt={item.name}
                                 width={240}
                                 height={180}
                                 className={styles.wishlistImage}
                               />
                             </div>
                             <div className={styles.wishlistItemInfo}>
-                              <h3 className={styles.wishlistItemTitle}>{item.title}</h3>
+                              <h3 className={styles.wishlistItemTitle}>{item.name}</h3>
                               <div className={styles.wishlistItemPrice}>
-                                {item.currentPrice}
-                                {item.originalPrice && (
-                                  <>
-                                    {/* <span className={styles.wishlistItemOriginalPrice}>{item.originalPrice}</span> */}
-                                    {/* <span className={styles.wishlistItemDiscount}>{item.discount}</span> */}
-                                  </>
-                                )}
+                                {item.price}
+
                               </div>
                               <div className={styles.wishlistItemActions}>
-                                <button 
+                                <button
                                   className={styles.wishlistAddToCart}
                                   onClick={() => handleAddToCart(item.id)}
                                 >
                                   🛒 Add to Cart
                                 </button>
-                                <button 
+                                <button
                                   className={styles.wishlistRemoveButton}
-                                  onClick={() => handleRemoveFromWishlist(item.id)}
+                                  onClick={() => handleRemoveFromWishlist(item._id)}
                                 >
                                   ❌
                                 </button>
@@ -667,7 +645,7 @@ export default function Profile() {
                   // Address Management View
                   <div ref={addressViewRef} className={styles.allOrdersView}>
                     <div className={styles.allOrdersHeader}>
-                      <button 
+                      <button
                         onClick={handleBackToProfile}
                         className={styles.backButton}
                       >
@@ -833,7 +811,7 @@ export default function Profile() {
 
                     <div className={styles.securitySection}>
                       <h2 className={styles.sectionTitle}>Security</h2>
-                      <button 
+                      <button
                         onClick={() => setShowPasswordModal(true)}
                         className={styles.passwordChangeLink}
                       >
@@ -844,7 +822,7 @@ export default function Profile() {
                     <div className={styles.recentOrdersSection}>
                       <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>Recent Orders</h2>
-                        <button 
+                        <button
                           onClick={handleViewAllOrders}
                           className={styles.viewAllLink}
                         >
@@ -867,7 +845,7 @@ export default function Profile() {
                               </div>
                               <div className={styles.orderInfo}>
                                 <div className={styles.orderPrice}>{order.price}</div>
-                                <div 
+                                <div
                                   className={styles.orderStatus}
                                   style={{ color: getStatusColor(order.status) }}
                                 >
@@ -894,7 +872,7 @@ export default function Profile() {
       </div>
 
       {/* Change Password Modal */}
-      <ChangePasswordModal 
+      <ChangePasswordModal
         isOpen={showPasswordModal}
         onClose={handlePasswordModalClose}
       />

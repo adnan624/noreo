@@ -5,35 +5,33 @@ import styles from '../styles/ProductCard.module.css';
 import { addToCart, removeFromCart } from '../../src/store/slices/cartSlice/cartSlice';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Tooltip } from 'react-tooltip';
-import { addWishlist, removeWishlist, getWishlist } from '@/store/slices/wishlistSlice/action';
+import { addWishlist, removeWishlist } from '@/store/slices/wishlistSlice/action';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onWishlistToggle }) => {
   const dispatch = useDispatch();
+
   const { items: cartItems } = useSelector(state => state.cart);
-  // const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
-  // const [isWishlisted, setIsWishlisted] = useState(() =>
-  //   wishlistItems.some(item => item.productId === product._id)
-  // );
   const { isAuthenticated } = useSelector(state => state.auth);
+
   const cartItem = cartItems.find(item => item.uniqueId === product.uniqueId);
   const quantityInCart = cartItem ? cartItem.quantity : 0;
   const isInCart = quantityInCart > 0;
 
-  console.log('product.isWishlisted',product.isWishlisted)
+  // Local state for wishlist to avoid directly mutating props
+  const [isWishlisted, setIsWishlisted] = useState(product.isWishlisted);
 
-// console.log('baaho mein liyeeee',wishlistItems)
-  const toggleWishlist = async (e) => {
+  const handleToggleWishlist = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     try {
-      if (product.isWishlisted) {
+      if (isWishlisted) {
          dispatch(removeWishlist({ productId: product._id }));
       } else {
          dispatch(addWishlist({ productId: product._id }));
       }
-     
-      dispatch(getWishlist()); // refresh wishlist after update
+      setIsWishlisted(!isWishlisted);
+      onWishlistToggle && onWishlistToggle(); // Optional callback
     } catch (error) {
       console.error('Wishlist toggle failed:', error);
     }
@@ -45,13 +43,13 @@ const ProductCard = ({ product }) => {
     dispatch(addToCart(product));
   };
 
-  const incrementQuantity = (e) => {
+  const handleIncrementQuantity = (e) => {
     e.preventDefault();
     e.stopPropagation();
     dispatch(addToCart(product));
   };
 
-  const decrementQuantity = (e) => {
+  const handleDecrementQuantity = (e) => {
     e.preventDefault();
     e.stopPropagation();
     dispatch(removeFromCart(product.uniqueId));
@@ -64,15 +62,16 @@ const ProductCard = ({ product }) => {
           <div className={styles.productImageContainer}>
             <img src={product.image} alt={product.name} className={styles.productImage} />
 
-            {/* Wishlist Icon */}
+            {/* Wishlist Button */}
             {isAuthenticated && (
               <button
                 className={styles.wishlistButton}
-                onClick={toggleWishlist}
+                onClick={handleToggleWishlist}
                 data-tooltip-id={`wishlist-tooltip-${product.uniqueId}`}
-                data-tooltip-content={product.isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                data-tooltip-content={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
               >
-                {product.isWishlisted ? (
+                {isWishlisted ? (
                   <FaHeart className={styles.wishlistIconActive} />
                 ) : (
                   <FaRegHeart className={styles.wishlistIcon} />
@@ -80,11 +79,12 @@ const ProductCard = ({ product }) => {
               </button>
             )}
 
-            {/* Status Badges */}
+            {/* Status Labels */}
             {!product.inStock && <div className={styles.outOfStock}>Out of Stock</div>}
             {product.onSale && product.inStock && <div className={styles.saleBadge}>Sale</div>}
           </div>
 
+          {/* Product Info */}
           <div className={styles.productInfo}>
             <h3 className={styles.productName}>{product.name}</h3>
             <p className={styles.quantityText}>{product.watt || 'NA W'}</p>
@@ -95,6 +95,8 @@ const ProductCard = ({ product }) => {
                 )}
                 <span className={styles.productPrice}>₹{Math.round(product.price)}</span>
               </div>
+
+              {/* Cart Controls */}
               {!isInCart ? (
                 <button
                   className={`${styles.addToCartBtn} ${!product.inStock ? styles.disabled : ''}`}
@@ -104,12 +106,12 @@ const ProductCard = ({ product }) => {
                   ADD
                 </button>
               ) : (
-                <div className={styles.quantityControl} onClick={(e) => e.preventDefault()}>
-                  <button className={styles.quantityButton} onClick={decrementQuantity}>
+                <div className={styles.quantityControl} role="group" aria-label="Product quantity controls">
+                  <button className={styles.quantityButton} onClick={handleDecrementQuantity}>
                     −
                   </button>
                   <span className={styles.quantityValue}>{quantityInCart}</span>
-                  <button className={styles.quantityButton} onClick={incrementQuantity}>
+                  <button className={styles.quantityButton} onClick={handleIncrementQuantity}>
                     +
                   </button>
                 </div>
@@ -119,7 +121,7 @@ const ProductCard = ({ product }) => {
         </div>
       </Link>
 
-      {/* Tooltip for wishlist */}
+      {/* Tooltip */}
       <Tooltip
         id={`wishlist-tooltip-${product.uniqueId}`}
         place="top"
