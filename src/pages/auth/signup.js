@@ -6,7 +6,9 @@ import Link from 'next/link';
 import styles from '../../styles/signup.module.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { register } from '@/store/slices/authSlice/action';
+import { register, gmail } from '@/store/slices/authSlice/action';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from '@/firebase/config';
 // import { register } from '../st  ore/slices/authSlice';
 
 export default function Signup() {
@@ -67,18 +69,92 @@ export default function Signup() {
       })).unwrap();
       
       console.log('Registration successful', resultAction);
-
-   router.push('/')
-      
-      setIsLoading(false);
       
       // Redirect after successful registration
-      // router.push('/auth/login?registered=true');
+      router.push('/');
       console.log('Registration completed successfully');
+      
     } catch (error) {
-      setIsLoading(false);
-      setErrorMessage(typeof error === 'string' ? error : 'Registration failed. Please try again.');
       console.error('Registration error:', error);
+      
+      // Handle specific error messages
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      // Check for specific email already exists errors
+      const emailExistsMessages = [
+        'email already exists',
+        'email already registered',
+        'user already exists',
+        'email is already in use',
+        'account already exists'
+      ];
+      
+      const isEmailError = emailExistsMessages.some(msg => 
+        errorMessage.toLowerCase().includes(msg.toLowerCase())
+      );
+      
+      if (isEmailError) {
+        setErrorMessage('This email is already registered. Please use a different email to signup.');
+      } else {
+        setErrorMessage(errorMessage);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGmailSignUp = async () => {
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      // Create a Google provider instance
+      const provider = new GoogleAuthProvider();
+
+      // Sign in with popup
+      signInWithPopup(auth, provider).then(async (result) => {
+        const user = result.user;
+
+        if (user.email) {
+          // Dispatch login action with user info
+          const loginResult = await dispatch(
+            gmail({
+              email: user.email,
+              name: user.displayName || "",
+              photoUrl: user.photoURL || "",
+            })
+          ).unwrap();
+          console.log("loginResult", loginResult);
+        }
+      });
+
+      // console.log('loginResult',loginResult)
+      // The signed-in user info
+
+      // // Also log the raw user object (with non-enumerable properties)
+      // console.log('Raw User Object:', user);
+      // console.log('Raw User displayName:', user.displayName);
+      // console.log('Raw User email:', user.email);
+      // console.log('Raw User photoURL:', user.photoURL);
+
+      // Redirect after successful login
+      router.push('/');
+    } catch (error) {
+      // Handle errors
+      console.error("Gmail sign-in error:", error.message);
+      setErrorMessage("Failed to sign in with Gmail. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -210,7 +286,7 @@ export default function Signup() {
               <span>OR</span>
             </div>
             
-            <button className={styles.gmailButton}>
+            <button    onClick={handleGmailSignUp} className={styles.gmailButton}>
               <svg className={styles.gmailIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
                 <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
                 <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>

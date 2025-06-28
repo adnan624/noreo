@@ -71,7 +71,7 @@ export default function Login() {
       // Sign in with popup
       signInWithPopup(auth, provider).then(async (result) => {
         const user = result.user;
-
+      console.log('useeeee', user)
         if (user.email) {
           // Dispatch login action with user info
           const loginResult = await dispatch(
